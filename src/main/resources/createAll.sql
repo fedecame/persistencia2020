@@ -5,3 +5,4 @@ CREATE TABLE IF NOT EXISTS patogeno (
   PRIMARY KEY (id)
 )
 ENGINE = InnoDB;
+

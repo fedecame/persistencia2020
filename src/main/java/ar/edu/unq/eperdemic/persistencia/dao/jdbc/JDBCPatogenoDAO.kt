@@ -8,7 +8,17 @@ import ar.edu.unq.eperdemic.persistencia.dao.jdbc.JDBCConnector.execute
 class JDBCPatogenoDAO : PatogenoDAO {
 
     override fun crear(patogeno: Patogeno): Int {
-        TODO("not implemented")
+        execute {
+          val ps=  it.prepareStatement("INSERT INTO personaje (tipo,cantidadDeEspecies) VALUES (?,?)")
+            ps.setString(1, patogeno!!.tipo)
+            ps.execute()
+            if (ps.updateCount != 1) {
+                throw RuntimeException("No se inserto el personaje $patogeno")
+            }
+            ps.close()
+            null
+
+
     }
 
     override fun actualizar(patogeno: Patogeno) {
