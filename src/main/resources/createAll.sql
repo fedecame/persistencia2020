@@ -1,9 +1,7 @@
-CREATE TABLE IF NOT EXISTS personaje (
+CREATE TABLE IF NOT EXISTS patogeno (
   id int auto_increment NOT NULL ,
-  nombre VARCHAR(255) NOT NULL UNIQUE,
-  pesoMaximo int NOT NULL,
-  xp int NOT NULL,
-  vida int NOT NULL,
+  tipo VARCHAR(255) NOT NULL UNIQUE,
+  cantidadDeEspecies int auto_increment;
   PRIMARY KEY (id)
 )
 ENGINE = InnoDB;
