@@ -2,6 +2,7 @@ package ar.edu.unq.eperdemic.persistencia.dao.jdbc
 
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.exception.PatogenoNoCreadoRunTimeException
+import ar.edu.unq.eperdemic.modelo.exception.PatogenoNotFoundRunTimeException
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.jdbc.JDBCConnector.execute
 import java.sql.Connection
@@ -13,7 +14,7 @@ class JDBCPatogenoDAO: PatogenoDAO {
 
     override    fun crear(patogeno: Patogeno): Int {
         var patogeno_id : Int = -1 //Tiene que estar inicializada
-        execute {
+            execute {
             val ps = it.prepareStatement("INSERT INTO patogeno(tipo, cantidadDeEspecies) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS)
             ps.setString(1, patogeno.tipo)
             ps.setInt(2, patogeno.cantidadDeEspecies)
@@ -25,10 +26,8 @@ class JDBCPatogenoDAO: PatogenoDAO {
             if (set_resultado.next()) {
                 patogeno_id = set_resultado.getInt(1)
             }
-            print(patogeno_id)
             ps.close()
         }
-        //Si llega aca el patogeno se creo correctamente en la DB, no?
         return patogeno_id
     }
 
@@ -44,10 +43,10 @@ class JDBCPatogenoDAO: PatogenoDAO {
             var patogenoBuscado: Patogeno? = null
             while (resultSet.next()) {
                 if (patogenoBuscado != null) {
-                    throw RuntimeException("Existe mas de un personaje con el id $patogenoId")
+                    throw PatogenoNotFoundRunTimeException(patogenoId)
                 }
                 patogenoBuscado = Patogeno(resultSet.getString("tipo"), resultSet.getInt("cantidadDeEspecies"), patogenoId)
-            }//resultSet.getInt("pesoMaximo")
+            }
             ps.close()
             patogenoBuscado!!
         }

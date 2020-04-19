@@ -9,12 +9,12 @@ import org.junit.Test
 
 class PatogenoDAOTest {
     private val dao = JDBCPatogenoDAO()
-    lateinit var patogeno: Patogeno
+    var patogeno: Patogeno = Patogeno("Bacteria", 8)
 
-    @Before
-    fun crearModelo() {
-        patogeno = Patogeno("Bacteria", 8)
-    }
+    //@Before
+    //fun crearModelo() {
+    //    patogeno = Patogeno("Bacteria", 8)
+    //}
 
     @Test
     fun alGuardarYLuegoRecuperarSeObtienePatogenosSimilares() {
@@ -26,10 +26,10 @@ class PatogenoDAOTest {
         Assert.assertEquals(patogeno.cantidadDeEspecies, patogenoRecuperado.cantidadDeEspecies)
     }
 
-    @After
-    fun emilinarModelo() {
+    //@After
+    //fun emilinarModelo() {
         //dao.eliminar(patogeno)
-    }
+    //}
 
 
 }
