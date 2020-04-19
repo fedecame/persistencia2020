@@ -9,7 +9,7 @@ class JDBCPatogenoDAO : PatogenoDAO {
 
     override fun crear(patogeno: Patogeno): Int {
         execute {
-          val ps=  it.prepareStatement("INSERT INTO personaje (tipo,cantidadDeEspecies) VALUES (?,?)")
+            val ps = it.prepareStatement("INSERT INTO personaje (tipo,cantidadDeEspecies) VALUES (?,?)")
             ps.setString(1, patogeno!!.tipo)
             ps.execute()
             if (ps.updateCount != 1) {
@@ -17,8 +17,7 @@ class JDBCPatogenoDAO : PatogenoDAO {
             }
             ps.close()
             null
-
-
+        }
     }
 
     override fun actualizar(patogeno: Patogeno) {
