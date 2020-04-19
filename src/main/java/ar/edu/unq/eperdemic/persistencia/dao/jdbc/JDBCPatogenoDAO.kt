@@ -17,14 +17,13 @@ class JDBCPatogenoDAO: PatogenoDAO {
             val ps = it.prepareStatement("INSERT INTO patogeno(tipo, cantidadDeEspecies) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS)
             ps.setString(1, patogeno.tipo)
             ps.setInt(2, patogeno.cantidadDeEspecies)
-            //ps.execute() linea original
             ps.executeUpdate()
             if (ps.updateCount != 1) {
                 throw PatogenoNoCreadoRunTimeException(patogeno.tipo)
             }
-            val rs: ResultSet = ps.getGeneratedKeys()
-            if (rs.next()) {
-                patogeno_id = rs.getInt(1)
+            val set_resultado = ps.getGeneratedKeys()
+            if (set_resultado.next()) {
+                patogeno_id = set_resultado.getInt(1)
             }
             print(patogeno_id)
             ps.close()
