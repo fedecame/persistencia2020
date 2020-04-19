@@ -31,9 +31,9 @@ class JDBCPatogenoDAO: PatogenoDAO {
         return patogeno_id
     }
 
-//    override fun actualizar(patogeno: Patogeno) {
-//        TODO("not implemented")
-//    }
+    override fun actualizar(patogeno: Patogeno) {
+
+    }
 
     override fun recuperar(patogenoId: Int): Patogeno {
         return execute { conn: Connection ->
