@@ -32,17 +32,18 @@ class JDBCPatogenoDAO: PatogenoDAO {
     }
 
     override fun actualizar(patogeno: Patogeno) {
-
         execute {
             val ps = it.prepareStatement("UPDATE patogeno SET tipo = ?, cantidadDeEspecies = ? WHERE id = ?")
             ps.setString(1, patogeno.tipo)
             ps.setInt(2, patogeno.cantidadDeEspecies)
             ps.setInt(3, patogeno.id!!)
-            ps.executeUpdate()
+            val x = ps.executeUpdate()
+            if (x == 0) {
+               throw PatogenoNotFoundRunTimeException(patogeno.id!!)
+            }
             ps.close()
         }
     }
-
     override fun recuperar(patogenoId: Int): Patogeno {
         lateinit var patogenoBuscado : Patogeno
         return execute { conn: Connection ->
