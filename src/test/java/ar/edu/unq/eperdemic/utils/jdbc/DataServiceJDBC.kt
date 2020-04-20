@@ -2,12 +2,12 @@ package ar.edu.unq.eperdemic.utils.jdbc
 
 import ar.edu.unq.eperdemic.utils.DataService
 
-class DataServiceJDBC : DataService {
+class DataServiceJDBC(var dataDAO: DataDAO) : DataService {
     override fun crearSetDeDatosIniciales() {
-        TODO("not implemented")
+        dataDAO.crearSetDatosIniciales()
     }
 
     override fun eliminarTodo() {
-        TODO("not implemented")
+        dataDAO.eliminarTodo()
     }
 }
