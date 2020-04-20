@@ -37,7 +37,7 @@ class PatogenoDAOTest {
         Assert.assertEquals(0, patogenoRecuperado.cantidadDeEspecies)
         dao.eliminar(patogenoRecuperado)
     }
-/*
+
     @Test
     fun seModificanLosValoresDelPatogenoAlActualizarlo() {
         dao.crear(Patogeno("Virus"))
@@ -54,7 +54,7 @@ class PatogenoDAOTest {
         Assert.assertEquals(42, patogenoRecuperado.cantidadDeEspecies)
         dao.eliminar(patogenoActualizado)
     }
-*/
+
     @After
     fun emilinarModelo() {
         dataDao.eliminarTodo()

@@ -10,7 +10,7 @@ class DataDAOImpl : DataDAO {
     override fun eliminarTodo(){
         execute{
             conn: Connection ->
-            val ps =  conn.prepareStatement("DROP TABLE patogeno")
+            val ps =  conn.prepareStatement("TRUNCATE TABLE patogeno")
             ps.execute()
             ps.close()
             null
