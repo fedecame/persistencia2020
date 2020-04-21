@@ -44,6 +44,13 @@ class JDBCPatogenoDAO: PatogenoDAO {
         }
     }
 
+    private fun setPatogeno(resultSet: ResultSet): Patogeno {
+        val patogeno = Patogeno(resultSet.getString("tipo"))
+        patogeno.cantidadDeEspecies = resultSet.getInt("cantidadDeEspecies")
+        patogeno.id = resultSet.getInt("id")
+        return patogeno
+    }
+
     override fun recuperar(patogenoId: Int): Patogeno {
         var patogenoBuscado : Patogeno? = null
         return execute { conn: Connection ->
@@ -51,7 +58,7 @@ class JDBCPatogenoDAO: PatogenoDAO {
             ps.setInt(1, patogenoId)
             val resultSet = ps.executeQuery()
             while (resultSet.next()) {
-                patogenoBuscado = Patogeno(resultSet.getString("tipo"), resultSet.getInt("cantidadDeEspecies"), patogenoId)
+                patogenoBuscado = this.setPatogeno(resultSet)
                 if(resultSet.next()){
                     print("Hay otro")
                 }
@@ -82,10 +89,7 @@ class JDBCPatogenoDAO: PatogenoDAO {
      private fun resultSet2List(resultSet : ResultSet) : List<Patogeno>{
          val lista = mutableListOf<Patogeno>()
          while (resultSet.next()) {
-             val id: Int = resultSet.getInt("id")
-             val tipo: String = resultSet.getString("tipo")
-             val cantidadDeEspecies : Int = resultSet.getInt("cantidadDeEspecies")
-             val patogeno = Patogeno(tipo, cantidadDeEspecies, id)
+             val patogeno = this.setPatogeno(resultSet)
              lista.add(patogeno)
          }
          return lista

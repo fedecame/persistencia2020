@@ -57,7 +57,9 @@ class PatogenoDAOTest {
         Assert.assertEquals("Virus", patogenoOriginal.tipo)
         Assert.assertEquals(0, patogenoOriginal.cantidadDeEspecies)
 
-        val patogenoActualizado = Patogeno("Caca", 42, 4)
+        val patogenoActualizado = Patogeno("Caca")
+        patogenoActualizado.id = 4
+        patogenoActualizado.cantidadDeEspecies = 42
         dao.actualizar(patogenoActualizado)
         val patogenoRecuperado = dao.recuperar(4)
         Assert.assertEquals(4, patogenoRecuperado.id)
@@ -67,7 +69,8 @@ class PatogenoDAOTest {
 
     @Test(expected = PatogenoNotFoundRunTimeException::class)
     fun alIntentarActualizarUnPatogenoQueNoExisteArrojaUnaExcepcion() {
-        val fruta = Patogeno("Sarasa", 108, 666)
+        val fruta = Patogeno("Sarasa")
+        fruta.id = 666
         dao.actualizar(fruta)
     }
 
