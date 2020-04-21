@@ -1,6 +1,7 @@
 package ar.edu.unq.eperdemic.persistencia.dao.jdbc
 
 import ar.edu.unq.eperdemic.modelo.Patogeno
+import ar.edu.unq.eperdemic.modelo.exception.IdRepetidoRunTimeException
 import ar.edu.unq.eperdemic.modelo.exception.PatogenoNoCreadoRunTimeException
 import ar.edu.unq.eperdemic.modelo.exception.PatogenoNotFoundRunTimeException
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
@@ -60,7 +61,7 @@ class JDBCPatogenoDAO: PatogenoDAO {
             while (resultSet.next()) {
                 patogenoBuscado = this.setPatogeno(resultSet)
                 if(resultSet.next()){
-                    print("Hay otro")
+                    throw IdRepetidoRunTimeException(patogenoId)
                 }
             }
             if (patogenoBuscado == null) {

@@ -6,7 +6,7 @@ import ar.edu.unq.eperdemic.persistencia.dao.jdbc.JDBCConnector.execute
 import java.sql.Connection
 
 class DataDAOImpl(private var patogenoDao : PatogenoDAO) : DataDAO {
-    override fun crearSetDatosIniciales() {
+    override fun crearSetDeDatosIniciales() {
         var patogenos = listOf("Bacteria", "Hongo", "Protozoo", "Virus")
         for (patogeno in patogenos) {
             patogenoDao.crear(Patogeno(patogeno))

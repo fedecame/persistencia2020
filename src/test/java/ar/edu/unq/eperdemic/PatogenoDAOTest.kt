@@ -4,6 +4,7 @@ import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.exception.PatogenoNotFoundRunTimeException
 import ar.edu.unq.eperdemic.persistencia.dao.jdbc.JDBCPatogenoDAO
 import ar.edu.unq.eperdemic.utils.jdbc.DataDAOImpl
+import ar.edu.unq.eperdemic.utils.jdbc.DataServiceJDBC
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -11,11 +12,16 @@ import org.junit.Test
 
 class PatogenoDAOTest {
     private val dao = JDBCPatogenoDAO()
-    private val dataDao = DataDAOImpl(dao)
+    private val dataService = DataServiceJDBC(DataDAOImpl(dao))
 
     @Before
     fun crearModelo() {
-        dataDao.crearSetDatosIniciales()
+        dataService.crearSetDeDatosIniciales()
+    }
+
+    @Test(expected = PatogenoNotFoundRunTimeException::class)
+    fun alRecuperarUnPatogenoNoExistenteLanzaUnaExcepcion() {
+        dao.recuperar(42)
     }
 
     @Test
@@ -27,7 +33,7 @@ class PatogenoDAOTest {
     }
 
     @Test
-    fun alGuardarYLuegoRecuperarSeObtienePatogenosSimilaresHabiendoMasDeUnoEnLaTabla() {
+    fun alGuardarYLuegoRecuperarSeObtienePatogenosSimilaresHabiendoDosEnLaTabla() {
         val patogenoRecuperado = dao.recuperar(2)
         Assert.assertEquals(2, patogenoRecuperado.id)
         Assert.assertEquals("Hongo", patogenoRecuperado.tipo)
@@ -76,7 +82,7 @@ class PatogenoDAOTest {
 
     @After
     fun eliminarModelo() {
-        dataDao.eliminarTodo()
+        dataService.eliminarTodo()
     }
 
     @Test

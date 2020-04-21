@@ -4,7 +4,7 @@ import ar.edu.unq.eperdemic.utils.DataService
 
 class DataServiceJDBC(var dataDAO: DataDAO) : DataService {
     override fun crearSetDeDatosIniciales() {
-        dataDAO.crearSetDatosIniciales()
+        dataDAO.crearSetDeDatosIniciales()
     }
 
     override fun eliminarTodo() {
