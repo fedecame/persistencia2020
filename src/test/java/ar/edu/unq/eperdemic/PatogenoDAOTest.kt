@@ -65,7 +65,6 @@ class PatogenoDAOTest {
         Assert.assertEquals(42, patogenoRecuperado.cantidadDeEspecies)
     }
 
-    //*Aun no lanza la excepcion
     @Test(expected = PatogenoNotFoundRunTimeException::class)
     fun alIntentarActualizarUnPatogenoQueNoExisteArrojaUnaExcepcion() {
         val fruta = Patogeno("Sarasa", 108, 666)
@@ -75,6 +74,25 @@ class PatogenoDAOTest {
     @After
     fun eliminarModelo() {
         dataDao.eliminarTodo()
+    }
+
+    @Test
+    fun elRecuperarTodosTraeUnaListaVaciaCuandoNoHayNingunDatoCargado() {
+        this.eliminarModelo()
+        val patogenosRecuperados = dao.recuperarATodos()
+        Assert.assertEquals(0, patogenosRecuperados.size)
+        Assert.assertTrue(patogenosRecuperados.isEmpty())
+    }
+
+    @Test
+    fun elRecuperarTodosTraeUnaListaCon4PatogenosOrdenadosAlfabeticamenteSegunSuTipo() {
+        val patogenosRecuperados = dao.recuperarATodos()
+        Assert.assertEquals(4, patogenosRecuperados.size)
+        Assert.assertFalse(patogenosRecuperados.isEmpty())
+        Assert.assertEquals("Bacteria", patogenosRecuperados.get(0).tipo)
+        Assert.assertEquals("Hongo", patogenosRecuperados.get(1).tipo)
+        Assert.assertEquals("Protozoo", patogenosRecuperados.get(2).tipo)
+        Assert.assertEquals("Virus", patogenosRecuperados.get(3).tipo)
     }
 
 }
