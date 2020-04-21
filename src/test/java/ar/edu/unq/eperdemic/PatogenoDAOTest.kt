@@ -11,7 +11,7 @@ import org.junit.Before
 import org.junit.Test
 
 class PatogenoDAOTest {
-    private val dao = JDBCPatogenoDAO()
+    private var dao = JDBCPatogenoDAO()
     private val dataService = DataServiceJDBC(DataDAOImpl(dao))
 
     @Before
