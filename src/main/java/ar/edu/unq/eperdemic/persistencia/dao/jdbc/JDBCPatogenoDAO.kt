@@ -6,18 +6,18 @@ import ar.edu.unq.eperdemic.modelo.exception.PatogenoNotFoundRunTimeException
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.jdbc.JDBCConnector.execute
 import java.sql.Connection
+import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.Statement
 
 
 class JDBCPatogenoDAO: PatogenoDAO {
 
-    override    fun crear(patogeno: Patogeno): Int {
-        var patogenoId : Int = -1
+    override fun crear(patogeno: Patogeno): Int {
+        var patogenoId : Int? = null
             execute {
             val ps = it.prepareStatement("INSERT INTO patogeno(tipo, cantidadDeEspecies) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS)
-            ps.setString(1, patogeno.tipo)
-            ps.setInt(2, patogeno.cantidadDeEspecies)
+            this.setQueryWithoutID(patogeno.tipo, patogeno.cantidadDeEspecies, ps)
             ps.executeUpdate()
             if (ps.updateCount != 1) {
                 throw PatogenoNoCreadoRunTimeException(patogeno.tipo)
@@ -28,14 +28,19 @@ class JDBCPatogenoDAO: PatogenoDAO {
             }
             ps.close()
         }
-        return patogenoId
+        return patogenoId!!
+    }
+
+
+    private fun setQueryWithoutID(tipo : String, cantidadDeEspecies : Int, ps : PreparedStatement){
+        ps.setString(1, tipo)
+        ps.setInt(2, cantidadDeEspecies)
     }
 
     override fun actualizar(patogeno: Patogeno) {
         execute {
             val ps = it.prepareStatement("UPDATE patogeno SET tipo = ?, cantidadDeEspecies = ? WHERE id = ?")
-            ps.setString(1, patogeno.tipo)
-            ps.setInt(2, patogeno.cantidadDeEspecies)
+            this.setQueryWithoutID(patogeno.tipo, patogeno.cantidadDeEspecies, ps)
             ps.setInt(3, patogeno.id!!)
             val x = ps.executeUpdate()
             if (x == 0) {
@@ -61,21 +66,8 @@ class JDBCPatogenoDAO: PatogenoDAO {
         }
     }
 
-//    override fun recuperarATodos(): List<Patogeno> {
-//        TODO("not implemented")
-//    }
-
-    fun eliminar(patogeno: Patogeno) {
-        execute { conn: Connection ->
-            val ps =  conn.prepareStatement("DELETE FROM patogeno WHERE id =  ? ")
-            ps.setInt(1, patogeno.id!!)
-            ps.execute()
-            if (ps.updateCount != 1) {
-                throw RuntimeException(patogeno.id as String)
-            }
-            ps.close()
-            null
-        }
+    override fun recuperarATodos(): List<Patogeno> {
+        return listOf<Patogeno>()
     }
 
     init {

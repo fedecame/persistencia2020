@@ -6,5 +6,5 @@ interface PatogenoDAO {
     fun crear(patogeno: Patogeno): Int?
     fun actualizar(patogeno: Patogeno )
     fun recuperar(patogenoId: Int): Patogeno
-    //fun recuperarATodos() : List<Patogeno>
+    fun recuperarATodos() : List<Patogeno>
 }
