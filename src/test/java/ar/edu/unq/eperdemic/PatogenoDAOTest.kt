@@ -80,11 +80,6 @@ class PatogenoDAOTest {
         dao.actualizar(fruta)
     }
 
-    @After
-    fun eliminarModelo() {
-        dataService.eliminarTodo()
-    }
-
     @Test
     fun elRecuperarTodosTraeUnaListaVaciaCuandoNoHayNingunDatoCargado() {
         this.eliminarModelo()
@@ -104,4 +99,8 @@ class PatogenoDAOTest {
         Assert.assertEquals("Virus", patogenosRecuperados.get(3).tipo)
     }
 
+    @After
+    fun eliminarModelo() {
+        dataService.eliminarTodo()
+    }
 }
