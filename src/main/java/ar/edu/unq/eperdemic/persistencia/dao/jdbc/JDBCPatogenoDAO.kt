@@ -50,19 +50,19 @@ class JDBCPatogenoDAO: PatogenoDAO {
         }
     }
     override fun recuperar(patogenoId: Int): Patogeno {
-        lateinit var patogenoBuscado : Patogeno
+        var patogenoBuscado : Patogeno? = null
         return execute { conn: Connection ->
             val ps = conn.prepareStatement("SELECT * FROM patogeno WHERE id = ?")
             ps.setInt(1, patogenoId)
             val resultSet = ps.executeQuery()
             while (resultSet.next()) {
                 patogenoBuscado = Patogeno(resultSet.getString("tipo"), resultSet.getInt("cantidadDeEspecies"), patogenoId)
-                if (patogenoBuscado == null) {
-                    throw PatogenoNotFoundRunTimeException(patogenoId)
-                }
+            }
+            if (patogenoBuscado == null) {
+                throw PatogenoNotFoundRunTimeException(patogenoId)
             }
             ps.close()
-            patogenoBuscado
+            patogenoBuscado!!
         }
     }
 
