@@ -12,7 +12,7 @@ open class ModData(protected var dao : PatogenoDAO = JDBCPatogenoDAO(), protecte
         dataService.crearSetDeDatosIniciales()
     }
 
-    fun eliminarModelo() {
+    open fun eliminarModelo() {
         dataService.eliminarTodo()
     }
 }

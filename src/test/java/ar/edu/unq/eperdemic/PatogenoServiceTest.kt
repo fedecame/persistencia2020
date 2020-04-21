@@ -66,7 +66,7 @@ class PatogenoServiceTest : ModData(){
         Assert.assertEquals("Virus", patogenosRecuperados.get(3).tipo)
     }
     @After
-    fun eliminarModelo() {
+    override fun eliminarModelo() {
         super.eliminarModelo()
     }
 }

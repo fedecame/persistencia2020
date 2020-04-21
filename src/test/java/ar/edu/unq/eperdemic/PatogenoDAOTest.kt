@@ -100,7 +100,7 @@ class PatogenoDAOTest : ModData(){
     }
 
     @After
-    fun eliminarModelo() {
+    override fun eliminarModelo() {
         super.eliminarModelo()
     }
 }
