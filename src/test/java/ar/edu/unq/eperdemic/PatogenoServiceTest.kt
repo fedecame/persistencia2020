@@ -4,21 +4,17 @@ import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.exception.PatogenoNotFoundRunTimeException
 import ar.edu.unq.eperdemic.persistencia.dao.jdbc.JDBCPatogenoDAO
 import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
-import ar.edu.unq.eperdemic.utils.jdbc.DataDAOImpl
-import ar.edu.unq.eperdemic.utils.jdbc.DataServiceJDBC
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
-class PatogenoServiceTest {
-    private var dao = JDBCPatogenoDAO()
+class PatogenoServiceTest : ModData(){
     private var service = PatogenoServiceImpl(dao)
-    private val dataService = DataServiceJDBC(DataDAOImpl(dao))
 
     @Before
-    fun crearModelo() {
-        dataService.crearSetDeDatosIniciales()
+    override fun crearModelo() {
+        super.crearModelo()
     }
 
     @Test(expected = PatogenoNotFoundRunTimeException::class)
@@ -69,11 +65,8 @@ class PatogenoServiceTest {
         Assert.assertEquals("Protozoo", patogenosRecuperados.get(2).tipo)
         Assert.assertEquals("Virus", patogenosRecuperados.get(3).tipo)
     }
-
     @After
     fun eliminarModelo() {
-        dataService.eliminarTodo()
+        super.eliminarModelo()
     }
-
-
 }

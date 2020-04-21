@@ -10,13 +10,11 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
-class PatogenoDAOTest {
-    private var dao = JDBCPatogenoDAO()
-    private val dataService = DataServiceJDBC(DataDAOImpl(dao))
+class PatogenoDAOTest : ModData(){
 
     @Before
-    fun crearModelo() {
-        dataService.crearSetDeDatosIniciales()
+    override fun crearModelo() {
+        super.crearModelo()
     }
 
     @Test(expected = PatogenoNotFoundRunTimeException::class)
@@ -68,9 +66,11 @@ class PatogenoDAOTest {
         patogenoActualizado.cantidadDeEspecies = 42
         dao.actualizar(patogenoActualizado)
         val patogenoRecuperado = dao.recuperar(4)
+        Assert.assertEquals(patogenoOriginal.id, patogenoRecuperado.id)
         Assert.assertEquals(4, patogenoRecuperado.id)
-        Assert.assertEquals("Caca", patogenoRecuperado.tipo)
-        Assert.assertEquals(42, patogenoRecuperado.cantidadDeEspecies)
+        Assert.assertEquals(patogenoOriginal.tipo, patogenoRecuperado.tipo)
+        Assert.assertEquals(patogenoOriginal.cantidadDeEspecies, patogenoRecuperado.cantidadDeEspecies)
+        Assert.assertEquals(patogenoOriginal.cantidadDeEspecies, patogenoRecuperado.cantidadDeEspecies)
     }
 
     @Test(expected = PatogenoNotFoundRunTimeException::class)
@@ -101,6 +101,6 @@ class PatogenoDAOTest {
 
     @After
     fun eliminarModelo() {
-        dataService.eliminarTodo()
+        super.eliminarModelo()
     }
 }
