@@ -29,7 +29,7 @@ class PatogenoDAOTest{
     fun alGuardarYLuegoRecuperarSeObtienePatogenosSimilares() {
         val patogenoRecuperado = dao.recuperar(1)
         Assert.assertEquals(1, patogenoRecuperado.id)
-        Assert.assertEquals("Bacteria", patogenoRecuperado.tipo)
+        Assert.assertEquals("Protozoo", patogenoRecuperado.tipo)
         Assert.assertEquals(0, patogenoRecuperado.cantidadDeEspecies)
     }
 
@@ -45,7 +45,7 @@ class PatogenoDAOTest{
     fun alGuardarYLuegoRecuperarSeObtienePatogenosSimilaresHabiendoTresEnLaTabla() {
         val patogenoRecuperado = dao.recuperar(3)
         Assert.assertEquals(3, patogenoRecuperado.id)
-        Assert.assertEquals("Protozoo", patogenoRecuperado.tipo)
+        Assert.assertEquals("Virus", patogenoRecuperado.tipo)
         Assert.assertEquals(0, patogenoRecuperado.cantidadDeEspecies)
     }
 
@@ -53,7 +53,7 @@ class PatogenoDAOTest{
     fun alGuardarYLuegoRecuperarSeObtienePatogenosSimilaresHabiendoCuatroEnLaTabla() {
         val patogenoRecuperado = dao.recuperar(4)
         Assert.assertEquals(4, patogenoRecuperado.id)
-        Assert.assertEquals("Virus", patogenoRecuperado.tipo)
+        Assert.assertEquals("Bacteria", patogenoRecuperado.tipo)
         Assert.assertEquals(0, patogenoRecuperado.cantidadDeEspecies)
     }
 
@@ -61,7 +61,7 @@ class PatogenoDAOTest{
     fun seModificanLosValoresDelPatogenoAlActualizarlo() {
         val patogenoOriginal = dao.recuperar(4)
         Assert.assertEquals(4, patogenoOriginal.id)
-        Assert.assertEquals("Virus", patogenoOriginal.tipo)
+        Assert.assertEquals("Bacteria", patogenoOriginal.tipo)
         Assert.assertEquals(0, patogenoOriginal.cantidadDeEspecies)
 
         val patogenoActualizado = Patogeno("Caca")

@@ -41,17 +41,16 @@ class PatogenoServiceTest{
     fun seModificanLosValoresDelPatogenoAlActualizarlo() {
         val patogenoOriginal = service.recuperarPatogeno(4)
         Assert.assertEquals(4, patogenoOriginal.id)
-        Assert.assertEquals("Virus", patogenoOriginal.tipo)
+        Assert.assertEquals("Bacteria", patogenoOriginal.tipo)
         Assert.assertEquals(0, patogenoOriginal.cantidadDeEspecies)
 
         service.agregarEspecie(4, "Sarasa", "MiCasa")
         val patogenoRecuperado = service.recuperarPatogeno(4)
         Assert.assertEquals(4, patogenoRecuperado.id)
-        Assert.assertEquals("Virus", patogenoRecuperado.tipo)
+        Assert.assertEquals("Bacteria", patogenoRecuperado.tipo)
         Assert.assertEquals(1, patogenoRecuperado.cantidadDeEspecies)
         Assert.assertFalse(patogenoOriginal.cantidadDeEspecies == patogenoRecuperado.cantidadDeEspecies)
     }
-
 
     @Test
     fun elRecuperarTodosTraeUnaListaVaciaCuandoNoHayNingunDatoCargado() {

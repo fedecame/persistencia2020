@@ -9,7 +9,7 @@ import java.sql.Connection
 class DataServiceJDBC(var patogenoDao : PatogenoDAO) : DataService {
 
     override fun crearSetDeDatosIniciales() {
-        var patogenos = listOf("Bacteria", "Hongo", "Protozoo", "Virus")
+        var patogenos = listOf("Protozoo", "Hongo", "Virus", "Bacteria")
         for (patogeno in patogenos) {
             patogenoDao.crear(Patogeno(patogeno))
         }
