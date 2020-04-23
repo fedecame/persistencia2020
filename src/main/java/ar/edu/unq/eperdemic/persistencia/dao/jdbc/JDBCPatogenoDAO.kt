@@ -81,6 +81,15 @@ class JDBCPatogenoDAO: PatogenoDAO {
         }
     }
 
+    override fun eliminarTodos() {
+        execute { conn: Connection ->
+            val ps = conn.prepareStatement("TRUNCATE FROM patogeno")
+            ps.execute()
+            ps.close()
+            null
+        }
+    }
+
     private fun setQueryWithoutID(tipo : String, cantidadDeEspecies : Int, ps : PreparedStatement){
         ps.setString(1, tipo)
         ps.setInt(2, cantidadDeEspecies)
