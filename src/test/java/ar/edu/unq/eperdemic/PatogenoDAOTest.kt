@@ -2,19 +2,22 @@ package ar.edu.unq.eperdemic
 
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.exception.PatogenoNotFoundRunTimeException
+import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.jdbc.JDBCPatogenoDAO
-import ar.edu.unq.eperdemic.utils.jdbc.DataDAOImpl
+import ar.edu.unq.eperdemic.utils.DataService
 import ar.edu.unq.eperdemic.utils.jdbc.DataServiceJDBC
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
-class PatogenoDAOTest : ModData(){
+class PatogenoDAOTest{
+    private var dao : PatogenoDAO = JDBCPatogenoDAO()
+    private val dataService : DataService = DataServiceJDBC(dao)
 
     @Before
-    override fun crearModelo() {
-        super.crearModelo()
+    fun crearModelo() {
+        dataService.crearSetDeDatosIniciales()
     }
 
     @Test(expected = PatogenoNotFoundRunTimeException::class)
@@ -68,9 +71,8 @@ class PatogenoDAOTest : ModData(){
         val patogenoRecuperado = dao.recuperar(4)
         Assert.assertEquals(patogenoOriginal.id, patogenoRecuperado.id)
         Assert.assertEquals(4, patogenoRecuperado.id)
-        Assert.assertEquals(patogenoOriginal.tipo, patogenoRecuperado.tipo)
-        Assert.assertEquals(patogenoOriginal.cantidadDeEspecies, patogenoRecuperado.cantidadDeEspecies)
-        Assert.assertEquals(patogenoOriginal.cantidadDeEspecies, patogenoRecuperado.cantidadDeEspecies)
+        Assert.assertEquals("Caca", patogenoRecuperado.tipo)
+        Assert.assertEquals(42, patogenoRecuperado.cantidadDeEspecies)
     }
 
     @Test(expected = PatogenoNotFoundRunTimeException::class)
@@ -100,7 +102,7 @@ class PatogenoDAOTest : ModData(){
     }
 
     @After
-    override fun eliminarModelo() {
-        super.eliminarModelo()
+    fun eliminarModelo() {
+        dataService.eliminarTodo()
     }
 }
