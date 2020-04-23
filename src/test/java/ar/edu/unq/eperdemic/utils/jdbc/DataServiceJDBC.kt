@@ -7,6 +7,7 @@ import ar.edu.unq.eperdemic.utils.DataService
 import java.sql.Connection
 
 class DataServiceJDBC(var patogenoDao : PatogenoDAO) : DataService {
+
     override fun crearSetDeDatosIniciales() {
         var patogenos = listOf("Bacteria", "Hongo", "Protozoo", "Virus")
         for (patogeno in patogenos) {
