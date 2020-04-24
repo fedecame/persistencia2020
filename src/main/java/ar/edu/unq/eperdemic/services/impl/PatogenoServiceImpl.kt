@@ -7,7 +7,7 @@ import ar.edu.unq.eperdemic.services.PatogenoService
 
 class PatogenoServiceImpl(var patogenoDAO: PatogenoDAO) : PatogenoService {
     override fun crearPatogeno(patogeno: Patogeno): Int {
-        return patogenoDAO.crear(patogeno)!!
+        return patogenoDAO.crear(patogeno)
     }
 
     override fun recuperarPatogeno(id: Int): Patogeno {
