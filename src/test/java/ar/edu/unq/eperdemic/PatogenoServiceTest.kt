@@ -47,8 +47,13 @@ class PatogenoServiceTest{
         dao.recuperar(42)
     }
 
+    @Test(expected = PatogenoNotFoundRunTimeException::class)
+    fun alActualizarUnPatogenoDeIDNoExistenteParaLaDBLanzaUnaExcepcion() {
+        service.agregarEspecie(42, "Gripe A", "Asdlandia")
+    }
+
     @Test
-    fun seModificanLosValoresDelPatogenoAlActualizarlo() {
+    fun seModificanLosValoresDelPatogenoAlAgregarEspecie() {
         val patogenoOriginal = service.recuperarPatogeno(4)
         Assert.assertEquals(4, patogenoOriginal.id)
         Assert.assertEquals("Bacteria", patogenoOriginal.tipo)
