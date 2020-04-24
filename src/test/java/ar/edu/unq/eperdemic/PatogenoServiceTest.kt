@@ -23,9 +23,13 @@ class PatogenoServiceTest{
         dataService.crearSetDeDatosIniciales()
     }
 
-    @Test(expected = PatogenoNotFoundRunTimeException::class)
-    fun alRecuperarUnPatogenoNoExistenteLanzaUnaExcepcion() {
-        dao.recuperar(42)
+    @Test
+    fun alCrearUnPatogenoSinElementosAnterioresElIDAsignadoEs1() {
+        this.eliminarModelo()
+        val idPatogenoCreado = service.crearPatogeno(Patogeno("ProbandoService"))
+        val patogenoRecuperado = service.recuperarPatogeno(idPatogenoCreado)
+        Assert.assertEquals(1, idPatogenoCreado)
+        Assert.assertEquals(idPatogenoCreado, patogenoRecuperado.id)
     }
 
     @Test
@@ -35,6 +39,12 @@ class PatogenoServiceTest{
         Assert.assertEquals(idPatogenoCreado, patogenoRecuperado.id)
         Assert.assertEquals("ProbandoService", patogenoRecuperado.tipo)
         Assert.assertEquals(0, patogenoRecuperado.cantidadDeEspecies)
+    }
+
+
+    @Test(expected = PatogenoNotFoundRunTimeException::class)
+    fun alRecuperarUnPatogenoNoExistenteLanzaUnaExcepcion() {
+        dao.recuperar(42)
     }
 
     @Test
@@ -61,15 +71,30 @@ class PatogenoServiceTest{
     }
 
     @Test
-    fun elRecuperarTodosTraeUnaListaCon4PatogenosOrdenadosAlfabeticamenteSegunSuTipo() {
+    fun elRecuperarTodosTraeTodosLosPatogenosPersistidos() {
         val patogenosRecuperados = service.recuperarATodosLosPatogenos()
         Assert.assertEquals(4, patogenosRecuperados.size)
-        Assert.assertFalse(patogenosRecuperados.isEmpty())
+        val nombres = patogenosRecuperados.map{ it.tipo }
+        Assert.assertTrue(nombres.contains("Bacteria"))
+        Assert.assertTrue(nombres.contains("Protozoo"))
+        Assert.assertTrue(nombres.contains("Hongo"))
+        Assert.assertTrue(nombres.contains("Virus"))
+        val ids = patogenosRecuperados.map{ it.id}
+        Assert.assertTrue(ids.contains(1))
+        Assert.assertTrue(ids.contains(2))
+        Assert.assertTrue(ids.contains(3))
+        Assert.assertTrue(ids.contains(4))
+    }
+
+    @Test
+    fun elRecuperarTodosTraeUnaListaConToodosLosPatogenosOrdenadosAlfabeticamenteSegunSuTipo() {
+        val patogenosRecuperados = service.recuperarATodosLosPatogenos()
         Assert.assertEquals("Bacteria", patogenosRecuperados.get(0).tipo)
         Assert.assertEquals("Hongo", patogenosRecuperados.get(1).tipo)
         Assert.assertEquals("Protozoo", patogenosRecuperados.get(2).tipo)
         Assert.assertEquals("Virus", patogenosRecuperados.get(3).tipo)
     }
+
     @After
     fun eliminarModelo() {
         dataService.eliminarTodo()

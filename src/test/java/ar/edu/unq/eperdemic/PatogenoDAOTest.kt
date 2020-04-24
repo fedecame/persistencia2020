@@ -1,8 +1,10 @@
 package ar.edu.unq.eperdemic
 
 import ar.edu.unq.eperdemic.modelo.Patogeno
+import ar.edu.unq.eperdemic.modelo.exception.MultiplesIDRunTimeException
 import ar.edu.unq.eperdemic.modelo.exception.PatogenoNotFoundRunTimeException
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
+import ar.edu.unq.eperdemic.persistencia.dao.jdbc.JDBCConnector.execute
 import ar.edu.unq.eperdemic.persistencia.dao.jdbc.JDBCPatogenoDAO
 import ar.edu.unq.eperdemic.utils.DataService
 import ar.edu.unq.eperdemic.utils.jdbc.DataServiceJDBC
@@ -21,12 +23,31 @@ class PatogenoDAOTest{
     }
 
     @Test(expected = PatogenoNotFoundRunTimeException::class)
-    fun alRecuperarUnPatogenoNoExistenteLanzaUnaExcepcion() {
+    fun alRecuperarUnPatogenoDeIDNoExistenteLanzaUnaExcepcion() {
         dao.recuperar(42)
     }
 
     @Test
-    fun alGuardarYLuegoRecuperarSeObtienePatogenosSimilares() {
+    fun alCrearElPrimerPatogenoEsteTieneId1() {
+        this.eliminarModelo()
+        val idPrimeroCreado = dao.crear(Patogeno("sarasa"))
+        val patogenoRecuperado = dao.recuperar(1)
+        Assert.assertEquals(1, patogenoRecuperado.id)
+    }
+
+    @Test
+    fun alCrearElIdSeAutoincrementa() {
+        this.eliminarModelo()
+        val idPrimeroCreado = dao.crear(Patogeno("sarasa1"))
+        Assert.assertEquals(1, idPrimeroCreado)
+        val idSegundoCreado = dao.crear(Patogeno("sarasa2"))
+        Assert.assertEquals(2, idSegundoCreado)
+        val idTerceroCreado = dao.crear(Patogeno("sarasa3"))
+        Assert.assertEquals(3, idTerceroCreado)
+    }
+
+    @Test
+    fun alCrearYLuegoRecuperarSeObtienePatogenosSimilares() {
         val patogenoRecuperado = dao.recuperar(1)
         Assert.assertEquals(1, patogenoRecuperado.id)
         Assert.assertEquals("Protozoo", patogenoRecuperado.tipo)
@@ -34,27 +55,19 @@ class PatogenoDAOTest{
     }
 
     @Test
-    fun alGuardarYLuegoRecuperarSeObtienePatogenosSimilaresHabiendoDosEnLaTabla() {
-        val patogenoRecuperado = dao.recuperar(2)
-        Assert.assertEquals(2, patogenoRecuperado.id)
-        Assert.assertEquals("Hongo", patogenoRecuperado.tipo)
-        Assert.assertEquals(0, patogenoRecuperado.cantidadDeEspecies)
-    }
-
-    @Test
-    fun alGuardarYLuegoRecuperarSeObtienePatogenosSimilaresHabiendoTresEnLaTabla() {
-        val patogenoRecuperado = dao.recuperar(3)
-        Assert.assertEquals(3, patogenoRecuperado.id)
-        Assert.assertEquals("Virus", patogenoRecuperado.tipo)
-        Assert.assertEquals(0, patogenoRecuperado.cantidadDeEspecies)
-    }
-
-    @Test
-    fun alGuardarYLuegoRecuperarSeObtienePatogenosSimilaresHabiendoCuatroEnLaTabla() {
+    fun alGuardarYLuegoRecuperarSeObtienePatogenosSimilaresHabiendoMasDeUnoEnLaTabla() {
         val patogenoRecuperado = dao.recuperar(4)
         Assert.assertEquals(4, patogenoRecuperado.id)
         Assert.assertEquals("Bacteria", patogenoRecuperado.tipo)
         Assert.assertEquals(0, patogenoRecuperado.cantidadDeEspecies)
+    }
+
+
+    @Test(expected = PatogenoNotFoundRunTimeException::class)
+    fun alActualizarUnPatogenoDeIDNoExistenteParaLaDBLanzaUnaExcepcion() {
+        val patogenoFruta = Patogeno("Sarasa")
+        patogenoFruta.id = 42
+        dao.actualizar(patogenoFruta)
     }
 
     @Test
@@ -64,14 +77,14 @@ class PatogenoDAOTest{
         Assert.assertEquals("Bacteria", patogenoOriginal.tipo)
         Assert.assertEquals(0, patogenoOriginal.cantidadDeEspecies)
 
-        val patogenoActualizado = Patogeno("Caca")
+        val patogenoActualizado = Patogeno("Batman")
         patogenoActualizado.id = 4
         patogenoActualizado.cantidadDeEspecies = 42
         dao.actualizar(patogenoActualizado)
         val patogenoRecuperado = dao.recuperar(4)
         Assert.assertEquals(patogenoOriginal.id, patogenoRecuperado.id)
         Assert.assertEquals(4, patogenoRecuperado.id)
-        Assert.assertEquals("Caca", patogenoRecuperado.tipo)
+        Assert.assertEquals("Batman", patogenoRecuperado.tipo)
         Assert.assertEquals(42, patogenoRecuperado.cantidadDeEspecies)
     }
 
@@ -91,6 +104,22 @@ class PatogenoDAOTest{
     }
 
     @Test
+    fun elRecuperarTodosTraeTodosLosPatogenosPersistidos() {
+        val patogenosRecuperados = dao.recuperarATodos()
+        Assert.assertEquals(4, patogenosRecuperados.size)
+        val nombres = patogenosRecuperados.map{ it.tipo }
+        Assert.assertTrue(nombres.contains("Bacteria"))
+        Assert.assertTrue(nombres.contains("Protozoo"))
+        Assert.assertTrue(nombres.contains("Hongo"))
+        Assert.assertTrue(nombres.contains("Virus"))
+        val ids = patogenosRecuperados.map{ it.id}
+        Assert.assertTrue(ids.contains(1))
+        Assert.assertTrue(ids.contains(2))
+        Assert.assertTrue(ids.contains(3))
+        Assert.assertTrue(ids.contains(4))
+    }
+
+    @Test
     fun elRecuperarTodosTraeUnaListaCon4PatogenosOrdenadosAlfabeticamenteSegunSuTipo() {
         val patogenosRecuperados = dao.recuperarATodos()
         Assert.assertEquals(4, patogenosRecuperados.size)
@@ -99,6 +128,16 @@ class PatogenoDAOTest{
         Assert.assertEquals("Hongo", patogenosRecuperados.get(1).tipo)
         Assert.assertEquals("Protozoo", patogenosRecuperados.get(2).tipo)
         Assert.assertEquals("Virus", patogenosRecuperados.get(3).tipo)
+    }
+
+    @Test
+    fun elEliminarTodoBorraTodosLosPatogenos() {
+        var patogenosRecuperados = dao.recuperarATodos()
+        this.eliminarModelo()
+        Assert.assertEquals(4, patogenosRecuperados.size)
+        patogenosRecuperados = dao.recuperarATodos()
+        Assert.assertTrue(patogenosRecuperados.isEmpty())
+        Assert.assertEquals(0, patogenosRecuperados.size)
     }
 
     @After
