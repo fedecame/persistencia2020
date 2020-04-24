@@ -4,8 +4,8 @@ import java.io.Serializable
 
 class Patogeno(val tipo: String) : Serializable{
 
-    val id : Int? = null
     var cantidadDeEspecies: Int = 0
+    var id : Int? = null
 
     override fun toString(): String {
         return tipo
