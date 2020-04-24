@@ -2,9 +2,7 @@ package ar.edu.unq.eperdemic.utils.jdbc
 
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
-import ar.edu.unq.eperdemic.persistencia.dao.jdbc.JDBCConnector
 import ar.edu.unq.eperdemic.utils.DataService
-import java.sql.Connection
 
 class DataServiceJDBC(var patogenoDao : PatogenoDAO) : DataService {
 
