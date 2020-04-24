@@ -24,12 +24,8 @@ class JDBCPatogenoDAO: PatogenoDAO {
                 throw PatogenoNoCreadoRunTimeException(patogeno.tipo)
             }
             val set_resultado = ps.getGeneratedKeys()
-                //Este IF no iria, no? Nunca podrian pasarle mas de 1 id para crear.
-                // Y la creacion de varios, es de a uno a la vez.
-                // Es decir, en este metodo no hay forma de que el set tenga mas de un elemento.
-            if (set_resultado.next()) {
-                patogenoId = set_resultado.getInt(1)
-            }
+            set_resultado.next()
+            patogenoId = set_resultado.getInt(1)
             ps.close()
         }
         return patogenoId!!
@@ -40,15 +36,15 @@ class JDBCPatogenoDAO: PatogenoDAO {
             val ps = it.prepareStatement("UPDATE patogeno SET tipo = ?, cantidadDeEspecies = ? WHERE id = ?")
             this.setQueryWithoutID(patogeno.tipo, patogeno.cantidadDeEspecies, ps)
             ps.setInt(3, patogeno.id!!)
-            val x = ps.executeUpdate()
+            var x: Int?
+            try {
+                x = ps.executeUpdate()
+            } catch (e: RuntimeException) {
+                throw MultiplesIDRunTimeException(patogeno.id!!)
+            }
             if (x == 0) {
                throw PatogenoNotFoundRunTimeException(patogeno.id!!)
             }
-            /*
-            if (x > 1) {
-                it.rollback();
-                throw MultiplesIDRunTimeException(patogeno.id!!)
-            } Esto no va, pero si estaria bueno catchear la SQL exception, y tirar nuestra excepcion*/
             ps.close()
         }
     }
