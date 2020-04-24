@@ -2,6 +2,7 @@ package ar.edu.unq.eperdemic.persistencia.dao.jdbc
 
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.exception.IdRepetidoRunTimeException
+import ar.edu.unq.eperdemic.modelo.exception.MultiplesIDRunTimeException
 import ar.edu.unq.eperdemic.modelo.exception.PatogenoNoCreadoRunTimeException
 import ar.edu.unq.eperdemic.modelo.exception.PatogenoNotFoundRunTimeException
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
@@ -23,6 +24,9 @@ class JDBCPatogenoDAO: PatogenoDAO {
                 throw PatogenoNoCreadoRunTimeException(patogeno.tipo)
             }
             val set_resultado = ps.getGeneratedKeys()
+                //Este IF no iria, no? Nunca podrian pasarle mas de 1 id para crear.
+                // Y la creacion de varios, es de a uno a la vez.
+                // Es decir, en este metodo no hay forma de que el set tenga mas de un elemento.
             if (set_resultado.next()) {
                 patogenoId = set_resultado.getInt(1)
             }
@@ -40,6 +44,11 @@ class JDBCPatogenoDAO: PatogenoDAO {
             if (x == 0) {
                throw PatogenoNotFoundRunTimeException(patogeno.id!!)
             }
+            /*
+            if (x > 1) {
+                it.rollback();
+                throw MultiplesIDRunTimeException(patogeno.id!!)
+            } Esto no va, pero si estaria bueno catchear la SQL exception, y tirar nuestra excepcion*/
             ps.close()
         }
     }
@@ -52,8 +61,8 @@ class JDBCPatogenoDAO: PatogenoDAO {
     }
 
     override fun recuperar(patogenoId: Int): Patogeno {
-        var patogenoBuscado : Patogeno? = null
         return execute { conn: Connection ->
+            var patogenoBuscado : Patogeno? = null
             val ps = conn.prepareStatement("SELECT * FROM patogeno WHERE id = ?")
             ps.setInt(1, patogenoId)
             val resultSet = ps.executeQuery()
