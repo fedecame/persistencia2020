@@ -83,7 +83,7 @@ class JDBCPatogenoDAO: PatogenoDAO {
 
     override fun eliminarTodos() {
         execute { conn: Connection ->
-            val ps = conn.prepareStatement("TRUNCATE FROM patogeno")
+            val ps = conn.prepareStatement("TRUNCATE TABLE patogeno")
             ps.execute()
             ps.close()
             null
