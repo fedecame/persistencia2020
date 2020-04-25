@@ -3,18 +3,21 @@ package ar.edu.unq.eperdemic.spring.controllers
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.services.PatogenoService
 import ar.edu.unq.eperdemic.spring.controllers.dto.EspecieDTO
+import ar.edu.unq.eperdemic.spring.controllers.dto.PatogenoDTO
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
+@Suppress("SpringJavaInjectionPointsAutowiringInspection")
+@CrossOrigin
 @ServiceREST
 @RequestMapping("/patogeno")
 class PatogenoControllerREST(private val patogenoService: PatogenoService) {
 
   @PostMapping
-  fun create(@RequestBody patogeno: Patogeno): ResponseEntity<Int> {
+  fun create(@RequestBody patogeno: Patogeno): ResponseEntity<Patogeno> {
     val patogenoId = patogenoService.crearPatogeno(patogeno)
-    return ResponseEntity(patogenoId, HttpStatus.CREATED)
+    return ResponseEntity(patogenoService.recuperarPatogeno(patogenoId), HttpStatus.CREATED)
   }
 
   @PostMapping("/{id}")
@@ -30,5 +33,10 @@ class PatogenoControllerREST(private val patogenoService: PatogenoService) {
   @GetMapping
   fun getAll() = patogenoService.recuperarATodosLosPatogenos()
 
+  @GetMapping("/infectados/{id}")
+  fun getCantidadInfectados(@PathVariable id: Int) = patogenoService.cantidadDeInfectados(id)
+
+  @GetMapping("/esPandemia/{id}")
+  fun esPandemia(@PathVariable id: Int) = patogenoService.esPandemia(id)
 
 }

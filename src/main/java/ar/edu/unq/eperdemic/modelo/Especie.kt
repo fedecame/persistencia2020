@@ -1,7 +1,7 @@
 package ar.edu.unq.eperdemic.modelo
 
-class Especie(val patogeno: Patogeno,
-              val nombre: String,
-              val paisDeOrigen: String) {
+class Especie(var patogeno: Patogeno,
+              var nombre: String,
+              var paisDeOrigen: String) {
 
 }
