@@ -1,6 +1,10 @@
 package ar.edu.unq.eperdemic.modelo
 
 class Ubicacion(var nombreUbicacion: String) {
+    var nombre= nombreUbicacion;
+    fun getUbicacion():String{
+        return nombreUbicacion
+    }
 
     private val vectorAlojados = mutableListOf<Vector>()
 
