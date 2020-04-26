@@ -12,6 +12,7 @@ abstract class TipoVector(val vector : Vector){
     fun infectameSiCorresponde(especie: Especie) {
         if (this.porcentajeDeContagioExitoso(especie) >= 100) {
             vector.infectar(especie)
+            this.agregarInfectado(especie)
         }
     }
 
@@ -26,4 +27,6 @@ abstract class TipoVector(val vector : Vector){
     abstract fun factorContagio(especie : Especie): Int
 
     abstract fun puedeSerContagiadoPor(unTipo : TipoVector): Boolean
+
+    open fun agregarInfectado(especie : Especie){}
 }

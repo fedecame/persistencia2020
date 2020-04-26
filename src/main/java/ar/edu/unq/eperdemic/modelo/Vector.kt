@@ -23,8 +23,12 @@ class Vector( var id: Int?,
     }
 
     fun infectar(especie: Especie) {
-        estadoActual = Infectado(this)
+        estadoActual.infectarse(this)
         this.agregarEspecie(especie)
+    }
+
+    fun cambiarEstado(estado:EstadoVector) {
+        this.estadoActual=estado;
     }
 
 }
