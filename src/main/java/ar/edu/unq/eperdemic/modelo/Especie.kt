@@ -16,5 +16,7 @@ class Especie(var patogeno: Patogeno,
         cantidadInfectados++
     }
 
-
+    fun cantidadDeADN() {
+        cantidadInfectados.div(5)
+    }
 }
