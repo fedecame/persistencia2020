@@ -28,5 +28,5 @@ abstract class TipoVector(val vector : Vector){
 
     abstract fun puedeSerContagiadoPor(unTipo : TipoVector): Boolean
 
-    abstract fun agregarInfectado(especie : Especie)
+    open fun agregarInfectado(especie : Especie){}
 }
