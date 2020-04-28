@@ -16,17 +16,12 @@ class RandomMasterTest {
 
     @Test
     fun giveMeARandomNumberDaUnDoubleEntreElRangoEstablecidosEnLosParametros(){
-        var aNumber = 0.00
-        var otherNumber = 100.00
-        var numeroX=randomMaster.giveMeARandonNumberBeetween(aNumber, otherNumber)
+        val aNumber = 0.00
+        val otherNumber = 100.00
+        val numeroX=randomMaster.giveMeARandonNumberBeetween(aNumber, otherNumber)
         Assert.assertTrue(numeroX is Double)
         Assert.assertTrue(numeroX >= aNumber)
         Assert.assertTrue(numeroX <= otherNumber)
-
-        Assert.assertTrue(numeroX is Double)
-        Assert.assertTrue(numeroX >= aNumber)
-        Assert.assertTrue(numeroX <= otherNumber)
-        Assert.assertTrue(numeroX in aNumber..otherNumber)
     }
 
     @Test
