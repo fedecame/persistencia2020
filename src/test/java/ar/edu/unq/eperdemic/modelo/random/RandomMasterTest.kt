@@ -19,7 +19,6 @@ class RandomMasterTest {
         var aNumber = 0.00
         var otherNumber = 100.00
         var numeroX=randomMaster.giveMeARandonNumberBeetween(aNumber, otherNumber)
-        print(numeroX)
         Assert.assertTrue(numeroX is Double)
         Assert.assertTrue(numeroX >= aNumber)
         Assert.assertTrue(numeroX <= otherNumber)
