@@ -11,7 +11,12 @@ class HibernateVectorDAO :  HibernateDAO<Vector>(Vector::class.java), VectorDAO 
     }
 
     override fun recuperar(vectorID : Int): Vector {
-        return super.recuperar(vectorID.toLong())
+        //try {
+            return super.recuperar(vectorID.toLong())
+        //}
+        //catch(e : Exception){
+        //   throw e
+        //}
     }
 
 }

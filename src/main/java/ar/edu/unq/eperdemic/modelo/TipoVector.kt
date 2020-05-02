@@ -10,10 +10,10 @@ abstract class TipoVector(val vector : Vector){
     }
 
     fun infectameSiCorresponde(especie: Especie) {
-        if (this.porcentajeDeContagioExitoso(especie) >= 100) {
-            vector.infectar(especie)
-            this.agregarInfectado(especie)
-        }
+        //if (this.porcentajeDeContagioExitoso(especie) >= 100) {
+        //    vector.infectar(especie)
+        //    this.agregarInfectado(especie)
+    //    }
     }
 
     fun porcentajeDeContagioExitoso(especie: Especie): Int = (1)/*random AQUI*/ + this.factorContagio(especie)
