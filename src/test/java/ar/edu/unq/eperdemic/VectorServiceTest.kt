@@ -17,7 +17,7 @@ open class VectorServiceTest {
     private var vectorDao = HibernateVectorDAO()
     private val dataDao = HibernateDataDAO()
     private var vectorService = VectorServiceImpl(vectorDao, dataDao)
-    private var vector = Vector()
+    private var vector : Vector = Vector()
 
 
     @Test
