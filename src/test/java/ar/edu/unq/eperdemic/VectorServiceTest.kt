@@ -14,11 +14,11 @@ import javax.transaction.Transactional
 
 class VectorServiceTest {
 
-    lateinit  var vectorService : VectorService
+    lateinit var vectorService : VectorService
     lateinit var vector : Vector
 
 
-    @After
+    @Before
     fun setUp(){
         vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateDataDAO())
         vectorService.crearVector(vector)
@@ -56,7 +56,7 @@ class VectorServiceTest {
     }
 
 
-    @Before
+    @After
     open fun eliminarTodo(){
        vectorService.borrarTodo()
     }
