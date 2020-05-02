@@ -2,12 +2,13 @@ package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.persistencia.dao.DataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 
 
-class VectorServiceImpl(private var vectorDao: VectorDAO) : VectorService {
+class VectorServiceImpl(private var vectorDao: VectorDAO, private var dataDAO : DataDAO) : VectorService {
     override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) {
         TODO("Not yet implemented")
     }
@@ -20,11 +21,8 @@ class VectorServiceImpl(private var vectorDao: VectorDAO) : VectorService {
         TODO("Not yet implemented")
     }
 
-    override fun crearVector(vector: Vector): Int {
-        val n = runTrx {vectorDao.crear(vector)}
-        print("El ID es $n")
-        return n
-    }
+    override fun crearVector(vector: Vector): Vector = runTrx {vectorDao.crear(vector)}
+
 
     override fun recuperarVector(vectorID: Int): Vector {
         return runTrx {vectorDao.recuperar(vectorID)}
@@ -32,5 +30,10 @@ class VectorServiceImpl(private var vectorDao: VectorDAO) : VectorService {
 
     override fun borrarVector(vectorId: Int) {
         TODO("Not yet implemented")
+    }
+
+    override fun borrarTodo(){
+        runTrx {dataDAO.clear()}
+
     }
 }
