@@ -26,8 +26,9 @@ class VectorServiceTest {
     }
 
     @Test
-    fun testRecuperar(){
+    fun testAlCrearUnVectorEsteSePuedeRecuperarConSuID(){
         val recuperado = vectorService.recuperarVector(1)
+        Assert.assertEquals(1, recuperado.id!!)
     }
 
     @Test
@@ -36,7 +37,7 @@ class VectorServiceTest {
         Assert.assertEquals(null, vector0.id)
         vectorService.crearVector(vector0)
         Assert.assertNotEquals(null, vector0.id)
-        Assert.assertEquals(1, vector.id)
+        Assert.assertEquals(1, vector.id!!.toInt())
     }
 
     @Test(expected = IDVectorNoEncontradoException::class)
@@ -56,7 +57,7 @@ class VectorServiceTest {
     fun testAlCrearUnVectorEsteSePuedeRecuperarPorSuID(){
         val vectorAGuardar = Vector()
         vectorService.crearVector(vectorAGuardar)
-        //val vectorRecuperado = vectorService.recuperarVector(vectorAGuardar.id!!)
+        val vectorRecuperado = vectorService.recuperarVector(vectorAGuardar.id!!.toInt())
         Assert.assertEquals(2, vectorAGuardar.id!!)
     }
 

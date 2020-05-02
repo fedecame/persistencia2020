@@ -7,7 +7,7 @@ class Vector() {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id : Int? = null
+    var id : Long? = null
 
    // @Column(nullable = false, length = 500)
    // @ManyToOne(cascade = CascadeType.ALL)
