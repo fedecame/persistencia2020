@@ -40,9 +40,9 @@ class VectorServiceTest {
         Assert.assertEquals(1, vector.id!!.toInt())
     }
 
-    @Test(expected = IDVectorNoEncontradoException::class)
+    @Test()
     fun testAlIntentarRecuperarUnVectorConUNIdInexistenteSeLanzaUNaIDVectorNoEncontradoException(){
-        vectorService.recuperarVector(42)
+        vectorService.recuperarVector(420)
     }
 
      @Test
