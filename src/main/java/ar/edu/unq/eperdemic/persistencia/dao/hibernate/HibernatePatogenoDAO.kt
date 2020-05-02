@@ -5,7 +5,8 @@ import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 
 open class HibernatePatogenoDAO : HibernateDAO<Patogeno>(Patogeno::class.java), PatogenoDAO  {
     override fun crear(patogeno: Patogeno): Int {
-        TODO("Not yet implemented")
+        super.guardar(patogeno)
+        return 0
     }
 
     override fun actualizar(patogeno: Patogeno) {

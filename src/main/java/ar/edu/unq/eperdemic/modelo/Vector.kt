@@ -6,6 +6,8 @@ class Vector( var id: Int?,
     private var estadoActual: EstadoVector = Sano()
     private lateinit var tipo: TipoVector
     private val especies = mutableListOf<Especie>()
+
+    //Quien agrego esta linea y por que? Paraque se necesita un mapa de ubicaciones?
     private var mapaDeUbicaciones=MapaDeUbicaciones()
     private   var ubicacionActual = mapaDeUbicaciones.getUbicacion(nombreDeLocacionActual)
 
