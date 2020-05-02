@@ -21,7 +21,9 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var dataDAO: DataDAO) : Vector
         TODO("Not yet implemented")
     }
 
-    override fun crearVector(vector: Vector): Vector = runTrx {vectorDao.crear(vector)}
+    override fun crearVector(vector: Vector): Vector{
+        return runTrx { vectorDao.crear(vector) }
+    }
 
 
     override fun recuperarVector(vectorID: Int): Vector {

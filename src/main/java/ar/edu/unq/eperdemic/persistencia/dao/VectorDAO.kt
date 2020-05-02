@@ -4,6 +4,6 @@ import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.Vector
 
 interface VectorDAO {
-    fun crear(vector: Vector): Vector
-    fun recuperar(vectorID: Int): Vector
+   fun crear (vector: Vector): Vector
+   fun recuperar(vectorID: Int): Vector
 }
