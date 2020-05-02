@@ -1,6 +1,7 @@
 package ar.edu.unq.eperdemic
 
 import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.modelo.exception.IDVectorNoEncontradoException
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
@@ -10,7 +11,8 @@ import org.junit.Before
 import org.junit.Test
 import javax.transaction.Transactional
 
-class VectorServiceTest {
+@Transactional
+open class VectorServiceTest {
 
     private var vectorDao = HibernateVectorDAO()
     private val dataDao = HibernateDataDAO()
@@ -31,33 +33,32 @@ class VectorServiceTest {
         Assert.assertEquals(1, vector.id)
     }
 
-    @Test
-    fun testAlCrearUnVectorPuedeSerRecuperadoPorElIDQueRetorna(){
-        Assert.assertEquals(null, vector.id)
-        vectorService.crearVector(vector)
-        Assert.assertNotEquals(null, vector.id)
-        Assert.assertEquals(1, vector.id)
-
-        //     val vectorRecuperado = vectorService.recuperarVector(vector.id!!)
- //       Assert.assertEquals(1, vector.id!!)
-    }
-
-    @Test
-    fun testAlRecuperarUnVectorSeConsigueElIndicado(){
-        val vectorRecuperado = vectorService.recuperarVector(1)
-        Assert.assertEquals(1, vectorRecuperado.id!!)
+    @Test(expected = IDVectorNoEncontradoException::class)
+    fun testAlIntentarRecuperarUnVectorConUNIdInexistenteSeLanzaUNaIDVectorNoEncontradoException(){
+        vectorService.recuperarVector(42)
     }
 
      @Test
    fun testElIDEsAutoincrementalALaMedidaQueSeCreanNuevosVectores(){
-   //   val id1 = vectorService.crearVector(Vector())
-    //   val id2 = vectorService.crearVector(Vector())
-    //  Assert.assertEquals(id1+1, id2)
-
+        val id1 = vectorService.crearVector(Vector()).id!!
+        val id2 = vectorService.crearVector(Vector()).id!!
+        Assert.assertTrue(id1 < id2)
+        Assert.assertEquals(id1+1, id2)
+        Assert.assertEquals(1, id1)
+        Assert.assertEquals(2, id2)
     }
 
+    @Test
+    fun testAlCrearUnVectorEsteSePuedeRecuperarPorSuID(){
+        val vectorCreado = vectorService.crearVector(Vector())
+        val vectorRecuperado = vectorService.recuperarVector(vectorCreado.id!!)
+        Assert.assertEquals(1, vectorCreado.id)
+    }
+
+
     @Before
-    fun eliminarTodo(){
+    @Transactional
+    open fun eliminarTodo(){
        vectorService.borrarTodo()
     }
 
