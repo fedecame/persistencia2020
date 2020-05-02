@@ -2,9 +2,10 @@ package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
 import ar.edu.unq.eperdemic.services.VectorService
 
-class VectorServiceImpl : VectorService {
+class VectorServiceImpl(private var vectorDao: VectorDAO) : VectorService {
     override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) {
         TODO("Not yet implemented")
     }
@@ -17,8 +18,8 @@ class VectorServiceImpl : VectorService {
         TODO("Not yet implemented")
     }
 
-    override fun crearVector(vector: Vector): Vector {
-        TODO("Not yet implemented")
+    override fun crearVector(vector: Vector): Int {
+        return vectorDao.crear(vector)!!
     }
 
     override fun recuperarVector(vectorId: Int): Vector {

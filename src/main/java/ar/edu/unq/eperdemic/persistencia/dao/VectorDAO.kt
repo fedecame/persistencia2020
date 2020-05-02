@@ -5,5 +5,5 @@ import ar.edu.unq.eperdemic.modelo.Vector
 
 interface VectorDAO {
     fun crear(vector: Vector): Int
-    fun recuperar(patogenoId: Int): Patogeno
+    fun recuperar(vectorID: Int): Vector
 }

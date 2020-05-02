@@ -10,7 +10,7 @@ interface VectorService {
     fun enfermedades(vectorId: Int): List<Especie>
 
     /* Operaciones CRUD */
-    fun crearVector(vector: Vector): Vector
+    fun crearVector(vector: Vector): Int
     fun recuperarVector(vectorId: Int): Vector
     fun borrarVector(vectorId: Int)
 
