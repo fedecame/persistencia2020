@@ -4,6 +4,7 @@ import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.exception.IDVectorNoEncontradoException
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
+import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
 import org.junit.After
 import org.junit.Assert
@@ -11,18 +12,17 @@ import org.junit.Before
 import org.junit.Test
 import javax.transaction.Transactional
 
-@Transactional
-open class VectorServiceTest {
+class VectorServiceTest {
 
-    private var vectorDao = HibernateVectorDAO()
-    private val dataDao = HibernateDataDAO()
-    private var vectorService = VectorServiceImpl(vectorDao, dataDao)
-    private var vector : Vector = Vector()
+    lateinit  var vectorService : VectorService
+    lateinit var vector : Vector
 
 
-    @Test
-    fun testSeCreaSatifactoriamente(){
-        vectorService.crearVector(Vector())
+    @After
+    fun setUp(){
+        vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateDataDAO())
+        vectorService.crearVector(vector)
+
     }
 
     @Test
@@ -57,7 +57,6 @@ open class VectorServiceTest {
 
 
     @Before
-    @Transactional
     open fun eliminarTodo(){
        vectorService.borrarTodo()
     }

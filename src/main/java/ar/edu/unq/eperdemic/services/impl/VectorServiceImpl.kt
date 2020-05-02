@@ -8,7 +8,7 @@ import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 
 
-class VectorServiceImpl(private var vectorDao: VectorDAO, private var dataDAO : DataDAO) : VectorService {
+class VectorServiceImpl(var vectorDao: VectorDAO, var dataDAO: DataDAO) : VectorService {
     override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) {
         TODO("Not yet implemented")
     }
@@ -32,8 +32,7 @@ class VectorServiceImpl(private var vectorDao: VectorDAO, private var dataDAO : 
         TODO("Not yet implemented")
     }
 
-    override fun borrarTodo(){
-        runTrx {dataDAO.clear()}
-
+    override fun borrarTodo() {
+            runTrx { dataDAO.clear() }
     }
 }
