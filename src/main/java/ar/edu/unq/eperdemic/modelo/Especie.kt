@@ -1,8 +1,21 @@
 package ar.edu.unq.eperdemic.modelo
 
-class Especie(var patogeno: Patogeno,
-              var nombre: String,
-              var paisDeOrigen: String) {
+import javax.persistence.*
+
+@Entity
+class Especie() {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id : Long? = null
+
+
+
+    /*
+    //Esto estaba en el constructor:
+    var patogeno: Patogeno,
+    var nombre: String,
+    var paisDeOrigen: String
 
     private var cantidadInfectados = 0
 
@@ -19,4 +32,6 @@ class Especie(var patogeno: Patogeno,
     fun cantidadDeADN() {
         cantidadInfectados.div(5)
     }
+
+     */
 }

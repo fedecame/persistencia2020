@@ -2,25 +2,34 @@ package ar.edu.unq.eperdemic.modelo
 
 import javax.persistence.*
 
+
 @Entity
+@Table(name = "vector")
 class Vector() {
 
     @Id
+    @Column(name="vector_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id : Long? = null
 
-   // @Column(nullable = false, length = 500)
+    @OneToMany()
+    @JoinColumn(name = "id")
+    private val especies : List<Especie> = mutableListOf<Especie>()
+
+    //private lateinit var tipo: TipoVector? =null
+    //@Column(nullable = false, length = 500)
+    //@ManyToOne(cascade = CascadeType.ALL)
+    //private var estadoActual: EstadoVector = Sano()
+
+    // @Column(nullable = false, length = 500)
    // @ManyToOne(cascade = CascadeType.ALL)
     // var ubicacion : Ubicacion? = null
 
 /*
-    //private lateinit var tipo: TipoVector
-    //private var estadoActual: EstadoVector = Sano()
 
     //Inicialmente esto estaba en el constructor, junto al ID, pero el constructor no tiene que recibir parametros
     //private var nombreDeLocacionActual: String?
 
-    //private val especies = mutableListOf<Especie>()
 
     //Quien agrego esta linea y por que? Paraque se necesita un mapa de ubicaciones?
     //private var mapaDeUbicaciones=MapaDeUbicaciones()
