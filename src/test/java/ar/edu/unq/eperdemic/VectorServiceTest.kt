@@ -2,6 +2,7 @@ package ar.edu.unq.eperdemic
 
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.exception.IDVectorNoEncontradoException
+import ar.edu.unq.eperdemic.modelo.exception.PatogenoNotFoundRunTimeException
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.VectorService
@@ -40,7 +41,7 @@ class VectorServiceTest {
         Assert.assertEquals(1, vector.id!!.toInt())
     }
 
-    @Test()
+    @Test(expected = IDVectorNoEncontradoException::class)
     fun testAlIntentarRecuperarUnVectorConUNIdInexistenteSeLanzaUNaIDVectorNoEncontradoException(){
         vectorService.recuperarVector(420)
     }

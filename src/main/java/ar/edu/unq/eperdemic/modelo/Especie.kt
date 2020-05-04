@@ -8,14 +8,14 @@ class Especie() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id : Long? = null
-
+    lateinit var patogeno: Patogeno
+    var nombre: String = ""
+    var paisDeOrigen: String = ""
 
 
     /*
     //Esto estaba en el constructor:
-    var patogeno: Patogeno,
-    var nombre: String,
-    var paisDeOrigen: String
+
 
     private var cantidadInfectados = 0
 

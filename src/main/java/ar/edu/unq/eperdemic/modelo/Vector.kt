@@ -2,19 +2,43 @@ package ar.edu.unq.eperdemic.modelo
 
 import javax.persistence.*
 
-
 @Entity
-@Table(name = "vector")
-class Vector() {
+class Vector {
 
     @Id
-    @Column(name="vector_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false, nullable = false)
     var id : Long? = null
+    var nombre : String = ""
+
+    @Column(nullable = false)
+    var estado = EstadoDelivery.EstadoVectorEnum.Sano.name.toString()
 
     @OneToMany()
-    @JoinColumn(name = "id")
-    private val especies : List<Especie> = mutableListOf<Especie>()
+    private val especies : MutableSet<Especie> = mutableSetOf()
+
+    @Transient
+    var estadoDelivery = EstadoDelivery()
+
+    private fun estado() : EstadoVector = estadoDelivery.estado(estado)!!
+
+    @Transient
+    private val tipo = 2
+
+    fun recuperarse(){
+        this.cambiarEstado(EstadoDelivery.EstadoVectorEnum.Sano)
+    }
+
+    fun infectarse(){
+        this.cambiarEstado(EstadoDelivery.EstadoVectorEnum.Infectado)
+    }
+
+    private fun cambiarEstado(unEstado: EstadoDelivery.EstadoVectorEnum) {
+        estado = unEstado.name
+    }
+
+
+}
 
     //private lateinit var tipo: TipoVector? =null
     //@Column(nullable = false, length = 500)
@@ -64,12 +88,9 @@ class Vector() {
 
 
     fun infectar(especie: Especie) {
-        estadoActual.infectarse(this)
+        estado.infectarse(this)
         this.agregarEspecie(especie)
     }
 
-    fun cambiarEstado(estado:EstadoVector) {
-        this.estadoActual=estado;
-    }
+
 */
-}

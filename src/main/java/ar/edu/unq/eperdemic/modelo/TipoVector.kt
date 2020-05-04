@@ -1,6 +1,11 @@
 package ar.edu.unq.eperdemic.modelo
 
 abstract class TipoVector(val vector : Vector){
+
+    enum class TipoVector{
+        INsecto, Animal, Humano
+    }
+
     fun contagiamePor(especiesContagiador: List<Especie>, tipoDelContagiador: TipoVector){
         if(this.puedeSerContagiadoPor(tipoDelContagiador)) {
             especiesContagiador.forEach{
