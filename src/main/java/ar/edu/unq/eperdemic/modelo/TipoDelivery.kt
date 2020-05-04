@@ -8,22 +8,23 @@ class TipoDelivery {
     private var tipos = mutableMapOf<String, TipoVector>()
 
     init {
-        this.agregarTipo(TipoAnimal())
-        this.agregarTipo(TipoHumano())
-        this.agregarTipo(TipoInsecto())
+        this.agregarTipo(Animal())
+        this.agregarTipo(Humano())
+        this.agregarTipo(Insecto())
     }
 
     fun agregarTipo(nuevoTipo: TipoVector) {
-//        this.ifConditionThrow(this.estaEnLaLista(nombreTipo), ClaveRepetidaDeEstadoException(nombreTipo), { tipos.put(nombreTipo, nuevoTipo) })
-        tipos.put(nuevoTipo::class.java.simpleName, nuevoTipo)
+        val nombreTipo = this.format(nuevoTipo::class.java.simpleName)
+        this.ifConditionThrow(this.estaEnLaLista(nombreTipo), ClaveRepetidaDeEstadoException(nombreTipo), { tipos.put(nombreTipo.toLowerCase(), nuevoTipo) })
     }
 
     fun tipo(unNombre: String): TipoVector? {
-        //return this.ifConditionThrow(!this.estaEnLaLista(unNombre), EstadoNoEncontradoException(unNombre), { tipos.get(this.format(unNombre)) })
-        return tipos.get(unNombre)
+        return this.ifConditionThrow(!this.estaEnLaLista(unNombre), EstadoNoEncontradoException(unNombre), { tipos.get(unNombre.toLowerCase()) })
     }
 
-    private fun estaEnLaLista(unNombre: String) = tipos.keys.contains(unNombre)
+    private fun estaEnLaLista(unNombre: String) = tipos.keys.map{this.format(it)}.contains(this.format(unNombre))
+
+    private fun format(word : String) = word.toLowerCase()
 
     private fun <T> ifConditionThrow(condition: Boolean, e: Exception, bloque: () -> T): T {
         if (condition) {

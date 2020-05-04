@@ -1,9 +1,8 @@
 package ar.edu.unq.eperdemic
 
-import ar.edu.unq.eperdemic.modelo.TipoHumano
+import ar.edu.unq.eperdemic.modelo.Humano
 import ar.edu.unq.eperdemic.modelo.TipoVector
 import ar.edu.unq.eperdemic.modelo.Vector
-import ar.edu.unq.eperdemic.modelo.exception.IDVectorNoEncontradoException
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.VectorService
@@ -23,7 +22,7 @@ class VectorServiceTest {
     @Before
     fun setUp(){
         vector = Vector()
-        tipo = TipoHumano()
+        tipo = Humano()
         vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateDataDAO())
         vector.tipo = tipo
         vectorService.crearVector(vector)
@@ -68,13 +67,13 @@ class VectorServiceTest {
         vectorAGuardar.tipo = tipo
         vectorService.crearVector(vectorAGuardar)
         val vectorRecuperado = vectorService.recuperarVector(vectorAGuardar.id!!.toInt())
-        Assert.assertEquals(2, vectorAGuardar.id!!)
+        Assert.assertEquals(2, vectorRecuperado.id!!)
     }
 
 
     @After
     open fun eliminarTodo(){
-       vectorService.borrarTodo()
+        vectorService.borrarTodo()
     }
 
 }

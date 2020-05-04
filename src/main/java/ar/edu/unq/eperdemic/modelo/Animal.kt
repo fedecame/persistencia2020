@@ -1,6 +1,6 @@
 package ar.edu.unq.eperdemic.modelo
 
-class TipoAnimal() : TipoVector() {
+class Animal() : TipoVector() {
     override fun puedeSerContagiadoPor(tipo : TipoVector) = true //tipo.esInsecto()
     override fun esAnimal() = true
 

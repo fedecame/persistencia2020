@@ -4,7 +4,7 @@ import javax.persistence.AttributeConverter
 
 class TipoConverter : AttributeConverter<TipoVector, String> {
 
-    override fun convertToDatabaseColumn(tipoVector: TipoVector): String? {
+    override fun convertToDatabaseColumn(tipoVector: TipoVector): String {
         val clase = tipoVector::class.java
         val sb = StringBuilder()
         sb.append(clase.simpleName)

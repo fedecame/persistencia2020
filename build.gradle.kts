@@ -23,7 +23,6 @@ java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenCentral()
-    jcenter()
 }
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -38,9 +37,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
-    testImplementation("org.mockito:mockito-core:2.23.0")
     testImplementation("junit:junit:4.12")
-
     runtimeOnly("mysql:mysql-connector-java")
 
 }
