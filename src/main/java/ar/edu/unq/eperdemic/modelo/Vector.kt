@@ -1,21 +1,55 @@
 package ar.edu.unq.eperdemic.modelo
 
-class Vector( var id: Int?,
-              var nombreDeLocacionActual: String) {
+import javax.persistence.*
 
-    private var estadoActual: EstadoVector = Sano()
-    private lateinit var tipo: TipoVector
-    private val especies = mutableListOf<Especie>()
-    private var mapaDeUbicaciones=MapaDeUbicaciones()
-    private   var ubicacionActual = mapaDeUbicaciones.getUbicacion(nombreDeLocacionActual)
+
+@Entity
+@Table(name = "vector")
+class Vector() {
+
+    @Id
+    @Column(name="vector_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id : Long? = null
+
+    @OneToMany()
+    @JoinColumn(name = "id")
+    private val especies : List<Especie> = mutableListOf<Especie>()
+
+    //private lateinit var tipo: TipoVector? =null
+    //@Column(nullable = false, length = 500)
+    //@ManyToOne(cascade = CascadeType.ALL)
+    //private var estadoActual: EstadoVector = Sano()
+
+    // @Column(nullable = false, length = 500)
+   // @ManyToOne(cascade = CascadeType.ALL)
+    // var ubicacion : Ubicacion? = null
+
+/*
+
+    //Inicialmente esto estaba en el constructor, junto al ID, pero el constructor no tiene que recibir parametros
+    //private var nombreDeLocacionActual: String?
+
+
+    //Quien agrego esta linea y por que? Paraque se necesita un mapa de ubicaciones?
+    //private var mapaDeUbicaciones=MapaDeUbicaciones()
+    //private   var ubicacionActual = mapaDeUbicaciones.getUbicacion(nombreDeLocacionActual)
+
+
+
+
+    fun contagiarsePor(vectorQueContagia: Vector) {
+        tipo.contagiamePor(vectorQueContagia.especies(), vectorQueContagia.tipo())
+    }
 
     fun getUbicacionActual():Ubicacion?{
         return ubicacionActual
     }
+
     fun mover(nombreDeUbicacion :String){
         ubicacionActual=mapaDeUbicaciones.getUbicacion(nombreDeUbicacion)
-
     }
+
     fun contagiar(vectoresAContagiar: List<Vector>) {
         estadoActual.contagiar(vectoresAContagiar)
     }
@@ -28,9 +62,6 @@ class Vector( var id: Int?,
 
     fun tipo() = tipo
 
-    fun contagiarsePor(vectorQueContagia: Vector) {
-        tipo.contagiamePor(vectorQueContagia.especies(), vectorQueContagia.tipo())
-    }
 
     fun infectar(especie: Especie) {
         estadoActual.infectarse(this)
@@ -40,5 +71,5 @@ class Vector( var id: Int?,
     fun cambiarEstado(estado:EstadoVector) {
         this.estadoActual=estado;
     }
-
+*/
 }

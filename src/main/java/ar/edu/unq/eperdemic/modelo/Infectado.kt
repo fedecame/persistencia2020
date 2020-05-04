@@ -6,6 +6,6 @@ class Infectado(val vector: Vector) : EstadoVector {
     }
 
     override fun contagiar(vectoresAContagiar: List<Vector>) {
-        vectoresAContagiar.forEach{vectorContagiable -> vectorContagiable.contagiarsePor(vector)}
+        //vectoresAContagiar.forEach{vectorContagiable -> vectorContagiable.contagiarsePor(vector)}
     }
 }

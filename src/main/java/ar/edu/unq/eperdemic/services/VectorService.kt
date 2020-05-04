@@ -14,4 +14,7 @@ interface VectorService {
     fun recuperarVector(vectorId: Int): Vector
     fun borrarVector(vectorId: Int)
 
+    //Agrego:
+    fun borrarTodo()
+
 }
