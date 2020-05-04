@@ -1,27 +1,28 @@
 package ar.edu.unq.eperdemic.modelo
 
-abstract class TipoVector(val vector : Vector){
+abstract class TipoVector(){
 
-    enum class TipoVector{
-        INsecto, Animal, Humano
-    }
+    //Esto no lo necesitamos con la logica del convert
+    //enum class TipoDeVector{
+    //    Insecto, Animal, Humano
+    //}
 
-    fun contagiamePor(especiesContagiador: List<Especie>, tipoDelContagiador: TipoVector){
-        if(this.puedeSerContagiadoPor(tipoDelContagiador)) {
-            especiesContagiador.forEach{
-                especie -> this.infectameSiCorresponde(especie)
-            }
-        }
-    }
+    //fun contagiamePor(vector: Vector, tipoDelContagiador: TipoVector, especiesContagiador: List<Especie>){
+    //    if(this.puedeSerContagiadoPor(tipoDelContagiador)) {
+    //        especiesContagiador.forEach{
+    //            especie -> this.infectameSiCorresponde(vector, especie)
+    //        }
+    //    }
+    //}
 
-    fun infectameSiCorresponde(especie: Especie) {
+    //fun infectameSiCorresponde(vector: Vector, especie: Especie) {
         //if (this.porcentajeDeContagioExitoso(especie) >= 100) {
         //    vector.infectar(especie)
         //    this.agregarInfectado(especie)
     //    }
-    }
+    //}
 
-    fun porcentajeDeContagioExitoso(especie: Especie): Int = (1)/*random AQUI*/ + this.factorContagio(especie)
+   // fun porcentajeDeContagioExitoso(especie: Especie): Int = (1)/*random AQUI*/ + this.factorContagio(especie)
 
     open fun esHumano(): Boolean = false
 

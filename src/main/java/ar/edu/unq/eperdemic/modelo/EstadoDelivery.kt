@@ -7,10 +7,6 @@ class EstadoDelivery {
 
     private var estados = mutableMapOf<String, EstadoVector>()
 
-    enum class EstadoVectorEnum {
-        Sano, Infectado
-    }
-
     init {
         estados.put("sano", Sano())
         estados.put("infectado", Infectado())
