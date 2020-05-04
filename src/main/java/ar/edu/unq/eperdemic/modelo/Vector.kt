@@ -10,40 +10,31 @@ class Vector {
     @Column(updatable = false, nullable = false)
     var id : Long? = null
 
-    //Falta la ubicacion de Nelson aca
-    //Esto es lo que teniamos por defecto
-    //@Column(nullable = false, length = 500)
-    //@ManyToOne(cascade = [CascadeType.ALL])
-    //var ubicacion : Ubicacion? = null
-
-
-    @Column(nullable = false)
-    var estado = EstadoDeVector.Sano.name.toString()
-
     @OneToMany()
     private val especies : MutableSet<Especie> = mutableSetOf()
-
-    @Transient
-    var estadoDelivery = EstadoDelivery()
-
 
     @Column(nullable = false)
     @Convert(converter = TipoConverter::class)
     lateinit var tipo : TipoVector
 
-    private fun estado() : EstadoVector = estadoDelivery.estado(estado)!!
+    @Column(nullable = false)
+    @Convert(converter = EstadoConverter::class)
+    lateinit var estado : EstadoVector
 
+    init{
+        this.recuperarse()
+    }
 
     fun recuperarse(){
-        this.cambiarEstado(EstadoDeVector.Sano)
+        this.cambiarEstado(Sano())
     }
 
     fun infectarse(){
-        this.cambiarEstado(EstadoDeVector.Infectado)
+        this.cambiarEstado(Infectado())
     }
 
-    private fun cambiarEstado(unEstado: EstadoDeVector) {
-        estado = unEstado.name
+    private fun cambiarEstado(unEstado: EstadoVector) {
+        estado = unEstado
     }
 
     fun agregarEspecie(unaEspecie: Especie){
@@ -53,6 +44,11 @@ class Vector {
 
 
 /*
+    //Falta la ubicacion de Nelson aca
+    //Esto es lo que teniamos por defecto
+    //@Column(nullable = false, length = 500)
+    //@ManyToOne(cascade = [CascadeType.ALL])
+    //var ubicacion : Ubicacion? = null
 
     fun contagiarsePor(vectorQueContagia: Vector) {
         tipo.contagiamePor(vectorQueContagia.especies(), vectorQueContagia.tipo())
@@ -62,15 +58,8 @@ class Vector {
         estadoActual.contagiar(vectoresAContagiar)
     }
 
-
-    fun especies() = especies
-
-    fun tipo() = tipo
-
     fun infectar(especie: Especie) {
         estado.infectarse(this)
         this.agregarEspecie(especie)
     }
-
-
 */

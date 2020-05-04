@@ -10,23 +10,27 @@ class VectorTest {
     @Before
     fun setUp(){
         vectorSUT = Vector()
+        vectorSUT.tipo = Animal()
     }
 
     @Test
-    fun elVectorNaceSinId(){
+    fun testelVectorNaceSinId(){
         Assert.assertEquals(null, vectorSUT.id)
     }
 
     @Test
-    fun elVectorSeCreaConUnEstadoSano(){
+    fun testtestElEstadoDelVectorEsElIndicado(){
+        Assert.assertTrue(true)
+    }
+    @Test
+    fun testelVectorSeCreaConUnEstadoSano(){
         Assert.assertEquals("Sano", vectorSUT.estado)
     }
 
     @Test
-    fun elVectorPasaAEstadoSanoAlrecuperarse(){
+    fun testelVectorPasaAEstadoSanoAlrecuperarse(){
         Assert.assertEquals("Sano", vectorSUT.estado)
         vectorSUT.infectarse()
         Assert.assertEquals("Infectado", vectorSUT.estado)
     }
-
 }

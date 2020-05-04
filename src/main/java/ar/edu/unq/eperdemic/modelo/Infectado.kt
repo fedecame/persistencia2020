@@ -5,7 +5,7 @@ class Infectado() : EstadoVector {
         //No hace nada
     }
 
-    override fun nombre(): String = EstadoDeVector.Infectado.name.toString()
+    override fun nombre(): String = "Infectado"
 
     override fun contagiar(vectorContangia : Vector, vectoresAContagiar: List<Vector>) {
         //vectoresAContagiar.forEach{vectorContagiable -> vectorContagiable.contagiarsePor(vector)}

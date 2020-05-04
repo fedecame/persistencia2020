@@ -10,6 +10,7 @@ class EstadoDeliveryTest {
     private lateinit var estadoDeliverySUT : EstadoDelivery
     private lateinit var infectado : String
     private lateinit var sano : String
+
     @Before
     fun setUP(){
             estadoDeliverySUT = EstadoDelivery()

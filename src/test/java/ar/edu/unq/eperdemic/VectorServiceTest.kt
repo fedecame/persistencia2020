@@ -1,8 +1,7 @@
 package ar.edu.unq.eperdemic
 
-import ar.edu.unq.eperdemic.modelo.Humano
-import ar.edu.unq.eperdemic.modelo.TipoVector
-import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.modelo.*
+import ar.edu.unq.eperdemic.modelo.exception.IDVectorNoEncontradoException
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.VectorService
@@ -17,14 +16,16 @@ class VectorServiceTest {
     lateinit var vectorService : VectorService
     lateinit var vector : Vector
     lateinit var tipo : TipoVector
-
+    lateinit var estado : EstadoVector
 
     @Before
     fun setUp(){
         vector = Vector()
         tipo = Humano()
+        estado = Sano()
         vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateDataDAO())
         vector.tipo = tipo
+        vector.estado = estado
         vectorService.crearVector(vector)
     }
 
@@ -32,6 +33,32 @@ class VectorServiceTest {
     fun testAlCrearUnVectorEsteSePuedeRecuperarConSuID(){
         val recuperado = vectorService.recuperarVector(1)
         Assert.assertEquals(1, recuperado.id!!)
+    }
+
+    @Test
+    fun testAlCrearseUnVectorTieneEstadoSano(){
+        val recuperado = vectorService.recuperarVector(1)
+        Assert.assertEquals("Sano", recuperado.estado.nombre())
+    }
+
+    @Test
+    fun testAlInfectarseUnVectorTieneEstadoInfectado(){
+
+        val recuperado = vectorService.recuperarVector(1)
+        Assert.assertEquals("Sano", recuperado.estado.nombre())
+    }
+
+    @Test
+    fun testAlInfectarseUnVectorTieneEstadoSano(){
+        val recuperado = vectorService.recuperarVector(1)
+        Assert.assertEquals("Sano", recuperado.estado.nombre())
+    }
+
+    @Test
+    fun testUNVectorSeInfectaAlRecibirElMensajeInfectarse(){
+        vector.estado = Infectado()
+        val recuperado = vectorService.recuperarVector(1)
+        Assert.assertEquals("Infectado", recuperado.estado.nombre())
     }
 
     @Test
@@ -70,6 +97,11 @@ class VectorServiceTest {
         Assert.assertEquals(2, vectorRecuperado.id!!)
     }
 
+    @Test
+    fun testAlRecuperarUnIDInexistenteRetornaNull(){
+        val vectorRecuperado = vectorService.recuperarVector(42)
+        Assert.assertEquals(null, vectorRecuperado)
+    }
 
     @After
     open fun eliminarTodo(){

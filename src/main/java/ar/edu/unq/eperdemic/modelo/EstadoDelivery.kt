@@ -13,15 +13,15 @@ class EstadoDelivery {
     }
 
     fun agregarEstado(nuevoEstado: EstadoVector) {
-        val nombre = nuevoEstado.nombre()
-        this.ifConditionThrow(this.estaEnLaLista(nombre), ClaveRepetidaDeEstadoException(nombre), { estados.put(this.format(nombre), nuevoEstado) })
+        val nombre = this.format(nuevoEstado.nombre())
+        this.ifConditionThrow(this.estaEnLaLista(nombre), ClaveRepetidaDeEstadoException(nombre), { estados.put(nombre, nuevoEstado) })!!
     }
 
     fun estado(unNombre: String): EstadoVector? {
-        return this.ifConditionThrow(!this.estaEnLaLista(unNombre), EstadoNoEncontradoException(unNombre), { estados.get(this.format(unNombre)) })
+        return this.ifConditionThrow(!this.estaEnLaLista(unNombre), EstadoNoEncontradoException(unNombre), { estados.get(this.format(unNombre)) })!!
     }
 
-    private fun estaEnLaLista(unNombre: String) = estados.keys.contains(this.format(unNombre))
+    private fun estaEnLaLista(unNombre: String) = estados.keys.map{this.format(it)}.contains(this.format(unNombre))
 
     private fun <T> ifConditionThrow(condition: Boolean, e: Exception, bloque: () -> T): T {
         if (condition) {
@@ -29,7 +29,6 @@ class EstadoDelivery {
         }
         return bloque()
     }
-
 
     private fun format(unNombre : String) = unNombre.toLowerCase()
 }

@@ -11,9 +11,5 @@ class TipoConverter : AttributeConverter<TipoVector, String> {
         return sb.toString()
     }
 
-    override fun convertToEntityAttribute(dbTipo : String) : TipoVector?{
-        val res = TipoDelivery().tipo(dbTipo)!!
-        return res!!
-    }
-
+    override fun convertToEntityAttribute(dbTipo : String) : TipoVector? = TipoDelivery().tipo(dbTipo)!!
 }
