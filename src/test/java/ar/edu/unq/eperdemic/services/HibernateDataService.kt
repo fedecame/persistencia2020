@@ -1,4 +1,4 @@
-package ar.edu.unq.eperdemic.utils.hibernate
+package ar.edu.unq.eperdemic.services
 
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.utils.DataService

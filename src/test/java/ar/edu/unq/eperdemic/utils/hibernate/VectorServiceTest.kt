@@ -21,16 +21,52 @@ class VectorServiceTest {
     lateinit var vector : Vector
     lateinit var tipo : TipoVector
     lateinit var estado : EstadoVector
+    lateinit var especie : Especie
 
     @Before
     fun setUp(){
         vector = Vector()
         tipo = Humano()
         estado = Sano()
+        especie = Especie()
+        especie.cantidadInfectados = 42
+        especie.nombre = "Algo"
+        especie.paisDeOrigen = "Alemania"
+        especie.patogeno = Patogeno("")
         vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateDataDAO())
         vector.tipo = tipo
         vector.estado = estado
+        vector.agregarEspecie(especie)
         vectorService.crearVector(vector)
+    }
+
+    @Test
+    fun testAlRecuperarUNVectorSinEspeciesRetornaUnaListaVacia(){
+        val vector0 = Vector()
+        vector0.tipo = tipo
+        vector0.estado = estado
+        vectorService.crearVector(vector0)
+        val n = vector0.id!!.toInt()
+        val recuperado = vectorService.recuperarVector(n)
+        Assert.assertEquals(n, recuperado.id!!.toInt())
+        val list = recuperado.especies
+        Assert.assertTrue(list.isEmpty())
+        Assert.assertEquals(0,list.size)
+    }
+
+    @Test
+    fun testAlRecuperarUnVectorConUnaEspeciesRetornaUnaListaConLaEspecieIndicada(){
+        //Cuando tengamos el service con el infectar y demas, lo vamos a poder probar a nivel de Service
+        //Estaria bueno agregar la ruta de sanar(vectorID) en VectorService
+        val recuperado = vectorService.recuperarVector(1)
+        val list = recuperado.especies
+        Assert.assertFalse(list.isEmpty())
+        Assert.assertEquals(1,list.size)
+        val especie = list.first()
+        Assert.assertEquals(42,especie.cantidadInfectados)
+        Assert.assertEquals("Algo",especie.nombre)
+        Assert.assertEquals("Alemania",especie.paisDeOrigen)
+        Assert.assertEquals("",especie.patogeno.tipo)
     }
 
     @Test
