@@ -9,6 +9,7 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
 import ar.edu.unq.eperdemic.tipo.Humano
+import ar.edu.unq.eperdemic.tipo.Insecto
 import ar.edu.unq.eperdemic.tipo.TipoVector
 import org.junit.After
 import org.junit.Assert
@@ -39,6 +40,59 @@ class VectorServiceTest {
         vector.agregarEspecie(especie)
         vectorService.crearVector(vector)
     }
+
+    @Test
+    fun testALPedirLasEnfermedadesDeUnaVectorSinNIngunaEspecieRetornaUnaListaVacia(){
+        val vector0 = Vector()
+        vector0.tipo = tipo
+        vector0.estado = estado
+        vectorService.crearVector(vector0)
+        val list = vectorService.enfermedades(vector0.id!!.toInt())
+        Assert.assertTrue(list.isEmpty())
+        Assert.assertEquals(0,list.size)
+    }
+
+    @Test
+    fun testAlSolicitarLasEnfermedadesDeUnVectorConUnaEspecieRetornaUnaListaConLaEspecieIndicada(){
+        val list = vectorService.enfermedades(vector.id!!.toInt())
+        Assert.assertFalse(list.isEmpty())
+        Assert.assertEquals(1,list.size)
+        val especie = list.first()
+        Assert.assertEquals(42,especie.cantidadInfectados)
+        Assert.assertEquals("Algo",especie.nombre)
+        Assert.assertEquals("Alemania",especie.paisDeOrigen)
+        Assert.assertEquals("",especie.patogeno.tipo)
+    }
+
+    @Test
+    fun testAlSolicitarLasEnfermedadesDeUnVectorConDosEspeciesRetornaUnaListaConLaEspecieIndicada(){
+        val vector1 = Vector()
+        vector1.tipo = Insecto()
+        vector1.estado = Infectado()
+        val especie2 = Especie()
+        especie2.cantidadInfectados = 23
+        especie2.nombre = "Sarasa"
+        especie2.paisDeOrigen = "Japon"
+        especie2.patogeno = Patogeno("Nisman")
+        vector1.agregarEspecie(especie)
+        vector1.agregarEspecie(especie2)
+        vectorService.crearVector(vector1)
+        val list = vectorService.enfermedades(vector1.id!!.toInt())
+        Assert.assertFalse(list.isEmpty())
+        Assert.assertEquals(2,list.size)
+        val especie0 = list.first()
+        val especie1 = list.last()
+        Assert.assertEquals(42,especie0.cantidadInfectados)
+        Assert.assertEquals("Algo",especie0.nombre)
+        Assert.assertEquals("Alemania",especie0.paisDeOrigen)
+        Assert.assertEquals("",especie0.patogeno.tipo)
+        Assert.assertEquals(23,especie1.cantidadInfectados)
+        Assert.assertEquals("Sarasa",especie1.nombre)
+        Assert.assertEquals("Japon",especie1.paisDeOrigen)
+        Assert.assertEquals("Nisman",especie1.patogeno.tipo)
+    }
+
+
 
     @Test
     fun testAlRecuperarUNVectorSinEspeciesRetornaUnaListaVacia(){

@@ -16,7 +16,7 @@ class Vector {
     @Column(updatable = false, nullable = false)
     var id : Long? = null
 
-    @OneToMany(cascade=[CascadeType.ALL], fetch=FetchType.EAGER)
+    @ManyToMany(cascade=[CascadeType.ALL], fetch=FetchType.EAGER)
     var especies : MutableSet<Especie> = mutableSetOf()
 
     @Column(nullable = false)
