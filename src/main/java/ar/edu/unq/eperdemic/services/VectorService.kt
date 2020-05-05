@@ -12,9 +12,6 @@ interface VectorService {
     /* Operaciones CRUD */
     fun crearVector(vector: Vector): Vector
     fun recuperarVector(vectorId: Int): Vector
-    fun borrarVector(vectorID: Int)
-
-    //Agrego:
-    fun borrarTodo()
+    fun borrarVector(vectorId: Int)
 
 }
