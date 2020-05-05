@@ -5,7 +5,9 @@ class Sano() : EstadoVector{
        //vector.cambiarEstado(this)
     }
 
-    override fun contagiar(vectoresAContagiar: List<Vector>) {
+    override fun nombre(): String =  "Sano"
+
+    override fun contagiar(vectorQueContagia: Vector, vectoresAContagiar: List<Vector>) {
         //No hace nada
     }
 

@@ -2,74 +2,64 @@ package ar.edu.unq.eperdemic.modelo
 
 import javax.persistence.*
 
-
 @Entity
-@Table(name = "vector")
-class Vector() {
+class Vector {
 
     @Id
-    @Column(name="vector_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false, nullable = false)
     var id : Long? = null
 
     @OneToMany()
-    @JoinColumn(name = "id")
-    private val especies : List<Especie> = mutableListOf<Especie>()
+    private val especies : MutableSet<Especie> = mutableSetOf()
 
-    //private lateinit var tipo: TipoVector? =null
-    //@Column(nullable = false, length = 500)
-    //@ManyToOne(cascade = CascadeType.ALL)
-    //private var estadoActual: EstadoVector = Sano()
+    @Column(nullable = false)
+    @Convert(converter = TipoConverter::class)
+    lateinit var tipo : TipoVector
 
-    // @Column(nullable = false, length = 500)
-   // @ManyToOne(cascade = CascadeType.ALL)
-    // var ubicacion : Ubicacion? = null
+    @Column(nullable = false)
+    @Convert(converter = EstadoConverter::class)
+    lateinit var estado : EstadoVector
+
+    init{
+        this.recuperarse()
+    }
+
+    fun recuperarse(){
+        this.cambiarEstado(Sano())
+    }
+
+    fun infectarse(){
+        this.cambiarEstado(Infectado())
+    }
+
+    private fun cambiarEstado(unEstado: EstadoVector) {
+        estado = unEstado
+    }
+
+    fun agregarEspecie(unaEspecie: Especie){
+        especies.add(unaEspecie)
+    }
+}
+
 
 /*
-
-    //Inicialmente esto estaba en el constructor, junto al ID, pero el constructor no tiene que recibir parametros
-    //private var nombreDeLocacionActual: String?
-
-
-    //Quien agrego esta linea y por que? Paraque se necesita un mapa de ubicaciones?
-    //private var mapaDeUbicaciones=MapaDeUbicaciones()
-    //private   var ubicacionActual = mapaDeUbicaciones.getUbicacion(nombreDeLocacionActual)
-
-
-
+    //Falta la ubicacion de Nelson aca
+    //Esto es lo que teniamos por defecto
+    //@Column(nullable = false, length = 500)
+    //@ManyToOne(cascade = [CascadeType.ALL])
+    //var ubicacion : Ubicacion? = null
 
     fun contagiarsePor(vectorQueContagia: Vector) {
         tipo.contagiamePor(vectorQueContagia.especies(), vectorQueContagia.tipo())
-    }
-
-    fun getUbicacionActual():Ubicacion?{
-        return ubicacionActual
-    }
-
-    fun mover(nombreDeUbicacion :String){
-        ubicacionActual=mapaDeUbicaciones.getUbicacion(nombreDeUbicacion)
     }
 
     fun contagiar(vectoresAContagiar: List<Vector>) {
         estadoActual.contagiar(vectoresAContagiar)
     }
 
-    fun agregarEspecie(unaEspecie: Especie){
-        especies.add(unaEspecie)
-    }
-
-    fun especies() = especies
-
-    fun tipo() = tipo
-
-
     fun infectar(especie: Especie) {
-        estadoActual.infectarse(this)
+        estado.infectarse(this)
         this.agregarEspecie(especie)
     }
-
-    fun cambiarEstado(estado:EstadoVector) {
-        this.estadoActual=estado;
-    }
 */
-}

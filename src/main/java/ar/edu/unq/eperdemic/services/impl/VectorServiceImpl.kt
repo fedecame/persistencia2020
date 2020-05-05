@@ -25,7 +25,6 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var dataDAO: DataDAO) : Vector
         return runTrx { vectorDao.crear(vector) }
     }
 
-
     override fun recuperarVector(vectorID: Int): Vector {
         return runTrx {vectorDao.recuperar(vectorID)}
     }

@@ -8,30 +8,24 @@ class Especie() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id : Long? = null
+    lateinit var patogeno: Patogeno
+    var nombre: String = ""
+    var paisDeOrigen: String = ""
+    var cantidadInfectados = 0
 
-
+    fun agregarInfectado() {
+        cantidadInfectados++
+    }
 
     /*
-    //Esto estaba en el constructor:
-    var patogeno: Patogeno,
-    var nombre: String,
-    var paisDeOrigen: String
-
-    private var cantidadInfectados = 0
-
     fun factorContagioAnimal(): Int = patogeno.factorContagioAnimal()
 
     fun factorContagioInsecto(): Int = patogeno.factorContagioInsecto()
 
     fun factorContagioHumano(): Int = patogeno.factorContagioHumano()
 
-    fun agregarInfectado() {
-        cantidadInfectados++
-    }
-
     fun cantidadDeADN() {
         cantidadInfectados.div(5)
     }
-
      */
 }
