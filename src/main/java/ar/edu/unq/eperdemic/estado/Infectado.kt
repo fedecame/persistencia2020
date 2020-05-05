@@ -1,4 +1,6 @@
-package ar.edu.unq.eperdemic.modelo
+package ar.edu.unq.eperdemic.estado
+
+import ar.edu.unq.eperdemic.modelo.Vector
 
 class Infectado() : EstadoVector {
     override fun infectarse(vector: Vector) {

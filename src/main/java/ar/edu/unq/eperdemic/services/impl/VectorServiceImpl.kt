@@ -17,17 +17,11 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var dataDAO: DataDAO) : Vector
         TODO("Not yet implemented")
     }
 
-    override fun enfermedades(vectorId: Int): List<Especie> {
-        TODO("Not yet implemented")
-    }
+    override fun enfermedades(vectorId: Int): List<Especie> = runTrx { vectorDao.enfermedades(vectorId) }
 
-    override fun crearVector(vector: Vector): Vector{
-        return runTrx { vectorDao.crear(vector) }
-    }
+    override fun crearVector(vector: Vector): Vector = runTrx { vectorDao.crear(vector) }
 
-    override fun recuperarVector(vectorID: Int): Vector {
-        return runTrx {vectorDao.recuperar(vectorID)}
-    }
+    override fun recuperarVector(vectorID: Int): Vector = runTrx { vectorDao.recuperar(vectorID) }
 
     override fun borrarVector(vectorId: Int) {
         TODO("Not yet implemented")

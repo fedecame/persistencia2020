@@ -9,8 +9,8 @@ class Especie() {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id : Long? = null
     lateinit var patogeno: Patogeno
-    var nombre: String = ""
-    var paisDeOrigen: String = ""
+    lateinit var nombre: String
+    lateinit var paisDeOrigen: String
     var cantidadInfectados = 0
 
     fun agregarInfectado() {

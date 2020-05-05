@@ -1,5 +1,6 @@
-package ar.edu.unq.eperdemic.modelo
+package ar.edu.unq.eperdemic.estado.transformer
 
+import ar.edu.unq.eperdemic.estado.EstadoVector
 import javax.persistence.AttributeConverter
 
 class EstadoConverter : AttributeConverter<EstadoVector, String>  {
