@@ -80,16 +80,17 @@ class VectorServiceTest {
         val list = vectorService.enfermedades(vector1.id!!.toInt())
         Assert.assertFalse(list.isEmpty())
         Assert.assertEquals(2,list.size)
-        val especie0 = list.first()
-        val especie1 = list.last()
-        Assert.assertEquals(42,especie0.cantidadInfectados)
-        Assert.assertEquals("Algo",especie0.nombre)
-        Assert.assertEquals("Alemania",especie0.paisDeOrigen)
-        Assert.assertEquals("",especie0.patogeno.tipo)
+        val especie1 = list.get(0)
+        val especie0 = list.get(1)
         Assert.assertEquals(23,especie1.cantidadInfectados)
         Assert.assertEquals("Sarasa",especie1.nombre)
         Assert.assertEquals("Japon",especie1.paisDeOrigen)
         Assert.assertEquals("Nisman",especie1.patogeno.tipo)
+        Assert.assertEquals(42,especie0.cantidadInfectados)
+        Assert.assertEquals("Algo",especie0.nombre)
+        Assert.assertEquals("Alemania",especie0.paisDeOrigen)
+        Assert.assertEquals("",especie0.patogeno.tipo)
+
     }
 
 
