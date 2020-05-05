@@ -16,9 +16,7 @@ class Patogeno(val tipo: String) : Serializable{
 
     fun crearEspecie(nombreEspecie: String, paisDeOrigen: String) : Especie{
         cantidadDeEspecies++
-        val especie = Especie()
-        //Aca settearla
-        return Especie()
+        return Especie(this, nombreEspecie, paisDeOrigen)
     }
 
     //agregar 5 atributos
