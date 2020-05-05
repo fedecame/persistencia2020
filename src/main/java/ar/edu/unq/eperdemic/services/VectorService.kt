@@ -12,7 +12,7 @@ interface VectorService {
     /* Operaciones CRUD */
     fun crearVector(vector: Vector): Vector
     fun recuperarVector(vectorId: Int): Vector
-    fun borrarVector(vectorId: Int)
+    fun borrarVector(vectorID: Int)
 
     //Agrego:
     fun borrarTodo()

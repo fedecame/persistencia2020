@@ -1,5 +1,11 @@
 package ar.edu.unq.eperdemic.modelo
 
+import ar.edu.unq.eperdemic.estado.EstadoVector
+import ar.edu.unq.eperdemic.estado.Infectado
+import ar.edu.unq.eperdemic.estado.Sano
+import ar.edu.unq.eperdemic.estado.transformer.EstadoConverter
+import ar.edu.unq.eperdemic.tipo.TipoVector
+import ar.edu.unq.eperdemic.tipo.transformer.TipoConverter
 import javax.persistence.*
 
 @Entity
@@ -11,7 +17,7 @@ class Vector {
     var id : Long? = null
 
     @OneToMany()
-    private val especies : MutableSet<Especie> = mutableSetOf()
+    var especies : MutableSet<Especie> = mutableSetOf()
 
     @Column(nullable = false)
     @Convert(converter = TipoConverter::class)

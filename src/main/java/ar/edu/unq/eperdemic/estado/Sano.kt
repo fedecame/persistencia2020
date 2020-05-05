@@ -1,6 +1,8 @@
-package ar.edu.unq.eperdemic.modelo
+package ar.edu.unq.eperdemic.estado
 
-class Sano() : EstadoVector{
+import ar.edu.unq.eperdemic.modelo.Vector
+
+class Sano() : EstadoVector {
     override fun infectarse(vector: Vector) {
        //vector.cambiarEstado(this)
     }

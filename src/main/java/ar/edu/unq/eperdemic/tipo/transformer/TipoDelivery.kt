@@ -1,7 +1,20 @@
-package ar.edu.unq.eperdemic.modelo
+package ar.edu.unq.eperdemic.tipo.transformer
 
 import ar.edu.unq.eperdemic.modelo.exception.ClaveRepetidaDeEstadoException
 import ar.edu.unq.eperdemic.modelo.exception.EstadoNoEncontradoException
+import ar.edu.unq.eperdemic.tipo.Animal
+import ar.edu.unq.eperdemic.tipo.Humano
+import ar.edu.unq.eperdemic.tipo.Insecto
+import ar.edu.unq.eperdemic.tipo.TipoVector
+
+
+/*
+//Cuando el delivery funcione esto seria asi
+class TipoDelivery(tiposList : List<TipoVector>) : Delivery<TipoVector>(tiposList) {
+    override fun myAddException(nombreTipo : String) = ClaveRepetidaDeEstadoException(nombreTipo)
+    override fun myGetException(nombreTipo : String) = EstadoNoEncontradoException(nombreTipo)
+}
+*/
 
 class TipoDelivery {
 

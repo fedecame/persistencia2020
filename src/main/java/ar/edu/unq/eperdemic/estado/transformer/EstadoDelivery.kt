@@ -1,5 +1,8 @@
-package ar.edu.unq.eperdemic.modelo
+package ar.edu.unq.eperdemic.estado.transformer
 
+import ar.edu.unq.eperdemic.estado.EstadoVector
+import ar.edu.unq.eperdemic.estado.Infectado
+import ar.edu.unq.eperdemic.estado.Sano
 import ar.edu.unq.eperdemic.modelo.exception.ClaveRepetidaDeEstadoException
 import ar.edu.unq.eperdemic.modelo.exception.EstadoNoEncontradoException
 

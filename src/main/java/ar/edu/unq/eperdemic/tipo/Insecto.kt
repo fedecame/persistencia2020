@@ -1,4 +1,6 @@
-package ar.edu.unq.eperdemic.modelo
+package ar.edu.unq.eperdemic.tipo
+
+import ar.edu.unq.eperdemic.modelo.Especie
 
 class Insecto() : TipoVector() {
     override fun puedeSerContagiadoPor(tipo : TipoVector): Boolean = true //tipo.esHumano() || tipo.esAnimal()

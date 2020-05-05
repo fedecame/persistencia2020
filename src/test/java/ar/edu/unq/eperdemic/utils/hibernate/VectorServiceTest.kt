@@ -1,11 +1,15 @@
 package ar.edu.unq.eperdemic
 
+import ar.edu.unq.eperdemic.estado.EstadoVector
+import ar.edu.unq.eperdemic.estado.Infectado
+import ar.edu.unq.eperdemic.estado.Sano
 import ar.edu.unq.eperdemic.modelo.*
-import ar.edu.unq.eperdemic.modelo.exception.IDVectorNoEncontradoException
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
+import ar.edu.unq.eperdemic.tipo.Humano
+import ar.edu.unq.eperdemic.tipo.TipoVector
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before

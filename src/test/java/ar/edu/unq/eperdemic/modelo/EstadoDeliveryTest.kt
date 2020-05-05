@@ -1,5 +1,7 @@
 package ar.edu.unq.eperdemic.modelo
 
+import ar.edu.unq.eperdemic.estado.Infectado
+import ar.edu.unq.eperdemic.estado.transformer.EstadoDelivery
 import ar.edu.unq.eperdemic.modelo.exception.ClaveRepetidaDeEstadoException
 import ar.edu.unq.eperdemic.modelo.exception.EstadoNoEncontradoException
 import org.junit.Assert
