@@ -1,15 +1,17 @@
 package ar.edu.unq.eperdemic.modelo
 
-class Ubicacion(var nombreUbicacion: String) {
+import java.io.Serializable
+import javax.persistence.*
 
-    private val vectorAlojados = mutableListOf<Vector>()
+@Entity
+class Ubicacion() : Serializable {
+    @Id
+    lateinit var nombreUbicacion: String
 
-    fun getVectorAlojados() : List<Vector>{
+    @OneToMany(mappedBy = "ubicacion", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    var vectores: MutableSet<Vector> = HashSet()
 
-        return vectorAlojados
+    fun setearNombre(nombre:String){
+        nombreUbicacion=nombre
     }
-    fun addVectorUbicacion(vector:Vector){
-        vectorAlojados.add(vector)
-    }
-
 }

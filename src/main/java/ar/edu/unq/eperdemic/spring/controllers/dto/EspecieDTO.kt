@@ -11,7 +11,7 @@ class EspecieDTO (val nombre : String,
         fun from(especie:Especie) =
                 EspecieDTO(especie.nombre,
                         especie.paisDeOrigen,
-                        especie.patogeno.id)
+                        especie.patogeno.id!!)
     }
 
 }
