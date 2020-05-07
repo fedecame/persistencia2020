@@ -14,9 +14,16 @@ import org.hibernate.HibernateException
 import java.lang.RuntimeException
 
 class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO, var dataDAO: DataDAO) : UbicacionService {
-   var vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateDataDAO())
 
 
+    var vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateDataDAO())
+
+    override fun recuperarUbicacion(nombreUbicacion: String) {
+        return TransactionRunner.runTrx {
+            ubicacionDao.recuperar(nombreUbicacion)
+
+        }
+    }
 
     override fun crearUbicacion(nombreUbicacion: String): Ubicacion {
         var ubicacion= Ubicacion()
@@ -24,17 +31,12 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO, var dataDAO: DataDAO)
         return TransactionRunner.runTrx {
             ubicacionDao.crear(ubicacion)
 
-            ubicacionDao.recuperar(nombreUbicacion)
         }
     }
 
     override fun mover(vectorId: Int, nombreUbicacion: String) {
         TransactionRunner.runTrx {
-        //   if(ArrayubicacionDao.recuperarAll().forEach(id))
-        //    throw NoExisteUbicacionADondeSeDeseaMover(nombreUbicacion)
-
             vectorService.mover(vectorId, nombreUbicacion)
-
         }
     }
     override fun expandir(nombreUbicacion: String) {
