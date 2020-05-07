@@ -34,8 +34,10 @@ var ubicacionDao= HibernateUbicacionDAO()
     override fun enfermedades(vectorId: Int): List<Especie> = runTrx { vectorDao.enfermedades(vectorId) }
 
     override fun crearVector(vector: Vector): Vector = runTrx {
-        var vector=vectorDao.crear(vector)
-        vector.ubicacion?.alojarVector(vector)
+        var vector1=vectorDao.crear(vector)
+     var ubicacion = ubicacionDao.recuperar(vector.ubicacion?.nombreUbicacion)
+        ubicacion.vectores.add(vector1)//"alojo" el vector en ubicacion
+        ubicacionDao.actualizar(ubicacion)
     vector
     }
 
