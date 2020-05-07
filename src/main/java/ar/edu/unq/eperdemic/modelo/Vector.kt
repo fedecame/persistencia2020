@@ -41,8 +41,9 @@ class Vector {
         this.cambiarEstado(Sano())
     }
 
-    fun infectarse(){
+    fun infectarse(especie: Especie){
         this.cambiarEstado(Infectado())
+        this.agregarEspecie(especie)
     }
 
     private fun cambiarEstado(unEstado: EstadoVector) {
@@ -52,12 +53,6 @@ class Vector {
     fun agregarEspecie(unaEspecie: Especie){
         especies.add(unaEspecie)
     }
-    fun setearNombreUbicacion(nombre: String){
-
-        ubicacion= Ubicacion()
-        ubicacion!!.setearNombre(nombre)
-    }
-
 }
 
 
@@ -71,12 +66,6 @@ class Vector {
     fun contagiarsePor(vectorQueContagia: Vector) {
         tipo.contagiamePor(vectorQueContagia.especies(), vectorQueContagia.tipo())
     }
-
-//Necesitamos que el vector sepa contagiar a uno
-    fun contagiar(vectoresAContagiar: List<Vector>) {
-        estadoActual.contagiar(vectoresAContagiar)
-    }
-
     fun infectar(especie: Especie) {
         estado.infectarse(this)
         this.agregarEspecie(especie)
