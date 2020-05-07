@@ -23,7 +23,7 @@ import org.junit.Before
 import org.junit.Test
 
 class UbicacionServiceTest {
-    var vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateDataDAO())
+    var vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateDataDAO(), HibernateUbicacionDAO())
     var ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO(), HibernateDataDAO())
      val vector = Vector()
     val vector1=Vector()
@@ -88,7 +88,7 @@ fun alMoverAMismaUbicacionDondeEstaSeQuedaEnLaMismaUbicacion(){
           Assert.assertEquals(vectorActualizado.ubicacion?.nombreUbicacion,"Florencio Varela")
 }
 
-    @Test(expected = MoverUnVectorQueNoEstaCreado::class )
+    @Test(expected = IDVectorNoEncontradoException::class )
     fun moverUnVectorQueNoExiste(){
         vector.ubicacion=ubicacionCreada
         ubicacionService.mover(1,"Florencio Varela")
