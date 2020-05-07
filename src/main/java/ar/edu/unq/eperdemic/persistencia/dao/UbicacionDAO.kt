@@ -7,4 +7,5 @@ interface UbicacionDAO {
     fun crear (ubicacion: Ubicacion): Ubicacion
     fun recuperar(nombre:String): Ubicacion
     fun actualizar(ubicacion:Ubicacion):Ubicacion
+   // fun recuperarAll():MutableList<Ubicacion>
 }

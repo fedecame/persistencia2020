@@ -16,8 +16,7 @@ class Vector {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, nullable = false)
     var id : Long? = null
-    @Transient
-    lateinit var nombreDeLocacionActual: String
+
 
     @ManyToMany(cascade=[CascadeType.ALL], fetch=FetchType.EAGER)
     var especies : MutableSet<Especie> = mutableSetOf()
@@ -54,7 +53,7 @@ class Vector {
         especies.add(unaEspecie)
     }
     fun setearNombreUbicacion(nombre: String){
-        nombreDeLocacionActual=nombre
+
         ubicacion= Ubicacion()
         ubicacion!!.setearNombre(nombre)
     }
