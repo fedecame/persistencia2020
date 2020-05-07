@@ -3,13 +3,16 @@ package ar.edu.unq.eperdemic.services.impl
 import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.persistencia.dao.DataDAO
+import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 
 
 class VectorServiceImpl(var vectorDao: VectorDAO, var dataDAO: DataDAO) : VectorService {
-
+var ubicacionDao= HibernateUbicacionDAO()
 
     override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) {
         TODO("Not yet implemented")
@@ -22,7 +25,7 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var dataDAO: DataDAO) : Vector
     override fun mover(vectorId: Int, nombreUbicacion: String) {
         return runTrx {
             var vector= vectorDao.recuperar(vectorId)
-            vector.setearNombreUbicacion(nombreUbicacion)
+            vector.ubicacion=ubicacionDao.recuperar(nombreUbicacion)
             vectorDao.crear(vector)
         }}
 
