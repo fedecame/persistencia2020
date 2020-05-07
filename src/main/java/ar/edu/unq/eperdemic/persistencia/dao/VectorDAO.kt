@@ -10,4 +10,6 @@ interface VectorDAO {
    fun enfermedades(vectorID : Int) : List<Especie>
    fun infectar(vector: Vector, especie: Especie)
    fun contagiar(vectorInfectado: Vector, vectores: List<Vector>)
+   fun borrar(vector: Vector)
+   fun refresh(vector: Vector)
 }

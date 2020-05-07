@@ -6,6 +6,7 @@ import ar.edu.unq.eperdemic.estado.Sano
 import ar.edu.unq.eperdemic.modelo.*
 import ar.edu.unq.eperdemic.modelo.exception.IDVectorNoEncontradoException
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
@@ -35,7 +36,7 @@ class VectorServiceTest {
         especie.nombre = "Algo"
         especie.paisDeOrigen = "Alemania"
         especie.patogeno = Patogeno("")
-        vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateDataDAO())
+        vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateDataDAO(), HibernateUbicacionDAO())
         vector.tipo = tipo
         vector.estado = estado
         vector.agregarEspecie(especie)
@@ -66,7 +67,7 @@ class VectorServiceTest {
     }
 
     @Test
-    fun testAlSolicitarLasEnfermedadesDeUnVectorConDosEspeciesRetornaUnaListaConLaEspecieIndicada(){
+    fun testAlSolicitarLasEnfermedadesDeUnVectorConDosEspeciesRetornaUnaListaConLasEspeciesIndicadas(){
         val vector1 = Vector()
         vector1.tipo = Insecto()
         vector1.estado = Infectado()
@@ -81,16 +82,16 @@ class VectorServiceTest {
         val list = vectorService.enfermedades(vector1.id!!.toInt())
         Assert.assertFalse(list.isEmpty())
         Assert.assertEquals(2,list.size)
-        val especie1 = list.get(0)
-        val especie0 = list.get(1)
-        Assert.assertEquals(42,especie0.cantidadInfectados)
-        Assert.assertEquals("Algo",especie0.nombre)
-        Assert.assertEquals("Alemania",especie0.paisDeOrigen)
-        Assert.assertEquals("",especie0.patogeno.tipo)
+        val especie0 = list.get(0)
+        val especie1 = list.get(1)
         Assert.assertEquals(23,especie1.cantidadInfectados)
         Assert.assertEquals("Sarasa",especie1.nombre)
         Assert.assertEquals("Japon",especie1.paisDeOrigen)
         Assert.assertEquals("Nisman",especie1.patogeno.tipo)
+        Assert.assertEquals(42,especie0.cantidadInfectados)
+        Assert.assertEquals("Algo",especie0.nombre)
+        Assert.assertEquals("Alemania",especie0.paisDeOrigen)
+        Assert.assertEquals("",especie0.patogeno.tipo)
 
     }
 

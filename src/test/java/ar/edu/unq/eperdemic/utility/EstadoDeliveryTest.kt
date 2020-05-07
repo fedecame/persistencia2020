@@ -66,7 +66,6 @@ class EstadoDeliveryTest {
     @Test(expected = EstadoNoEncontradoException::class)
     fun testAlIntentarRecuperarUnVectorConUnaKeyErroneaArrojaUNEstadoNoEncontradoRunTimeException(){
         val algo = estadoDeliverySUT.estado("sarasa")
-        Assert.assertEquals(null, algo)
     }
 
     @Test(expected = ClaveRepetidaDeEstadoException::class)

@@ -2,9 +2,7 @@ package ar.edu.unq.eperdemic.persistencia.dao.hibernate
 
 import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Vector
-
 import ar.edu.unq.eperdemic.modelo.exception.IDVectorNoEncontradoException
-import ar.edu.unq.eperdemic.modelo.exception.MoverUnVectorQueNoEstaCreado
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
 
 class HibernateVectorDAO :  HibernateDAO<Vector>(Vector::class.java), VectorDAO  {
@@ -16,10 +14,10 @@ class HibernateVectorDAO :  HibernateDAO<Vector>(Vector::class.java), VectorDAO 
 
     override fun recuperar(vectorID: Int): Vector {
 
-        var vector =    super.recuperar(vectorID.toLong())
+        val vector = super.recuperar(vectorID.toLong())
 
         if(vector==null){
-            throw MoverUnVectorQueNoEstaCreado(vectorID)
+            throw IDVectorNoEncontradoException(vectorID)
         }
         return vector
 
@@ -39,10 +37,18 @@ class HibernateVectorDAO :  HibernateDAO<Vector>(Vector::class.java), VectorDAO 
 
     override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) {
         val _vector = this.recuperar(vectorInfectado.id)
-        //_vector.contagiar(vectores)
+        _vector.contagiar(vectores)
         for(vectorAContagiar in vectores){
             super.actualizar(vectorAContagiar)
         }
 
+    }
+
+    override fun borrar(vector: Vector) {
+        super.eliminar(vector)
+    }
+
+    override fun refresh(vector: Vector) {
+        super.actualizar(vector)
     }
 }
