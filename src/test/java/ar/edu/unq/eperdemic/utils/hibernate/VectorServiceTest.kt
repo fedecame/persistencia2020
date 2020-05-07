@@ -92,7 +92,6 @@ class VectorServiceTest {
         Assert.assertEquals("Algo",especie0.nombre)
         Assert.assertEquals("Alemania",especie0.paisDeOrigen)
         Assert.assertEquals("",especie0.patogeno.tipo)
-
     }
 
 
@@ -157,12 +156,6 @@ class VectorServiceTest {
         Assert.assertEquals(1, vector.id!!.toInt())
     }
 
-//    implementar la exception
-//    @Test()
-//    fun testAlIntentarRecuperarUnVectorConUNIdInexistenteSeLanzaUNaIDVectorNoEncontradoException(){
-//        vectorService.recuperarVector(420)
-//    }
-
      @Test
    fun testElIDEsAutoincrementalALaMedidaQueSeCreanNuevosVectores(){
          val vector0 = Vector()
@@ -187,7 +180,6 @@ class VectorServiceTest {
     @Test(expected = IDVectorNoEncontradoException::class)
     fun testAlRecuperarUnIDInexistenteRetornaNull(){
         val vectorRecuperado = vectorService.recuperarVector(42)
-//        Assert.assertEquals(null, vectorRecuperado)
     }
 
     @After
