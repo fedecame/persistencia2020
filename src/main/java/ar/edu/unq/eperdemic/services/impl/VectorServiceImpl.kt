@@ -10,12 +10,11 @@ import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 
 class VectorServiceImpl(var vectorDao: VectorDAO, var dataDAO: DataDAO) : VectorService {
     override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) {
-        TODO("Not yet implemented")
+        runTrx { vectorDao.contagiar(vectorInfectado, vectores) }
     }
 
     override fun infectar(vector: Vector, especie: Especie) {
-        TODO("Not yet implemented")
-    }
+        runTrx { vectorDao.infectar(vector,especie) }    }
 
     override fun enfermedades(vectorId: Int): List<Especie> = runTrx { vectorDao.enfermedades(vectorId) }
 
