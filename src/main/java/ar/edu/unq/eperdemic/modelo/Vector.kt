@@ -7,6 +7,7 @@ import ar.edu.unq.eperdemic.estado.transformer.EstadoConverter
 import ar.edu.unq.eperdemic.tipo.TipoVector
 import ar.edu.unq.eperdemic.tipo.transformer.TipoConverter
 import javax.persistence.*
+import kotlin.jvm.Transient
 
 @Entity
 class Vector {
@@ -15,6 +16,7 @@ class Vector {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, nullable = false)
     var id : Long? = null
+
 
     @ManyToMany(cascade=[CascadeType.ALL], fetch=FetchType.EAGER)
     var especies : MutableSet<Especie> = mutableSetOf()
@@ -26,6 +28,10 @@ class Vector {
     @Column(nullable = false)
     @Convert(converter = EstadoConverter::class)
     lateinit var estado : EstadoVector
+
+    @ManyToOne()
+    var ubicacion: Ubicacion? =null
+
 
     init{
         this.recuperarse()
@@ -47,14 +53,6 @@ class Vector {
     fun agregarEspecie(unaEspecie: Especie){
         especies.add(unaEspecie)
     }
-
-
-//    hay q implementar bien
-    fun contagiar(vectoresAContagiar: List<Vector>) {
-//        estado.contagiar(vectoresAContagiar)
-    }
-
-
 }
 
 
@@ -68,9 +66,6 @@ class Vector {
     fun contagiarsePor(vectorQueContagia: Vector) {
         tipo.contagiamePor(vectorQueContagia.especies(), vectorQueContagia.tipo())
     }
-
-
-
     fun infectar(especie: Especie) {
         estado.infectarse(this)
         this.agregarEspecie(especie)
