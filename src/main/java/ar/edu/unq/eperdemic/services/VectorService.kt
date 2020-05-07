@@ -16,5 +16,6 @@ interface VectorService {
 
     //Agrego:
     fun borrarTodo()
+    fun mover(vectorId: Int, nombreUbicacion: String)
 
 }

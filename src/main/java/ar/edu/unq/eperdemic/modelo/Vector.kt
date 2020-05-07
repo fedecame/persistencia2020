@@ -7,6 +7,7 @@ import ar.edu.unq.eperdemic.estado.transformer.EstadoConverter
 import ar.edu.unq.eperdemic.tipo.TipoVector
 import ar.edu.unq.eperdemic.tipo.transformer.TipoConverter
 import javax.persistence.*
+import kotlin.jvm.Transient
 
 @Entity
 class Vector {
@@ -15,6 +16,8 @@ class Vector {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, nullable = false)
     var id : Long? = null
+    @Transient
+    lateinit var nombreDeLocacionActual: String
 
     @ManyToMany(cascade=[CascadeType.ALL], fetch=FetchType.EAGER)
     var especies : MutableSet<Especie> = mutableSetOf()
@@ -26,6 +29,10 @@ class Vector {
     @Column(nullable = false)
     @Convert(converter = EstadoConverter::class)
     lateinit var estado : EstadoVector
+
+    @ManyToOne()
+    var ubicacion: Ubicacion? =null
+
 
     init{
         this.recuperarse()
@@ -46,6 +53,12 @@ class Vector {
     fun agregarEspecie(unaEspecie: Especie){
         especies.add(unaEspecie)
     }
+    fun setearNombreUbicacion(nombre: String){
+        nombreDeLocacionActual=nombre
+        ubicacion= Ubicacion()
+        ubicacion!!.setearNombre(nombre)
+    }
+
 }
 
 

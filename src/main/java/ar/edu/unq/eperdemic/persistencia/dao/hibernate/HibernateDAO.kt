@@ -14,4 +14,7 @@ open class HibernateDAO<T>(private val entityType: Class<T>) {
         val session = TransactionRunner.currentSession
         return session.get(entityType, id)
     }
+    fun recuperar(nombre : String?):T{
+        val session = TransactionRunner.currentSession
+        return session.get(entityType, nombre)    }
 }
