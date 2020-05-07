@@ -21,6 +21,10 @@ class HibernateUbicacionDAO : HibernateDAO<Ubicacion>(Ubicacion::class.java), Ub
         }
         return ubicacion
     }
+     override fun actualizar(ubicacion:Ubicacion){
+        return super.actualizar(ubicacion)
+    }
+
 
 }
 

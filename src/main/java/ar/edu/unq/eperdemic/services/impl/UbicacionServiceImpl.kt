@@ -18,10 +18,9 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO, var dataDAO: DataDAO)
 
     var vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateDataDAO())
 
-    override fun recuperarUbicacion(nombreUbicacion: String) {
+    override fun recuperarUbicacion(nombreUbicacion: String):Ubicacion{
         return TransactionRunner.runTrx {
             ubicacionDao.recuperar(nombreUbicacion)
-
         }
     }
 
@@ -35,6 +34,7 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO, var dataDAO: DataDAO)
     }
 
     override fun mover(vectorId: Int, nombreUbicacion: String) {
+
         TransactionRunner.runTrx {
             vectorService.mover(vectorId, nombreUbicacion)
         }

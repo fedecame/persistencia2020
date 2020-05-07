@@ -6,12 +6,16 @@ import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.exception.IDVectorNoEncontradoException
 import ar.edu.unq.eperdemic.modelo.exception.MoverUnVectorQueNoEstaCreado
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
+import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 
 class HibernateVectorDAO :  HibernateDAO<Vector>(Vector::class.java), VectorDAO  {
 
     override fun crear(vector : Vector): Vector {
         super.guardar(vector)
         return vector
+    }
+    override fun actualizar(vector:Vector){
+       return super.actualizar(vector)
     }
 
     override fun recuperar(vectorID: Int): Vector {

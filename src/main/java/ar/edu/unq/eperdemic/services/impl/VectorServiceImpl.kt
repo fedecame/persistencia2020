@@ -23,10 +23,12 @@ var ubicacionDao= HibernateUbicacionDAO()
 
     override fun mover(vectorId: Int, nombreUbicacion: String) {
         return runTrx {
-
             var vector= vectorDao.recuperar(vectorId)
-            vector.ubicacion=ubicacionDao.recuperar(nombreUbicacion)
-            vectorDao.crear(vector)
+            var ubicacionOrigen=ubicacionDao.recuperar(vector.ubicacion?.nombreUbicacion)
+            vector.ubicacion=ubicacionDao.recuperar(nombreUbicacion)//actualizo Ubicacion de Vector
+            ubicacionOrigen.vectores.removeIf { vector-> vector.id==vectorId.toLong() }//"desalojo" a el vector de la ubicacion origen
+            ubicacionDao.actualizar(ubicacionOrigen)
+            vectorDao.actualizar(vector)
         }}
 
     override fun enfermedades(vectorId: Int): List<Especie> = runTrx { vectorDao.enfermedades(vectorId) }

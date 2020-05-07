@@ -96,17 +96,29 @@ fun alMoverAMismaUbicacionDondeEstaSeQuedaEnLaMismaUbicacion(){
 
 
     @Test
-    fun moverDosVectoresAUnaMismaUbicacion(){
-        vector.ubicacion=ubicacionCreada
-        vector1.ubicacion=ubicacionCreada
+    fun moverDosVectoresAUnaMismaUbicacion() {
+        vector.ubicacion = ubicacionCreada
+        vector1.ubicacion = ubicacionCreada
         vectorService.crearVector(vector)
         vectorService.crearVector(vector1)
+        ubicacionService.mover(1, "Berazategui")
+        ubicacionService.mover(2,"Berazategui")
         var ubicacionRecuperada= ubicacionService.recuperarUbicacion("Florencio Varela")
         Assert.assertEquals(ubicacionCreada.vectores.size,2)
     }
+    @Test
+    fun  alMoveVectorAlojadoEnUnaPosicionLaUbicacionTieneUnVectorMenosAlojado(){
+        vector.ubicacion=ubicacionCreada
+        vectorService.crearVector(vector)
+        ubicacionCreada1 = ubicacionService.crearUbicacion("Quilmes")
+        Assert.assertEquals(ubicacionCreada.vectores.size,1)
+        ubicacionService.mover(1,"Quilmes")
+        var ubicacionRecuperada= ubicacionService.recuperarUbicacion("Florencio Varela")
+        Assert.assertEquals(ubicacionRecuperada.vectores.size.toInt(),0)
+    }
 
-@After
-    open fun eliminarTodo(){
+  @After
+  open fun eliminarTodo(){
         vectorService.borrarTodo()
     }
 }
