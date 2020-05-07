@@ -36,6 +36,6 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO, var dataDAO: DataDAO)
     }
 
     override fun borrarTodo() {
-        dataDAO.clear()
+        TransactionRunner.runTrx { dataDAO.clear() }
     }
 }

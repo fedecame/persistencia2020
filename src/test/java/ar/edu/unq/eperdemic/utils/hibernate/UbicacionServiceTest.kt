@@ -26,12 +26,16 @@ class UbicacionServiceTest {
     val vector = Vector()
     val tipo = Humano()
     val estado = Sano()
-    var ubicacionCreada = ubicacionService.crearUbicacion("Florencio Varela")
-    var ubicacion2Creada= ubicacionService.crearUbicacion("Quilmes")
+//    var ubicacionCreada = ubicacionService.crearUbicacion("Florencio Varela")
+//    var ubicacion2Creada= ubicacionService.crearUbicacion("Quilmes")
+    lateinit var ubicacionCreada:Ubicacion
     @Before
     fun setUp(){
         vector.tipo=tipo
         vector.estado=estado
+        ubicacionCreada = ubicacionService.crearUbicacion("Florencio Varela")
+        var ubicacion2Creada= ubicacionService.crearUbicacion("Quilmes")
+
     }
 
     @Test
@@ -67,5 +71,6 @@ class UbicacionServiceTest {
     @After
     open fun eliminarTodo(){
 //        ubicacionService.borrarTodo()
+        vectorService.borrarTodo()
     }
 }
