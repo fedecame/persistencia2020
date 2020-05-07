@@ -15,12 +15,11 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var dataDAO: DataDAO) : Vector
 var ubicacionDao= HibernateUbicacionDAO()
 
     override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) {
-        TODO("Not yet implemented")
+        runTrx { vectorDao.contagiar(vectorInfectado, vectores) }
     }
 
     override fun infectar(vector: Vector, especie: Especie) {
-        TODO("Not yet implemented")
-    }
+        runTrx { vectorDao.infectar(vector,especie) }    }
 
     override fun mover(vectorId: Int, nombreUbicacion: String) {
         return runTrx {

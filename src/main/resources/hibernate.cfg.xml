@@ -16,7 +16,8 @@
         <property name="show_sql">false</property>
 
         <property name="hibernate.hbm2ddl.auto">create-drop</property>
-
+        <property name="connection.url">jdbc:mysql//localhost/epers_ejemplo_hibernate/InternetProject?
+            createDatabaseIfNotExist=true</property>
         <mapping class="ar.edu.unq.eperdemic.modelo.Vector"/>
 
         <mapping class="ar.edu.unq.eperdemic.modelo.Especie" />
