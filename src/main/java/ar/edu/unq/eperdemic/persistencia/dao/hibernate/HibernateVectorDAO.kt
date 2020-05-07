@@ -20,5 +20,4 @@ class HibernateVectorDAO :  HibernateDAO<Vector>(Vector::class.java), VectorDAO 
         val res = vector.especies
         return res.toList()
     }
-
 }

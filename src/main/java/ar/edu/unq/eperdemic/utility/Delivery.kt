@@ -2,22 +2,17 @@ package ar.edu.unq.eperdemic.utility
 
 abstract class Delivery<T> (values : List<Any>) {
 
-    private var things : MutableMap<String, T> = mutableMapOf()
+    protected var things : MutableMap<String, T> = mutableMapOf()
 
     init {
         values.forEach {  this.add(it) }
     }
 
-    open fun add(aValue: Any) {
-        //Como consigo el nombre de una clase Any?
-        val name = ""
+    fun add(aValue: Any) {
         val y : T = aValue as T
-        val x = this.format(aValue.javaClass!!.simpleName)
-        print("ACA>>>>>>>$x")
-        this.ifConditionThrow(this.isInTheList(x), this.myAddException(name), this.myAddBlock(x, aValue))
+        val name = this.format(aValue.javaClass!!.simpleName)
+        this.ifConditionThrow(this.isInTheList(name), this.myAddException(name), this.myAddBlock(name, aValue))
     }
-
-    //fun provide()
 
     abstract fun myAddException(word : String): Exception
 

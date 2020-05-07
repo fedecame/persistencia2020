@@ -1,4 +1,4 @@
-package ar.edu.unq.eperdemic.modelo.random
+package ar.edu.unq.eperdemic.utility.random
 
 import ar.edu.unq.eperdemic.modelo.exception.MalosParametrosRunTimeException
 import kotlin.random.Random

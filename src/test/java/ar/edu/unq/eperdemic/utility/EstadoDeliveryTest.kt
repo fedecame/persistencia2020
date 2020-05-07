@@ -1,4 +1,4 @@
-package ar.edu.unq.eperdemic.modelo
+package ar.edu.unq.eperdemic.utility
 
 import ar.edu.unq.eperdemic.estado.Infectado
 import ar.edu.unq.eperdemic.estado.transformer.EstadoDelivery

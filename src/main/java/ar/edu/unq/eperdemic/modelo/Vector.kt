@@ -60,6 +60,7 @@ class Vector {
         tipo.contagiamePor(vectorQueContagia.especies(), vectorQueContagia.tipo())
     }
 
+//Necesitamos que el vector sepa contagiar a uno
     fun contagiar(vectoresAContagiar: List<Vector>) {
         estadoActual.contagiar(vectoresAContagiar)
     }
