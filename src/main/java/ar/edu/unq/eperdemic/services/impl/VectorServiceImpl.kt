@@ -23,6 +23,7 @@ var ubicacionDao= HibernateUbicacionDAO()
 
     override fun mover(vectorId: Int, nombreUbicacion: String) {
         return runTrx {
+
             var vector= vectorDao.recuperar(vectorId)
             vector.ubicacion=ubicacionDao.recuperar(nombreUbicacion)
             vectorDao.crear(vector)
