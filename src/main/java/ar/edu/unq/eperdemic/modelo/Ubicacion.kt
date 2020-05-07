@@ -14,4 +14,8 @@ class Ubicacion() : Serializable {
     fun setearNombre(nombre:String){
         nombreUbicacion=nombre
     }
+    fun alojarVector(vector:Vector){
+        vectores.add(vector)
+    }
+
 }

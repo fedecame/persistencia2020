@@ -10,5 +10,7 @@ interface UbicacionService {
     /* Operaciones CRUD*/
     fun crearUbicacion(nombreUbicacion: String): Ubicacion
      fun borrarTodo()
+    fun recuperarUbicacion(nombreUbicacion: String)
+
 
 }
