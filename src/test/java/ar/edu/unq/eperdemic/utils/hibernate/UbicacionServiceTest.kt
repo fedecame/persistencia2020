@@ -61,19 +61,13 @@ class UbicacionServiceTest {
     Assert.assertEquals(vectorActualizado.ubicacion?.nombreUbicacion,"Quilmes")
     }
 
-//(expected = NoExisteUbicacionADondeSeDeseaMover::class)internal.IntegratorServiceImpl - Adding Integrator [org.hibernate.secure.spi.JaccIntegrator].
-//00:21:30.557 [main] DEBUG org.hibernate.integrator.internal.IntegratorServiceImpl - Adding Integrator [org.hibernate.cache.internal.CollectionCacheInvalidator].
-//00:21:30.959 [main] INFO org.hibernate.Version - HHH000412: Hibernate ORM core version 5.4.12.Final
-//00:21:30.966 [main] DEBUG org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found
-//00:21:31.655 [main] DEBUG org.hibernate.boot.jaxb.internal.stax.LocalXmlResourceResolver - Interpreting public/system identifier : [-//Hibernate/Hibernate Configuration DTD 3.0//EN] - [http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd]
-//00:21:31.657 [main] DEBUG org.hibernate.boot.jaxb.internal.stax.LocalXmlResourceResolver - Recognized hibernate-configuration identifier; attempting to resolve on classpath under org/hibernate/
-//00:21:31.668 [main] DEBUG org.hibernate.boot.cfgxml.internal.Jax
+@Test (expected = NoExisteUbicacionADondeSeDeseaMover::class)
  fun seMueveAUbicacionQueNoExiste(){
     vector.setearNombreUbicacion("Florencio Varela")
     vectorService.crearVector(vector)
     ubicacionService.mover(1,"Sarandi")
 }
-
+@After
     open fun eliminarTodo(){
         vectorService.borrarTodo()
     }

@@ -2,6 +2,7 @@ package ar.edu.unq.eperdemic.persistencia.dao.hibernate
 
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.modelo.exception.NoExisteUbicacionADondeSeDeseaMover
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 
@@ -14,7 +15,11 @@ class HibernateUbicacionDAO : HibernateDAO<Ubicacion>(Ubicacion::class.java), Ub
     }
 
     override fun recuperar(nombre: String): Ubicacion {
-        return super.recuperar(nombre)    }
+        var ubicacion=super.recuperar(nombre)
+        if(ubicacion==null){
+            throw NoExisteUbicacionADondeSeDeseaMover("Nelson")
+        }
+        return ubicacion    }
 
  /*   override fun recuperarAll():MutableList<Ubicacion>{
         val session= TransactionRunner.currentSession
