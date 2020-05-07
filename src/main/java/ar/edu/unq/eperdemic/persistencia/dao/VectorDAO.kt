@@ -8,4 +8,10 @@ interface VectorDAO {
    fun crear (vector: Vector): Vector
    fun recuperar(vectorID: Int): Vector
    fun enfermedades(vectorID : Int) : List<Especie>
+
+
+   //fede
+   fun borrar(vector: Vector)
+
+   fun refresh(vector: Vector)
 }

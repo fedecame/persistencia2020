@@ -33,7 +33,6 @@ class Vector {
     @ManyToOne()
     var ubicacion: Ubicacion? =null
 
-
     init{
         this.recuperarse()
     }
@@ -42,8 +41,9 @@ class Vector {
         this.cambiarEstado(Sano())
     }
 
-    fun infectarse(){
+    fun infectarse(especie: Especie){
         this.cambiarEstado(Infectado())
+        this.agregarEspecie(especie)
     }
 
     private fun cambiarEstado(unEstado: EstadoVector) {
@@ -53,33 +53,12 @@ class Vector {
     fun agregarEspecie(unaEspecie: Especie){
         especies.add(unaEspecie)
     }
-    fun setearNombreUbicacion(nombre: String){
-        nombreDeLocacionActual=nombre
-        ubicacion= Ubicacion()
-        ubicacion!!.setearNombre(nombre)
-    }
-
-}
-
-
-/*
-    //Falta la ubicacion de Nelson aca
-    //Esto es lo que teniamos por defecto
-    //@Column(nullable = false, length = 500)
-    //@ManyToOne(cascade = [CascadeType.ALL])
-    //var ubicacion : Ubicacion? = null
 
     fun contagiarsePor(vectorQueContagia: Vector) {
-        tipo.contagiamePor(vectorQueContagia.especies(), vectorQueContagia.tipo())
+        tipo.contagiamePor(this, vectorQueContagia.tipo, vectorQueContagia.especies.toList())
     }
 
-//Necesitamos que el vector sepa contagiar a uno
     fun contagiar(vectoresAContagiar: List<Vector>) {
-        estadoActual.contagiar(vectoresAContagiar)
+        estado.contagiar(this, vectoresAContagiar)
     }
-
-    fun infectar(especie: Especie) {
-        estado.infectarse(this)
-        this.agregarEspecie(especie)
-    }
-*/
+}

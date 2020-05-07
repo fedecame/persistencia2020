@@ -86,7 +86,7 @@ class VectorTest {
     @Test
     fun testelVectorPasaAEstadoSanoAlrecuperarse(){
         Assert.assertEquals("Sano", vectorSUT.estado.nombre())
-        vectorSUT.infectarse()
+        vectorSUT.infectarse(especie)
         Assert.assertEquals("Infectado", vectorSUT.estado.nombre())
     }
 }
