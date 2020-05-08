@@ -12,9 +12,6 @@ class HibernateVectorDAO :  HibernateDAO<Vector>(Vector::class.java), VectorDAO 
         super.guardar(vector)
         return vector
     }
-    override fun actualizar(vector:Vector){
-       return super.actualizar(vector)
-    }
 
     override fun recuperar(vectorID: Int): Vector {
 
@@ -50,9 +47,5 @@ class HibernateVectorDAO :  HibernateDAO<Vector>(Vector::class.java), VectorDAO 
 
     override fun borrar(vector: Vector) {
         super.eliminar(vector)
-    }
-
-    override fun refresh(vector: Vector) {
-        super.actualizar(vector)
     }
 }
