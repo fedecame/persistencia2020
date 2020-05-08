@@ -25,9 +25,8 @@ var ubicacionDao= HibernateUbicacionDAO()
         return runTrx {
             var vector= vectorDao.recuperar(vectorId)
             var ubicacionOrigen=ubicacionDao.recuperar(vector.ubicacion?.nombreUbicacion)
-            vector.ubicacion=ubicacionDao.recuperar(nombreUbicacion)//actualizo Ubicacion de Vector
-            ubicacionOrigen.vectores.removeIf { vector-> vector.id==vectorId.toLong() }//"desalojo" a el vector de la ubicacion origen
-            ubicacionDao.actualizar(ubicacionOrigen)
+           vector.ubicacion=ubicacionDao.recuperar(nombreUbicacion)//actualizo Ubicacion de Vector
+
             vectorDao.actualizar(vector)
         }}
 
@@ -35,9 +34,7 @@ var ubicacionDao= HibernateUbicacionDAO()
 
     override fun crearVector(vector: Vector): Vector = runTrx {
         var vector1=vectorDao.crear(vector)
-     var ubicacion = ubicacionDao.recuperar(vector.ubicacion?.nombreUbicacion)
-        ubicacion.vectores.add(vector1)//"alojo" el vector en ubicacion
-        ubicacionDao.actualizar(ubicacion)
+
     vector
     }
 

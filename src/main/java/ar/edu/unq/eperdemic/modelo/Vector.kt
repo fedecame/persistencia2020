@@ -29,7 +29,7 @@ class Vector {
     @Convert(converter = EstadoConverter::class)
     lateinit var estado : EstadoVector
 
-    @ManyToOne()
+    @ManyToOne(cascade=[CascadeType.ALL])
     var ubicacion: Ubicacion? =null
 
 
