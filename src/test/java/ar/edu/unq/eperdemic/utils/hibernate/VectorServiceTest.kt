@@ -5,6 +5,7 @@ import ar.edu.unq.eperdemic.estado.Infectado
 import ar.edu.unq.eperdemic.estado.Sano
 import ar.edu.unq.eperdemic.modelo.*
 import ar.edu.unq.eperdemic.modelo.exception.IDVectorNoEncontradoException
+import ar.edu.unq.eperdemic.persistencia.dao.DataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
@@ -12,6 +13,7 @@ import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
+import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.tipo.Humano
 import ar.edu.unq.eperdemic.tipo.Insecto
 import ar.edu.unq.eperdemic.tipo.TipoVector
@@ -29,9 +31,11 @@ class VectorServiceTest {
     lateinit var estado : EstadoVector
     lateinit var especie : Especie
     lateinit var ubicacion : Ubicacion
+    lateinit var dataDAO: DataDAO
 
     @Before
     fun setUp(){
+        dataDAO = HibernateDataDAO()
         vector = Vector()
         tipo = Humano()
         estado = Sano()
@@ -40,12 +44,12 @@ class VectorServiceTest {
         especie.nombre = "Algo"
         especie.paisDeOrigen = "Alemania"
         especie.patogeno = Patogeno("")
-        vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateDataDAO(), HibernateUbicacionDAO())
+        vectorService = VectorServiceImpl(HibernateVectorDAO(), dataDAO, HibernateUbicacionDAO())
         vector.tipo = tipo
         vector.estado = estado
         vector.agregarEspecie(especie)
 
-        ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO(), HibernateDataDAO())
+        ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO(), dataDAO)
         ubicacion = ubicacionService.crearUbicacion("Quilmes")
         vector.ubicacion = ubicacion
         ubicacion.vectores.add(vector)
@@ -192,9 +196,16 @@ class VectorServiceTest {
         val vectorRecuperado = vectorService.recuperarVector(42)
     }
 
+    @Test
+    fun testBorraVector(){
+        vectorService.borrarVector(vector.id!!.toInt())
+    }
+
     @After
     open fun eliminarTodo(){
-        vectorService.borrarTodo()
+        TransactionRunner.runTrx {
+            dataDAO.clear()
+        }
     }
 
 }

@@ -17,7 +17,6 @@ class Especie() {
         cantidadInfectados++
     }
 
-    /*
     fun factorContagioAnimal(): Int = patogeno.factorContagioAnimal()
 
     fun factorContagioInsecto(): Int = patogeno.factorContagioInsecto()
@@ -27,5 +26,4 @@ class Especie() {
     fun cantidadDeADN() {
         cantidadInfectados.div(5)
     }
-     */
 }

@@ -10,6 +10,7 @@ class Humano() : TipoVector() {
     override fun factorContagio(especie : Especie): Int = 2//especie.factorContagioHumano()
 
     override fun agregarInfectado(especie: Especie) {
+        // esto suma 1 a la cant d infectados q valen para el adn en la especie del parametro
         //especie.agregarInfectado()
     }
 }

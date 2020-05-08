@@ -11,6 +11,7 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
+import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.tipo.Humano
 import org.junit.After
 import org.junit.Assert
@@ -127,6 +128,8 @@ fun alMoverAMismaUbicacionDondeEstaSeQuedaEnLaMismaUbicacion(){
 
   @After
   open fun eliminarTodo(){
-        vectorService.borrarTodo()
-    }
+      TransactionRunner.runTrx {
+          HibernateDataDAO().clear()
+      }
+  }
 }
