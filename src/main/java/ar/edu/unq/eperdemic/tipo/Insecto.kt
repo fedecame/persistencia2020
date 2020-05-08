@@ -7,5 +7,5 @@ class Insecto() : TipoVector() {
 
     override fun esInsecto() = true
 
-    override fun factorContagio(especie : Especie): Int = 2//especie.factorContagioInsecto()
+    override fun factorContagio(especie : Especie): Int = especie.factorContagioInsecto()
 }

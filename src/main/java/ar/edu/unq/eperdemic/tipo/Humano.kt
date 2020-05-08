@@ -7,7 +7,7 @@ class Humano() : TipoVector() {
 
     override fun esHumano() = true
 
-    override fun factorContagio(especie : Especie): Int = 2//especie.factorContagioHumano()
+    override fun factorContagio(especie : Especie): Int =especie.factorContagioHumano()
 
     override fun agregarInfectado(especie: Especie) {
         //especie.agregarInfectado()
