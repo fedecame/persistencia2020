@@ -21,7 +21,7 @@ class EstadoDeliveryTest {
 
     @Test
     fun estadoDeliveryRetornaElEstadoSanoCorrectoCuandoLaClaveEsLaIndicada(){
-        val result = estadoDeliverySUT.get(sano)!!
+        val result = estadoDeliverySUT.get("sano")!!
         Assert.assertTrue(result is Sano)
     }
 

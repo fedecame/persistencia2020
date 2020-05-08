@@ -91,17 +91,20 @@ class VectorServiceTest {
         vector1.tipo = Insecto()
         vector1.estado = Infectado()
         vector1.ubicacion = ubicacion
-        val especie2 = Especie()
 
+
+        val especie2 = Especie()
         especie2.cantidadInfectados = 23
         especie2.nombre = "Sarasa"
         especie2.paisDeOrigen = "Japon"
         especie2.patogeno = Patogeno("Nisman")
+
         val especie3 = Especie()
         especie3.cantidadInfectados = 12
         especie3.nombre = "Coso"
         especie3.paisDeOrigen = "Argentina"
         especie3.patogeno = Patogeno("Coppola")
+
         vector1.agregarEspecie(especie2)
         vector1.agregarEspecie(especie3)
         vectorService.crearVector(vector1)

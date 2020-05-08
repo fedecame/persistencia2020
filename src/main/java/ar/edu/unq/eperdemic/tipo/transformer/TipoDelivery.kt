@@ -11,38 +11,6 @@ import ar.edu.unq.eperdemic.tipo.TipoVector
 import ar.edu.unq.eperdemic.utility.Delivery
 
 class TipoDelivery(tiposList : List<TipoVector>) : Delivery<TipoVector>(tiposList) {
-    override fun myAddException(nombreTipo : String) = ClaveRepetidaDeTipoException(nombreTipo)
-    override fun myGetException(nombreTipo : String) = TipoNoEncontradoException(nombreTipo)
+    override fun myAddException(nombreTipo: String) = ClaveRepetidaDeTipoException(nombreTipo)
+    override fun myGetException(nombreTipo: String) = TipoNoEncontradoException(nombreTipo)
 }
-/*
-class TipoDelivery {
-
-    private var tipos = mutableMapOf<String, TipoVector>()
-
-    init {
-        this.agregarTipo(Animal())
-        this.agregarTipo(Humano())
-        this.agregarTipo(Insecto())
-    }
-
-    fun agregarTipo(nuevoTipo: TipoVector) {
-        val nombreTipo = this.format(nuevoTipo::class.java.simpleName)
-        this.ifConditionThrow(this.estaEnLaLista(nombreTipo), ClaveRepetidaDeEstadoException(nombreTipo), { tipos.put(nombreTipo.toLowerCase(), nuevoTipo) })
-    }
-
-    fun tipo(unNombre: String): TipoVector? {
-        return this.ifConditionThrow(!this.estaEnLaLista(unNombre), EstadoNoEncontradoException(unNombre), { tipos.get(unNombre.toLowerCase()) })
-    }
-
-    private fun estaEnLaLista(unNombre: String) = tipos.keys.map{this.format(it)}.contains(this.format(unNombre))
-
-    private fun format(word : String) = word.toLowerCase()
-
-    private fun <T> ifConditionThrow(condition: Boolean, e: Exception, bloque: () -> T): T {
-        if (condition) {
-            throw e
-        }
-        return bloque()
-    }
-}
-*/
