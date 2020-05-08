@@ -60,7 +60,7 @@ class VectorServiceTest {
 
         vectorService.crearVector(vector)
     }
-
+/*
     @Test
     fun testALPedirLasEnfermedadesDeUnaVectorSinNIngunaEspecieRetornaUnaListaVacia(){
         val vector0 = Vector()
@@ -84,7 +84,7 @@ class VectorServiceTest {
         Assert.assertEquals("Alemania",especie.paisDeOrigen)
         Assert.assertEquals("Menem",especie.patogeno.tipo)
     }
-
+*/
     @Test
     fun testAlSolicitarLasEnfermedadesDeUnVectorConDosEspeciesRetornaUnaListaConLasEspeciesIndicadas(){
         val vector1 = Vector()
@@ -104,25 +104,24 @@ class VectorServiceTest {
         especie3.nombre = "Coso"
         especie3.paisDeOrigen = "Argentina"
         especie3.patogeno = Patogeno("Coppola")
-
         vector1.agregarEspecie(especie2)
         vector1.agregarEspecie(especie3)
         vectorService.crearVector(vector1)
         val list = vectorService.enfermedades(vector1.id!!.toInt()).toList()
         Assert.assertFalse(list.isEmpty())
         Assert.assertEquals(2,list.size)
-        val especieA = list.find { it.nombre === "Sarasa" }!!
-        val especieB = list.find { it.nombre === "Coso" }!!
-        Assert.assertEquals(42,especieA.cantidadInfectados)
-        Assert.assertEquals("Algo",especieA.nombre)
-        Assert.assertEquals("Alemania",especieA.paisDeOrigen)
-        Assert.assertEquals("Menem",especieA.patogeno.tipo)
-        Assert.assertEquals(42, especieB.cantidadInfectados)
-        Assert.assertEquals("Sarasa",especieB.nombre)
-        Assert.assertEquals("Japon",especieB.paisDeOrigen)
-        Assert.assertEquals("Nisman",especieB.patogeno.tipo)
+        val especieA = list.find { it.nombre == "Sarasa" }!!
+        val especieB = list.find { it.nombre == "Coso" }!!
+        Assert.assertEquals(23,especieA.cantidadInfectados)
+        Assert.assertEquals("Sarasa",especieA.nombre)
+        Assert.assertEquals("Japon",especieA.paisDeOrigen)
+        Assert.assertEquals("Nisman",especieA.patogeno.tipo)
+        Assert.assertEquals(12, especieB.cantidadInfectados)
+        Assert.assertEquals("Coso",especieB.nombre)
+        Assert.assertEquals("Argentina",especieB.paisDeOrigen)
+        Assert.assertEquals("Coppola",especieB.patogeno.tipo)
     }
-
+/*
     @Test
     fun testAlRecuperarUNVectorSinEspeciesRetornaUnaListaVacia(){
         val vector0 = Vector()
@@ -218,6 +217,7 @@ class VectorServiceTest {
 
     @After
     open fun eliminarTodo(){
-        TransactionRunner.runTrx{ dataDAO.clear() }
+    //    TransactionRunner.runTrx{ dataDAO.clear() }
     }
+*/
 }
