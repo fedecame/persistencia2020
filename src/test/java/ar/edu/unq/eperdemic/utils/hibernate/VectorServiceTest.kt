@@ -5,10 +5,17 @@ import ar.edu.unq.eperdemic.estado.Infectado
 import ar.edu.unq.eperdemic.estado.Sano
 import ar.edu.unq.eperdemic.modelo.*
 import ar.edu.unq.eperdemic.modelo.exception.IDVectorNoEncontradoException
+import ar.edu.unq.eperdemic.persistencia.dao.DataDAO
+import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
+import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
+import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
+import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
+import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.tipo.Humano
 import ar.edu.unq.eperdemic.tipo.Insecto
 import ar.edu.unq.eperdemic.tipo.TipoVector
@@ -20,14 +27,26 @@ import org.junit.Test
 class VectorServiceTest {
 
     lateinit var vectorService : VectorService
+    lateinit var ubicacionService : UbicacionService
     lateinit var vector : Vector
     lateinit var tipo : TipoVector
     lateinit var estado : EstadoVector
     lateinit var especie : Especie
+    lateinit var dataDAO : DataDAO
+    lateinit var ubicacionDAO : UbicacionDAO
+    lateinit var vectorDAO : VectorDAO
+    lateinit var ubicacion : Ubicacion
 
     @Before
     fun setUp(){
+        dataDAO = HibernateDataDAO()
         vector = Vector()
+        dataDAO = HibernateDataDAO()
+        ubicacionDAO = HibernateUbicacionDAO()
+        vectorDAO = HibernateVectorDAO()
+        vectorService = VectorServiceImpl(vectorDAO, dataDAO, ubicacionDAO)
+        ubicacionService = UbicacionServiceImpl(ubicacionDAO, dataDAO)
+        ubicacion = ubicacionService.crearUbicacion("Alemania")
         tipo = Humano()
         estado = Sano()
         especie = Especie()
@@ -35,11 +54,18 @@ class VectorServiceTest {
         especie.nombre = "Algo"
         especie.paisDeOrigen = "Alemania"
         especie.patogeno = Patogeno("")
-        vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateDataDAO())
+        vectorService = VectorServiceImpl(HibernateVectorDAO(), dataDAO, HibernateUbicacionDAO())
+        especie.patogeno = Patogeno("")
         vector.tipo = tipo
         vector.estado = estado
         vector.agregarEspecie(especie)
-        vectorService.crearVector(vector)
+
+        ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO(), dataDAO)
+        ubicacion = ubicacionService.crearUbicacion("Quilmes")
+        vector.ubicacion = ubicacion
+        ubicacion.vectores.add(vector)
+        var vectorDB = vectorService.crearVector(vector)
+        ubicacionService.mover(vectorDB.id!!.toInt(), ubicacion.nombreUbicacion)
     }
 
     @Test
@@ -66,7 +92,7 @@ class VectorServiceTest {
     }
 
     @Test
-    fun testAlSolicitarLasEnfermedadesDeUnVectorConDosEspeciesRetornaUnaListaConLaEspecieIndicada(){
+    fun testAlSolicitarLasEnfermedadesDeUnVectorConDosEspeciesRetornaUnaListaConLasEspeciesIndicadas(){
         val vector1 = Vector()
         vector1.tipo = Insecto()
         vector1.estado = Infectado()
@@ -78,20 +104,19 @@ class VectorServiceTest {
         vector1.agregarEspecie(especie)
         vector1.agregarEspecie(especie2)
         vectorService.crearVector(vector1)
-        val list = vectorService.enfermedades(vector1.id!!.toInt())
+        val list = vectorService.enfermedades(vector1.id!!.toInt()).toList()
         Assert.assertFalse(list.isEmpty())
         Assert.assertEquals(2,list.size)
-        val especie1 = list.get(0)
-        val especie0 = list.get(1)
-        Assert.assertEquals(42,especie0.cantidadInfectados)
-        Assert.assertEquals("Algo",especie0.nombre)
-        Assert.assertEquals("Alemania",especie0.paisDeOrigen)
-        Assert.assertEquals("",especie0.patogeno.tipo)
+        val especie0 = list.get(0)
+        val especie1 = list.get(1)
         Assert.assertEquals(23,especie1.cantidadInfectados)
         Assert.assertEquals("Sarasa",especie1.nombre)
         Assert.assertEquals("Japon",especie1.paisDeOrigen)
         Assert.assertEquals("Nisman",especie1.patogeno.tipo)
-
+        Assert.assertEquals(42,especie0.cantidadInfectados)
+        Assert.assertEquals("Algo",especie0.nombre)
+        Assert.assertEquals("Alemania",especie0.paisDeOrigen)
+        Assert.assertEquals("",especie0.patogeno.tipo)
     }
 
 
@@ -112,8 +137,6 @@ class VectorServiceTest {
 
     @Test
     fun testAlRecuperarUnVectorConUnaEspeciesRetornaUnaListaConLaEspecieIndicada(){
-        //Cuando tengamos el service con el infectar y demas, lo vamos a poder probar a nivel de Service
-        //Estaria bueno agregar la ruta de sanar(vectorID) en VectorService
         val recuperado = vectorService.recuperarVector(1)
         val list = recuperado.especies
         Assert.assertFalse(list.isEmpty())
@@ -156,12 +179,6 @@ class VectorServiceTest {
         Assert.assertEquals(1, vector.id!!.toInt())
     }
 
-//    implementar la exception
-//    @Test()
-//    fun testAlIntentarRecuperarUnVectorConUNIdInexistenteSeLanzaUNaIDVectorNoEncontradoException(){
-//        vectorService.recuperarVector(420)
-//    }
-
      @Test
    fun testElIDEsAutoincrementalALaMedidaQueSeCreanNuevosVectores(){
          val vector0 = Vector()
@@ -186,7 +203,21 @@ class VectorServiceTest {
     @Test(expected = IDVectorNoEncontradoException::class)
     fun testAlRecuperarUnIDInexistenteRetornaNull(){
         val vectorRecuperado = vectorService.recuperarVector(42)
-//        Assert.assertEquals(null, vectorRecuperado)
+    }
+
+    @Test(expected = IDVectorNoEncontradoException::class)
+    fun testBorraVector(){
+        vectorService.borrarVector(vector.id!!.toInt())
+        vectorService.recuperarVector(vector.id!!.toInt())
+    }
+
+    @Test
+    fun testBorraVectorDeUbicacion(){
+        val ubicacionAnt = ubicacionService.recuperarUbicacion(ubicacion.nombreUbicacion)
+        Assert.assertTrue(ubicacionAnt.vectores.any { curr -> curr.id == vector.id })
+        vectorService.borrarVector(vector.id!!.toInt())
+        val ubicacionAct = ubicacionService.recuperarUbicacion(ubicacion.nombreUbicacion)
+        Assert.assertFalse(ubicacionAct.vectores.any { curr -> curr.id == vector.id })
     }
 
     @After

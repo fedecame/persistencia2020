@@ -1,6 +1,7 @@
 package ar.edu.unq.eperdemic.persistencia.dao.hibernate
 
 import ar.edu.unq.eperdemic.modelo.Ubicacion
+import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.exception.NoExisteUbicacion
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 
@@ -23,6 +24,11 @@ class HibernateUbicacionDAO : HibernateDAO<Ubicacion>(Ubicacion::class.java), Ub
         return super.actualizar(ubicacion)
     }
 
+    override fun agregarVector(vector: Vector, ubicacion: Ubicacion) {
+        val ubicacionDB = this.recuperar(ubicacion.nombreUbicacion)
+        ubicacionDB.vectores.add(vector)
+        this.actualizar(ubicacionDB)
+    }
 
 }
 

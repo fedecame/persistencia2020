@@ -10,9 +10,9 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 
+// A FUTURO: Crear un MegalodonService que maneje todos los hilos y delegue en los otros services.
+class VectorServiceImpl(var vectorDao: VectorDAO, var dataDAO: DataDAO, var ubicacionDao: UbicacionDAO) : VectorService {
 
-class VectorServiceImpl(var vectorDao: VectorDAO, var dataDAO: DataDAO) : VectorService {
-var ubicacionDao= HibernateUbicacionDAO()
 
     override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) {
         runTrx { vectorDao.contagiar(vectorInfectado, vectores) }
@@ -25,8 +25,7 @@ var ubicacionDao= HibernateUbicacionDAO()
         return runTrx {
             var vector= vectorDao.recuperar(vectorId)
             var ubicacionOrigen=ubicacionDao.recuperar(vector.ubicacion?.nombreUbicacion)
-           vector.ubicacion=ubicacionDao.recuperar(nombreUbicacion)//actualizo Ubicacion de Vector
-
+            vector.ubicacion=ubicacionDao.recuperar(nombreUbicacion)//actualizo Ubicacion de Vector
             vectorDao.actualizar(vector)
         }}
 
@@ -34,17 +33,15 @@ var ubicacionDao= HibernateUbicacionDAO()
 
     override fun crearVector(vector: Vector): Vector = runTrx {
         var vector1=vectorDao.crear(vector)
-
-    vector
+        vector1
     }
 
     override fun recuperarVector(vectorID: Int): Vector = runTrx { vectorDao.recuperar(vectorID) }
 
     override fun borrarVector(vectorId: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun borrarTodo() {
-            runTrx { dataDAO.clear() }
+        runTrx {
+            val vector = vectorDao.recuperar(vectorId)
+            vectorDao.borrar(vector)
+        }
     }
 }
