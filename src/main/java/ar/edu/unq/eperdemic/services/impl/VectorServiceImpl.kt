@@ -35,19 +35,12 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var dataDAO: DataDAO, var ubic
 
     override fun crearVector(vector: Vector): Vector = runTrx {
         var vector1=vectorDao.crear(vector)
-        var ubicacion = ubicacionDao.recuperar(vector.ubicacion!!.nombreUbicacion)
-        ubicacion.vectores.add(vector1)//"alojo" el vector en ubicacion
-        ubicacionDao.actualizar(ubicacion)
-    vector
+        vector1
     }
 
     override fun recuperarVector(vectorID: Int): Vector = runTrx { vectorDao.recuperar(vectorID) }
 
     override fun borrarVector(vectorId: Int) {
         TODO("Not yet implemented")
-    }
-
-    override fun borrarTodo() {
-        runTrx { dataDAO.clear() }
     }
 }
