@@ -4,7 +4,10 @@ import ar.edu.unq.eperdemic.tipo.Animal
 import ar.edu.unq.eperdemic.tipo.Humano
 import ar.edu.unq.eperdemic.tipo.Insecto
 import ar.edu.unq.eperdemic.tipo.TipoVector
+import ar.edu.unq.eperdemic.utility.Converter
 import javax.persistence.AttributeConverter
+
+//Cuando funcione el converter : class TipoConverter : Converter<TipoVector>(TipoDelivery(mutableListOf(Animal(), Humano(), Insecto())))
 
 class TipoConverter : AttributeConverter<TipoVector, String> {
 
@@ -15,8 +18,6 @@ class TipoConverter : AttributeConverter<TipoVector, String> {
         return sb.toString()
     }
 
-    //Cuando el Delivery funcione
-    //override fun convertToEntityAttribute(dbTipo : String) : TipoVector? = TipoDelivery(mutableListOf(Animal(), Humano(), Insecto())).get(dbTipo)!!
     override fun convertToEntityAttribute(dbTipo : String) : TipoVector? = TipoDelivery(mutableListOf(Animal(), Insecto(), Humano())).get(dbTipo)!!
 
 }

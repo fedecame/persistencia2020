@@ -2,7 +2,9 @@ package ar.edu.unq.eperdemic.utility
 
 import ar.edu.unq.eperdemic.estado.transformer.EstadoDelivery
 import ar.edu.unq.eperdemic.modelo.exception.ClaveRepetidaDeEstadoException
+import ar.edu.unq.eperdemic.modelo.exception.ClaveRepetidaDeTipoException
 import ar.edu.unq.eperdemic.modelo.exception.EstadoNoEncontradoException
+import ar.edu.unq.eperdemic.modelo.exception.TipoNoEncontradoException
 import ar.edu.unq.eperdemic.tipo.Animal
 import ar.edu.unq.eperdemic.tipo.Humano
 import ar.edu.unq.eperdemic.tipo.Insecto
@@ -106,12 +108,12 @@ class TipoDeliveryTest {    private lateinit var estadoDeliverySUT : EstadoDeliv
         Assert.assertTrue(result.esInsecto())
     }
 
-    @Test(expected = EstadoNoEncontradoException::class)
+    @Test(expected = TipoNoEncontradoException::class)
     fun testAlIntentarRecuperarUnVectorConUnaKeyErroneaArrojaUNEstadoNoEncontradoRunTimeException(){
         val algo = tipoDeliverySUT.get("sarasa")
     }
 
-    @Test(expected = ClaveRepetidaDeEstadoException::class)
+    @Test(expected = ClaveRepetidaDeTipoException::class)
     fun testAlIntentaAgregarUnEstadoConUnaKeyYaUtilizadaArrojaUnEstadoNoEncontradoRunTimeException(){
         val algo = tipoDeliverySUT.add(Humano())
     }
