@@ -21,8 +21,8 @@ object JDBCConnector {
      */
     private fun openConnection(): Connection {
         val env = System.getenv()
-        val user = "root"
-        val password = "fedegato"
+        val user = env.getOrDefault("USER", "root")
+        val password = env.getOrDefault("PASSWORD", "root")
         val host = env.getOrDefault("HOST", "localhost")
         val dataBase = env.getOrDefault("DATA_BASE", "epers_tp1_jdbc")
 
