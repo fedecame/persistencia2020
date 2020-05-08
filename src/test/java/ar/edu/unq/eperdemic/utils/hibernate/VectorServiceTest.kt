@@ -92,7 +92,7 @@ class VectorServiceTest {
         vector1.estado = Infectado()
         vector1.ubicacion = ubicacion
         val especie2 = Especie()
-        
+
         especie2.cantidadInfectados = 23
         especie2.nombre = "Sarasa"
         especie2.paisDeOrigen = "Japon"
