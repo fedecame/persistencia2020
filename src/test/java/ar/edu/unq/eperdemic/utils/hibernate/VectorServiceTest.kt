@@ -15,6 +15,7 @@ import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
+import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.tipo.Humano
 import ar.edu.unq.eperdemic.tipo.Insecto
 import ar.edu.unq.eperdemic.tipo.TipoVector
@@ -91,6 +92,7 @@ class VectorServiceTest {
         vector1.estado = Infectado()
         vector1.ubicacion = ubicacion
         val especie2 = Especie()
+        
         especie2.cantidadInfectados = 23
         especie2.nombre = "Sarasa"
         especie2.paisDeOrigen = "Japon"
@@ -213,6 +215,6 @@ class VectorServiceTest {
 
     @After
     open fun eliminarTodo(){
-        dataDAO.clear()
+        TransactionRunner.runTrx{ dataDAO.clear() }
     }
 }

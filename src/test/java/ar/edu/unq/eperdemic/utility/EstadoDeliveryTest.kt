@@ -22,44 +22,44 @@ class EstadoDeliveryTest {
     @Test
     fun estadoDeliveryRetornaElEstadoSanoCorrectoCuandoLaClaveEsLaIndicada(){
         val result = estadoDeliverySUT.get(sano)!!
-        Assert.assertEquals(sano,result.nombre())
+        Assert.assertTrue(result is Sano)
     }
 
     @Test
     fun estadoDeliveryRetornaElEstadoSanoCorrectoCuandoLaClaveEsLaIndicadaSiSeLoEscribeConMayusculas(){
         val result = estadoDeliverySUT.get("SANO")!!
-        Assert.assertEquals(sano,result.nombre())
+        Assert.assertTrue(result is Sano)
     }
 
     @Test
     fun estadoDeliveryRetornaElEstadoSanoCorrectoCuandoLaClaveEsLaIndicadaSiSeLoEscribeConMinusculas(){
         val result = estadoDeliverySUT.get("sano")!!
-        Assert.assertEquals(sano,result.nombre())
+        Assert.assertTrue(result is Sano)
     }
 
     @Test
     fun estadoDeliveryRetornaElEstadoCorrectoCuandoLaClaveEsLaIndicadaSiSeLoEscribeConMinusculasYMayusculas(){
         val result = estadoDeliverySUT.get("SaNo")!!
-        Assert.assertEquals(sano,result.nombre())
+        Assert.assertTrue(result is Sano)
     }
 
     @Test
     fun estadoDeliveryRetornaElEstadoInfectadoCorrectoCuandoLaClaveEsLaIndicadaSiSeLoEscribeConMayusculas(){
         val result = estadoDeliverySUT.get("Infectado")!!
-        Assert.assertEquals(infectado,result.nombre())
+        Assert.assertTrue(result is Infectado)
     }
 
     @Test
     fun estadoDeliveryRetornaElEstadoinfectadoCorrectoCuandoLaClaveEsLaIndicadaSiSeLoEscribeConMinusculas(){
         val result = estadoDeliverySUT.get("infectado")!!
-        Assert.assertEquals(infectado,result.nombre())
+        Assert.assertTrue(result is Infectado)
     }
 
 
     @Test
     fun estadoDeliveryRetornaElEstadoinfectadoCorrectoCuandoLaClaveEsLaIndicadaSiSeLoEscribeConMayusculasYMinusculasYMayusculas(){
         val result = estadoDeliverySUT.get("InFeCtAdO")!!
-        Assert.assertEquals(infectado,result.nombre())
+        Assert.assertTrue(result is Infectado)
     }
 
     @Test(expected = EstadoNoEncontradoException::class)
