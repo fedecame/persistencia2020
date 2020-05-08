@@ -11,7 +11,6 @@ class HibernateDataService() : DataService, HibernateDataDAO() {
         TODO("Not yet implemented")
     }
 
-    //Esto tiene sentido?
     override fun eliminarTodo() {
         super.clear()
     }

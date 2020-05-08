@@ -3,31 +3,45 @@ package ar.edu.unq.eperdemic.services.impl
 import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.persistencia.dao.DataDAO
+import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 
+// A FUTURO: Crear un MegalodonService que maneje todos los hilos y delegue en los otros services.
+class VectorServiceImpl(var vectorDao: VectorDAO, var dataDAO: DataDAO, var ubicacionDao: UbicacionDAO) : VectorService {
 
-class VectorServiceImpl(var vectorDao: VectorDAO, var dataDAO: DataDAO) : VectorService {
+
     override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) {
-        TODO("Not yet implemented")
+        runTrx { vectorDao.contagiar(vectorInfectado, vectores) }
     }
 
     override fun infectar(vector: Vector, especie: Especie) {
-        TODO("Not yet implemented")
-    }
+        runTrx { vectorDao.infectar(vector,especie) }    }
+
+    override fun mover(vectorId: Int, nombreUbicacion: String) {
+        return runTrx {
+            var vector= vectorDao.recuperar(vectorId)
+            var ubicacionOrigen=ubicacionDao.recuperar(vector.ubicacion?.nombreUbicacion!!)
+            vector.ubicacion=ubicacionDao.recuperar(nombreUbicacion)//actualizo Ubicacion de Vector
+            vectorDao.actualizar(vector)
+        }}
 
     override fun enfermedades(vectorId: Int): List<Especie> = runTrx { vectorDao.enfermedades(vectorId) }
 
-    override fun crearVector(vector: Vector): Vector = runTrx { vectorDao.crear(vector) }
+    override fun crearVector(vector: Vector): Vector = runTrx {
+        var vector1=vectorDao.crear(vector)
+        vector1
+    }
 
     override fun recuperarVector(vectorID: Int): Vector = runTrx { vectorDao.recuperar(vectorID) }
 
     override fun borrarVector(vectorId: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun borrarTodo() {
-            runTrx { dataDAO.clear() }
+        runTrx {
+            val vector = vectorDao.recuperar(vectorId)
+            vectorDao.borrar(vector)
+        }
     }
 }

@@ -6,7 +6,9 @@ import ar.edu.unq.eperdemic.estado.Sano
 import ar.edu.unq.eperdemic.estado.transformer.EstadoConverter
 import ar.edu.unq.eperdemic.tipo.TipoVector
 import ar.edu.unq.eperdemic.tipo.transformer.TipoConverter
+import org.hibernate.annotations.Cascade
 import javax.persistence.*
+import kotlin.jvm.Transient
 
 @Entity
 class Vector {
@@ -27,6 +29,10 @@ class Vector {
     @Convert(converter = EstadoConverter::class)
     lateinit var estado : EstadoVector
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    var ubicacion: Ubicacion? =null
+
     init{
         this.recuperarse()
     }
@@ -35,8 +41,9 @@ class Vector {
         this.cambiarEstado(Sano())
     }
 
-    fun infectarse(){
+    fun infectarse(especie: Especie){
         this.cambiarEstado(Infectado())
+        this.agregarEspecie(especie)
     }
 
     private fun cambiarEstado(unEstado: EstadoVector) {
@@ -46,26 +53,12 @@ class Vector {
     fun agregarEspecie(unaEspecie: Especie){
         especies.add(unaEspecie)
     }
-}
-
-
-/*
-    //Falta la ubicacion de Nelson aca
-    //Esto es lo que teniamos por defecto
-    //@Column(nullable = false, length = 500)
-    //@ManyToOne(cascade = [CascadeType.ALL])
-    //var ubicacion : Ubicacion? = null
 
     fun contagiarsePor(vectorQueContagia: Vector) {
-        tipo.contagiamePor(vectorQueContagia.especies(), vectorQueContagia.tipo())
+        tipo.contagiamePor(this, vectorQueContagia.tipo, vectorQueContagia.especies.toList())
     }
 
     fun contagiar(vectoresAContagiar: List<Vector>) {
-        estadoActual.contagiar(vectoresAContagiar)
+        estado.contagiar(this, vectoresAContagiar)
     }
-
-    fun infectar(especie: Especie) {
-        estado.infectarse(this)
-        this.agregarEspecie(especie)
-    }
-*/
+}
