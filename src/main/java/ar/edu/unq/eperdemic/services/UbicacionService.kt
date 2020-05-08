@@ -11,6 +11,4 @@ interface UbicacionService {
     fun crearUbicacion(nombreUbicacion: String): Ubicacion
 
     fun recuperarUbicacion(nombreUbicacion: String):Ubicacion
-
-
 }

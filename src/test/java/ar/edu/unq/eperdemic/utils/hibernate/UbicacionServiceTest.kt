@@ -1,5 +1,6 @@
 package ar.edu.unq.eperdemic.utils.hibernate
 
+import ar.edu.unq.eperdemic.estado.Infectado
 import ar.edu.unq.eperdemic.estado.Sano
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
@@ -9,14 +10,20 @@ import ar.edu.unq.eperdemic.modelo.exception.NoExisteUbicacion
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
+import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.tipo.Humano
+import ar.edu.unq.eperdemic.tipo.Insecto
+import ar.edu.unq.eperdemic.utility.random.RandomMaster
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito
+import org.mockito.Mockito.*
 
 class UbicacionServiceTest {
     var vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateDataDAO(), HibernateUbicacionDAO())
@@ -27,6 +34,7 @@ class UbicacionServiceTest {
     val estado = Sano()
    lateinit var ubicacionCreada:Ubicacion
     lateinit var ubicacionCreada1:Ubicacion
+    lateinit var randomGenerator: RandomMaster
 
     @Before
     fun setUp(){
@@ -38,6 +46,8 @@ class UbicacionServiceTest {
         ubicacionCreada = ubicacionService.crearUbicacion("Florencio Varela")
         ubicacionCreada1 = ubicacionService.crearUbicacion("Berazategui")
 
+        randomGenerator = Mockito.mock(RandomMaster::class.java)
+        ubicacionService.randomGenerator = randomGenerator
     }
 
     @Test
@@ -126,8 +136,46 @@ fun alMoverAMismaUbicacionDondeEstaSeQuedaEnLaMismaUbicacion(){
         ubicacionService.recuperarUbicacion("Avellaneda")
     }
 
+    @Test
+    fun expandirSinVectoresInfectadosEnUbicacion(){
+        ubicacionService.expandir(ubicacionCreada1.nombreUbicacion)
+        verifyZeroInteractions(randomGenerator)
+    }
+
+    @Test
+    fun expandirCon1VectorInfectadoEnUbicacion(){
+        val vector2 = Vector()
+        vector2.estado = Infectado()
+        vector2.tipo = Insecto()
+        val vectorServiceMock = mock(VectorService::class.java)
+        ubicacionService.vectorService = vectorServiceMock
+
+        vector.ubicacion=ubicacionCreada1
+        val vectorCreado = vectorService.crearVector(vector)
+        ubicacionService.mover(vectorCreado.id!!.toInt(), ubicacionCreada1.nombreUbicacion)
+
+        vector1.ubicacion=ubicacionCreada1
+        val vectorCreado1 = vectorService.crearVector(vector1)
+        ubicacionService.mover(vectorCreado1.id!!.toInt(), ubicacionCreada1.nombreUbicacion)
+
+        vector2.ubicacion=ubicacionCreada1
+        val vectorCreado2 = vectorService.crearVector(vector2)
+        ubicacionService.mover(vectorCreado2.id!!.toInt(), ubicacionCreada1.nombreUbicacion)
+
+        ubicacionService.expandir(ubicacionCreada1.nombreUbicacion)
+        verify(randomGenerator, times(1)).giveMeARandonNumberBeetween(0.0, 0.0)
+
+    }
+
+//    @Test
+//    fun expandirConVariosInfectadosEnUbicacion(){
+//
+//    }
+
   @After
   open fun eliminarTodo(){
-        TransactionRunner.runTrx { HibernateDataDAO().clear() }
-    }
+      TransactionRunner.runTrx {
+          HibernateDataDAO().clear()
+      }
+  }
 }

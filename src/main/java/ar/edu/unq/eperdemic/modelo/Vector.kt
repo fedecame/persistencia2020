@@ -6,6 +6,7 @@ import ar.edu.unq.eperdemic.estado.Sano
 import ar.edu.unq.eperdemic.estado.transformer.EstadoConverter
 import ar.edu.unq.eperdemic.tipo.TipoVector
 import ar.edu.unq.eperdemic.tipo.transformer.TipoConverter
+import org.hibernate.annotations.Cascade
 import javax.persistence.*
 import kotlin.jvm.Transient
 
@@ -28,9 +29,13 @@ class Vector {
     @Convert(converter = EstadoConverter::class)
     lateinit var estado : EstadoVector
 
-    @ManyToOne(cascade=[CascadeType.ALL])
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
-    lateinit var ubicacion: Ubicacion
+    var ubicacion: Ubicacion? =null
+
+    init{
+        this.recuperarse()
+    }
 
     fun recuperarse(){
         this.cambiarEstado(Sano())
