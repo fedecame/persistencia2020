@@ -5,10 +5,15 @@ import ar.edu.unq.eperdemic.estado.Infectado
 import ar.edu.unq.eperdemic.estado.Sano
 import ar.edu.unq.eperdemic.modelo.*
 import ar.edu.unq.eperdemic.modelo.exception.IDVectorNoEncontradoException
+import ar.edu.unq.eperdemic.persistencia.dao.DataDAO
+import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
+import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
+import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
+import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
 import ar.edu.unq.eperdemic.tipo.Humano
 import ar.edu.unq.eperdemic.tipo.Insecto
@@ -21,14 +26,24 @@ import org.junit.Test
 class VectorServiceTest {
 
     lateinit var vectorService : VectorService
+    lateinit var ubicacionService : UbicacionService
     lateinit var vector : Vector
     lateinit var tipo : TipoVector
     lateinit var estado : EstadoVector
     lateinit var especie : Especie
+    lateinit var dataDAO : DataDAO
+    lateinit var ubicacionDAO : UbicacionDAO
+    lateinit var vectorDAO : VectorDAO
 
     @Before
     fun setUp(){
         vector = Vector()
+        dataDAO = HibernateDataDAO()
+        ubicacionDAO = HibernateUbicacionDAO()
+        vectorDAO = HibernateVectorDAO()
+        vectorService = VectorServiceImpl(vectorDAO, dataDAO, ubicacionDAO)
+        ubicacionService = UbicacionServiceImpl(ubicacionDAO, dataDAO)
+
         tipo = Humano()
         estado = Sano()
         especie = Especie()
@@ -36,10 +51,10 @@ class VectorServiceTest {
         especie.nombre = "Algo"
         especie.paisDeOrigen = "Alemania"
         especie.patogeno = Patogeno("")
-        vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateDataDAO(), HibernateUbicacionDAO())
         vector.tipo = tipo
         vector.estado = estado
         vector.agregarEspecie(especie)
+        vector.ubicacion = ubicacionService.crearUbicacion("Alemania")
         vectorService.crearVector(vector)
     }
 

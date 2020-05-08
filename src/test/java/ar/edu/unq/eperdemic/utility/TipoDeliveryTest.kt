@@ -25,7 +25,7 @@ class TipoDeliveryTest {    private lateinit var estadoDeliverySUT : EstadoDeliv
     @Before
     fun setUP(){
         tipos = mutableListOf(Animal(), Humano(), Insecto())
-        tipoDeliverySUT = TipoDelivery()
+        tipoDeliverySUT = TipoDelivery(tipos)
         animal  = "Animal"
         humano  = "Humano"
         insecto = "Insecto"
@@ -33,86 +33,86 @@ class TipoDeliveryTest {    private lateinit var estadoDeliverySUT : EstadoDeliv
 
     @Test
     fun estadoDeliveryRetornaElTipoAnimalCuandoLaClaveEsLaIndicada(){
-        val result = tipoDeliverySUT.tipo(animal)!!
+        val result = tipoDeliverySUT.get(animal)!!
         Assert.assertTrue(result.esAnimal())
     }
 
 
     @Test
     fun estadoDeliveryRetornaElTipoHumanoCuandoLaClaveEsLaIndicada(){
-        val result = tipoDeliverySUT.tipo(humano)!!
+        val result = tipoDeliverySUT.get(humano)!!
         Assert.assertTrue(result.esHumano())
     }
 
 
     @Test
     fun estadoDeliveryRetornaElTipoInsectoCuandoLaClaveEsLaIndicada(){
-        val result = tipoDeliverySUT.tipo(insecto)!!
+        val result = tipoDeliverySUT.get(insecto)!!
         Assert.assertTrue(result.esInsecto())
     }
 
     @Test
     fun estadoDeliveryRetornaElTipoAnimalCorrectoCuandoLaClaveEsLaIndicadaSiSeLoEscribeConMayusculas(){
-        val result = tipoDeliverySUT.tipo("ANIMAL")!!
+        val result = tipoDeliverySUT.get("ANIMAL")!!
         Assert.assertTrue(result.esAnimal())
     }
 
     @Test
     fun estadoDeliveryRetornaElTipoHumanoCorrectoCuandoLaClaveEsLaIndicadaSiSeLoEscribeConMayusculas(){
-        val result = tipoDeliverySUT.tipo("HUMANO")!!
+        val result = tipoDeliverySUT.get("HUMANO")!!
         Assert.assertTrue(result.esHumano())
     }
 
     @Test
     fun estadoDeliveryRetornaElTipoInsectoCorrectoCuandoLaClaveEsLaIndicadaSiSeLoEscribeConMayusculas(){
-        val result = tipoDeliverySUT.tipo("INSECTO")!!
+        val result = tipoDeliverySUT.get("INSECTO")!!
         Assert.assertTrue(result.esInsecto())
     }
 
     @Test
     fun estadoDeliveryRetornaElTipoAnimalCorrectoCuandoLaClaveEsLaIndicadaSiSeLoEscribeConMinusculas(){
-        val result = tipoDeliverySUT.tipo("animal")!!
+        val result = tipoDeliverySUT.get("animal")!!
         Assert.assertTrue(result.esAnimal())
     }
 
     @Test
     fun estadoDeliveryRetornaElTipoHumanoCorrectoCuandoLaClaveEsLaIndicadaSiSeLoEscribeConMinusculas(){
-        val result = tipoDeliverySUT.tipo("humano")!!
+        val result = tipoDeliverySUT.get("humano")!!
         Assert.assertTrue(result.esHumano())
     }
 
     @Test
     fun estadoDeliveryRetornaElTipoInsectoCorrectoCuandoLaClaveEsLaIndicadaSiSeLoEscribeConMinusculas(){
-        val result = tipoDeliverySUT.tipo("insecto")!!
+        val result = tipoDeliverySUT.get("insecto")!!
         Assert.assertTrue(result.esInsecto())
     }
 
 
     @Test
     fun estadoDeliveryRetornaElTipoAnimalCorrectoCuandoLaClaveEsLaIndicadaSiSeLoEscribeConMayusculasYMinusculas(){
-        val result = tipoDeliverySUT.tipo("AnImAl")!!
+        val result = tipoDeliverySUT.get("AnImAl")!!
         Assert.assertTrue(result.esAnimal())
     }
 
     @Test
     fun estadoDeliveryRetornaElTipoHumanoCorrectoCuandoLaClaveEsLaIndicadaSiSeLoEscribeConMayusculasYMinusculas(){
-        val result = tipoDeliverySUT.tipo("HuMaNo")!!
+        val result = tipoDeliverySUT.get("HuMaNo")!!
         Assert.assertTrue(result.esHumano())
     }
 
     @Test
     fun estadoDeliveryRetornaElTipoInsectoCorrectoCuandoLaClaveEsLaIndicadaSiSeLoEscribeConMayusculasYMinusculas(){
-        val result = tipoDeliverySUT.tipo("InSeCtO")!!
+        val result = tipoDeliverySUT.get("InSeCtO")!!
         Assert.assertTrue(result.esInsecto())
     }
 
     @Test(expected = EstadoNoEncontradoException::class)
     fun testAlIntentarRecuperarUnVectorConUnaKeyErroneaArrojaUNEstadoNoEncontradoRunTimeException(){
-        val algo = tipoDeliverySUT.tipo("sarasa")
+        val algo = tipoDeliverySUT.get("sarasa")
     }
 
     @Test(expected = ClaveRepetidaDeEstadoException::class)
     fun testAlIntentaAgregarUnEstadoConUnaKeyYaUtilizadaArrojaUnEstadoNoEncontradoRunTimeException(){
-        val algo = tipoDeliverySUT.agregarTipo(Humano())
+        val algo = tipoDeliverySUT.add(Humano())
     }
 }
