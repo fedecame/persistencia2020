@@ -8,8 +8,6 @@ import ar.edu.unq.eperdemic.tipo.Insecto
 import ar.edu.unq.eperdemic.tipo.TipoVector
 import ar.edu.unq.eperdemic.utility.Delivery
 
-
-//Cuando el delivery funcione esto seria asi
 class TipoDelivery(tiposList : List<TipoVector>) : Delivery<TipoVector>(tiposList) {
     override fun myAddException(nombreTipo : String) = ClaveRepetidaDeEstadoException(nombreTipo)
     override fun myGetException(nombreTipo : String) = EstadoNoEncontradoException(nombreTipo)
