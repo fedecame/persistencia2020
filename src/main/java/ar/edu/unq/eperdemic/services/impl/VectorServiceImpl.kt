@@ -24,10 +24,8 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var dataDAO: DataDAO, var ubic
     override fun mover(vectorId: Int, nombreUbicacion: String) {
         return runTrx {
             var vector= vectorDao.recuperar(vectorId)
-            var ubicacionOrigen=ubicacionDao.recuperar(vector.ubicacion?.nombreUbicacion!!)
+            var ubicacionOrigen=ubicacionDao.recuperar(vector.ubicacion?.nombreUbicacion)
             vector.ubicacion=ubicacionDao.recuperar(nombreUbicacion)//actualizo Ubicacion de Vector
-            ubicacionOrigen.vectores.removeIf { vector-> vector.id==vectorId.toLong() }//"desalojo" a el vector de la ubicacion origen
-            ubicacionDao.actualizar(ubicacionOrigen)
             vectorDao.actualizar(vector)
         }}
 

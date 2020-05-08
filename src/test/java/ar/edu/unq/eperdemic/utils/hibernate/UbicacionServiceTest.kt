@@ -39,7 +39,7 @@ class UbicacionServiceTest {
     @Before
     fun setUp(){
     vector.tipo=tipo
-    vector.estado=estado
+        vector.estado=estado
         vector1.tipo=tipo
         vector1.estado=estado
 
@@ -115,7 +115,7 @@ fun alMoverAMismaUbicacionDondeEstaSeQuedaEnLaMismaUbicacion(){
         Assert.assertEquals(ubicacionRecuperada1.vectores.size,2)
     }
     @Test
-    fun  alMoveVectorAlojadoEnUnaPosicionLaUbicacionTieneUnVectorMenosAlojado(){
+    fun  alMoverVectorAlojadoEnUnaPosicionLaUbicacionTieneUnVectorMenosAlojado(){
         vector.ubicacion=ubicacionCreada
         vectorService.crearVector(vector)
       var  ubicacionCreadaActualizada=ubicacionService.recuperarUbicacion("Florencio Varela")
