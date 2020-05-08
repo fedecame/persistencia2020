@@ -31,7 +31,7 @@ abstract class TipoVector(){
 
     abstract fun factorContagio(especie : Especie): Int
 
-    abstract fun puedeSerContagiadoPor(unTipo : TipoVector): Boolean
+    abstract fun puedeSerContagiadoPor(tipo : TipoVector): Boolean
 
     open fun agregarInfectado(especie : Especie){}
 }

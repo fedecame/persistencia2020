@@ -38,7 +38,4 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO, var dataDAO: DataDAO)
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun borrarTodo() {
-        TransactionRunner.runTrx { dataDAO.clear() }
-    }
 }

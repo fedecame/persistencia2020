@@ -52,7 +52,4 @@ class HibernateVectorDAO :  HibernateDAO<Vector>(Vector::class.java), VectorDAO 
         super.eliminar(vector)
     }
 
-    override fun refresh(vector: Vector) {
-        super.actualizar(vector)
-    }
 }
