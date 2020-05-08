@@ -11,11 +11,7 @@ class Ubicacion() : Serializable {
     @OneToMany(mappedBy = "ubicacion", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     var vectores: MutableSet<Vector> = HashSet()
 
-    fun setearNombre(nombre:String){
-        nombreUbicacion=nombre
-    }
-    fun alojarVector(vector:Vector){
-        vectores.add(vector)
-    }
+
+
 
 }

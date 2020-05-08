@@ -1,22 +1,16 @@
 package ar.edu.unq.eperdemic.utils.hibernate
 
-import ar.edu.unq.eperdemic.estado.EstadoVector
 import ar.edu.unq.eperdemic.estado.Sano
-import ar.edu.unq.eperdemic.modelo.Especie
-import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
-import ar.edu.unq.eperdemic.modelo.exception.IDVectorNoEncontradoException
 import ar.edu.unq.eperdemic.modelo.exception.MoverUnVectorQueNoEstaCreado
-import ar.edu.unq.eperdemic.modelo.exception.NoExisteUbicacionADondeSeDeseaMover
+import ar.edu.unq.eperdemic.modelo.exception.NoExisteUbicacion
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
-import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
 import ar.edu.unq.eperdemic.tipo.Humano
-import ar.edu.unq.eperdemic.tipo.TipoVector
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -71,7 +65,7 @@ class UbicacionServiceTest {
     Assert.assertEquals(vectorActualizado.ubicacion?.nombreUbicacion,"Quilmes")
     }
 
-@Test (expected = NoExisteUbicacionADondeSeDeseaMover::class)
+@Test (expected = NoExisteUbicacion::class)
  fun seMueveAUbicacionQueNoExiste(){
     vector.ubicacion=ubicacionCreada
     vectorService.crearVector(vector)
@@ -96,17 +90,42 @@ fun alMoverAMismaUbicacionDondeEstaSeQuedaEnLaMismaUbicacion(){
 
 
     @Test
-    fun moverDosVectoresAUnaMismaUbicacion(){
-        vector.ubicacion=ubicacionCreada
-        vector1.ubicacion=ubicacionCreada
+    fun moverDosVectoresAUnaMismaUbicacion() {
+        vector.ubicacion = ubicacionCreada
+        vector1.ubicacion = ubicacionCreada
         vectorService.crearVector(vector)
         vectorService.crearVector(vector1)
         var ubicacionRecuperada= ubicacionService.recuperarUbicacion("Florencio Varela")
-        Assert.assertEquals(ubicacionCreada.vectores.size,2)
+        Assert.assertEquals(ubicacionRecuperada.vectores.size,2)
+        ubicacionService.mover(1, "Berazategui")
+        ubicacionService.mover(2,"Berazategui")
+        var ubicacionRecuperada1= ubicacionService.recuperarUbicacion("Berazategui")
+        Assert.assertEquals(ubicacionRecuperada1.vectores.size,2)
+    }
+    @Test
+    fun  alMoveVectorAlojadoEnUnaPosicionLaUbicacionTieneUnVectorMenosAlojado(){
+        vector.ubicacion=ubicacionCreada
+        vectorService.crearVector(vector)
+      var  ubicacionCreadaActualizada=ubicacionService.recuperarUbicacion("Florencio Varela")
+        ubicacionCreada1 = ubicacionService.crearUbicacion("Quilmes")
+        Assert.assertEquals(ubicacionCreadaActualizada.vectores.size,1)
+        ubicacionService.mover(1,"Quilmes")
+        var ubicacionRecuperada= ubicacionService.recuperarUbicacion("Florencio Varela")
+        Assert.assertEquals(ubicacionRecuperada.vectores.size.toInt(),0)
+    }
+    @Test
+    fun recuperarUbicacion(){
+        var ubicacion= ubicacionService.recuperarUbicacion("Florencio Varela")
+        Assert.assertEquals(ubicacion.nombreUbicacion,"Florencio Varela")
+    }
+    
+    @Test(expected =  NoExisteUbicacion::class)
+    fun recuperarUbicacionQueNoExiste(){
+        ubicacionService.recuperarUbicacion("Avellaneda")
     }
 
-@After
-    open fun eliminarTodo(){
+  @After
+  open fun eliminarTodo(){
         vectorService.borrarTodo()
     }
 }

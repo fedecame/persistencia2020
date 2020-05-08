@@ -12,4 +12,5 @@ interface VectorDAO {
    fun contagiar(vectorInfectado: Vector, vectores: List<Vector>)
    fun borrar(vector: Vector)
    fun refresh(vector: Vector)
+   fun actualizar(vector:Vector)
 }
