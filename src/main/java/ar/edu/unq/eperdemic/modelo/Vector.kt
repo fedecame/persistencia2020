@@ -17,7 +17,6 @@ class Vector {
     @Column(updatable = false, nullable = false)
     var id : Long? = null
 
-
     @ManyToMany(cascade=[CascadeType.ALL], fetch=FetchType.EAGER)
     var especies : MutableSet<Especie> = mutableSetOf()
 
@@ -29,12 +28,9 @@ class Vector {
     @Convert(converter = EstadoConverter::class)
     lateinit var estado : EstadoVector
 
-    @ManyToOne()
-    var ubicacion: Ubicacion? =null
-
-    init{
-        this.recuperarse()
-    }
+    @ManyToOne(cascade=[CascadeType.ALL])
+    @JoinColumn(nullable = false)
+    lateinit var ubicacion: Ubicacion
 
     fun recuperarse(){
         this.cambiarEstado(Sano())

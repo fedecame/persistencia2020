@@ -3,6 +3,7 @@ package ar.edu.unq.eperdemic.utils.hibernate
 import ar.edu.unq.eperdemic.estado.Sano
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.modelo.exception.IDVectorNoEncontradoException
 import ar.edu.unq.eperdemic.modelo.exception.MoverUnVectorQueNoEstaCreado
 import ar.edu.unq.eperdemic.modelo.exception.NoExisteUbicacion
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO

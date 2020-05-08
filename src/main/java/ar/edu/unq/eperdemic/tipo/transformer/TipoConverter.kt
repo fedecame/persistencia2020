@@ -17,6 +17,6 @@ class TipoConverter : AttributeConverter<TipoVector, String> {
 
     //Cuando el Delivery funcione
     //override fun convertToEntityAttribute(dbTipo : String) : TipoVector? = TipoDelivery(mutableListOf(Animal(), Humano(), Insecto())).get(dbTipo)!!
-    override fun convertToEntityAttribute(dbTipo : String) : TipoVector? = TipoDelivery().tipo(dbTipo)!!
+    override fun convertToEntityAttribute(dbTipo : String) : TipoVector? = TipoDelivery(mutableListOf(Animal(), Insecto(), Humano())).get(dbTipo)!!
 
 }

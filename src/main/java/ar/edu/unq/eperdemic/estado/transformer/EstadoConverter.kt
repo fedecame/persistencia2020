@@ -1,6 +1,8 @@
 package ar.edu.unq.eperdemic.estado.transformer
 
 import ar.edu.unq.eperdemic.estado.EstadoVector
+import ar.edu.unq.eperdemic.estado.Infectado
+import ar.edu.unq.eperdemic.estado.Sano
 import javax.persistence.AttributeConverter
 
 class EstadoConverter : AttributeConverter<EstadoVector, String>  {
@@ -12,5 +14,5 @@ class EstadoConverter : AttributeConverter<EstadoVector, String>  {
         return sb.toString()
     }
 
-    override fun convertToEntityAttribute(dbEstado : String) : EstadoVector? = EstadoDelivery().estado(dbEstado)!!
+    override fun convertToEntityAttribute(dbEstado : String) : EstadoVector? = EstadoDelivery(mutableListOf(Sano(), Infectado())).get(dbEstado)!!
 }
