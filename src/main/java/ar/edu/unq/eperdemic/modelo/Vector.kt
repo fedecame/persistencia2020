@@ -28,8 +28,8 @@ class Vector {
     @Convert(converter = EstadoConverter::class)
     lateinit var estado : EstadoVector
 
-    @ManyToOne()
-    @Column(nullable = false)
+    @ManyToOne(cascade=[CascadeType.ALL])
+    @JoinColumn(nullable = false)
     lateinit var ubicacion: Ubicacion
 
     fun recuperarse(){

@@ -1,6 +1,7 @@
 package ar.edu.unq.eperdemic.utility
 
 import ar.edu.unq.eperdemic.estado.Infectado
+import ar.edu.unq.eperdemic.estado.Sano
 import ar.edu.unq.eperdemic.estado.transformer.EstadoDelivery
 import ar.edu.unq.eperdemic.modelo.exception.ClaveRepetidaDeEstadoException
 import ar.edu.unq.eperdemic.modelo.exception.EstadoNoEncontradoException
@@ -15,62 +16,60 @@ class EstadoDeliveryTest {
 
     @Before
     fun setUP(){
-            estadoDeliverySUT = EstadoDelivery()
-            infectado = "Infectado"
-            sano = "Sano"
+            estadoDeliverySUT = EstadoDelivery(mutableListOf(Sano(), Infectado()))
     }
 
     @Test
     fun estadoDeliveryRetornaElEstadoSanoCorrectoCuandoLaClaveEsLaIndicada(){
-        val result = estadoDeliverySUT.estado(sano)!!
+        val result = estadoDeliverySUT.get(sano)!!
         Assert.assertEquals(sano,result.nombre())
     }
 
     @Test
     fun estadoDeliveryRetornaElEstadoSanoCorrectoCuandoLaClaveEsLaIndicadaSiSeLoEscribeConMayusculas(){
-        val result = estadoDeliverySUT.estado("SANO")!!
+        val result = estadoDeliverySUT.get("SANO")!!
         Assert.assertEquals(sano,result.nombre())
     }
 
     @Test
     fun estadoDeliveryRetornaElEstadoSanoCorrectoCuandoLaClaveEsLaIndicadaSiSeLoEscribeConMinusculas(){
-        val result = estadoDeliverySUT.estado("sano")!!
+        val result = estadoDeliverySUT.get("sano")!!
         Assert.assertEquals(sano,result.nombre())
     }
 
     @Test
     fun estadoDeliveryRetornaElEstadoCorrectoCuandoLaClaveEsLaIndicadaSiSeLoEscribeConMinusculasYMayusculas(){
-        val result = estadoDeliverySUT.estado("SaNo")!!
+        val result = estadoDeliverySUT.get("SaNo")!!
         Assert.assertEquals(sano,result.nombre())
     }
 
     @Test
     fun estadoDeliveryRetornaElEstadoInfectadoCorrectoCuandoLaClaveEsLaIndicadaSiSeLoEscribeConMayusculas(){
-        val result = estadoDeliverySUT.estado("Infectado")!!
+        val result = estadoDeliverySUT.get("Infectado")!!
         Assert.assertEquals(infectado,result.nombre())
     }
 
     @Test
     fun estadoDeliveryRetornaElEstadoinfectadoCorrectoCuandoLaClaveEsLaIndicadaSiSeLoEscribeConMinusculas(){
-        val result = estadoDeliverySUT.estado("infectado")!!
+        val result = estadoDeliverySUT.get("infectado")!!
         Assert.assertEquals(infectado,result.nombre())
     }
 
 
     @Test
     fun estadoDeliveryRetornaElEstadoinfectadoCorrectoCuandoLaClaveEsLaIndicadaSiSeLoEscribeConMayusculasYMinusculasYMayusculas(){
-        val result = estadoDeliverySUT.estado("InFeCtAdO")!!
+        val result = estadoDeliverySUT.get("InFeCtAdO")!!
         Assert.assertEquals(infectado,result.nombre())
     }
 
     @Test(expected = EstadoNoEncontradoException::class)
     fun testAlIntentarRecuperarUnVectorConUnaKeyErroneaArrojaUNEstadoNoEncontradoRunTimeException(){
-        val algo = estadoDeliverySUT.estado("sarasa")
+        val algo = estadoDeliverySUT.get("sarasa")
     }
 
     @Test(expected = ClaveRepetidaDeEstadoException::class)
     fun testAlIntentaAgregarUnEstadoConUnaKeyYaUtilizadaArrojaUnEstadoNoEncontradoRunTimeException(){
-        val algo = estadoDeliverySUT.agregarEstado(Infectado())
+        val algo = estadoDeliverySUT.add(Infectado())
     }
 
 }

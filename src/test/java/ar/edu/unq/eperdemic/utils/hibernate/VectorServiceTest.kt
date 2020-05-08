@@ -44,7 +44,7 @@ class VectorServiceTest {
         vectorDAO = HibernateVectorDAO()
         vectorService = VectorServiceImpl(vectorDAO, dataDAO, ubicacionDAO)
         ubicacionService = UbicacionServiceImpl(ubicacionDAO, dataDAO)
-
+        ubicacion = ubicacionService.crearUbicacion("Alemania")
         tipo = Humano()
         estado = Sano()
         especie = Especie()
@@ -56,6 +56,7 @@ class VectorServiceTest {
         vector.estado = estado
         vector.agregarEspecie(especie)
         vector.ubicacion = ubicacion
+
         vectorService.crearVector(vector)
     }
 
