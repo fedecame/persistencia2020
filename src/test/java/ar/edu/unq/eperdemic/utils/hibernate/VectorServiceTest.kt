@@ -73,6 +73,7 @@ class VectorServiceTest {
         val vector0 = Vector()
         vector0.tipo = tipo
         vector0.estado = estado
+        vector0.ubicacion = ubicacion
         vectorService.crearVector(vector0)
         val list = vectorService.enfermedades(vector0.id!!.toInt())
         Assert.assertTrue(list.isEmpty())
@@ -103,20 +104,21 @@ class VectorServiceTest {
         especie2.patogeno = Patogeno("Nisman")
         vector1.agregarEspecie(especie)
         vector1.agregarEspecie(especie2)
+        vector1.ubicacion = ubicacion
         vectorService.crearVector(vector1)
         val list = vectorService.enfermedades(vector1.id!!.toInt()).toList()
         Assert.assertFalse(list.isEmpty())
         Assert.assertEquals(2,list.size)
-        val especie0 = list.get(0)
-        val especie1 = list.get(1)
-        Assert.assertEquals(23,especie1.cantidadInfectados)
-        Assert.assertEquals("Sarasa",especie1.nombre)
-        Assert.assertEquals("Japon",especie1.paisDeOrigen)
-        Assert.assertEquals("Nisman",especie1.patogeno.tipo)
-        Assert.assertEquals(42,especie0.cantidadInfectados)
-        Assert.assertEquals("Algo",especie0.nombre)
-        Assert.assertEquals("Alemania",especie0.paisDeOrigen)
-        Assert.assertEquals("",especie0.patogeno.tipo)
+        val especie1 = list.find { it.nombre == "Sarasa" }
+        val especie0 = list.find { it.nombre == "Algo" }
+        Assert.assertEquals(23,especie1!!.cantidadInfectados)
+        Assert.assertEquals("Sarasa",especie1!!.nombre)
+        Assert.assertEquals("Japon",especie1!!.paisDeOrigen)
+        Assert.assertEquals("Nisman",especie1!!.patogeno.tipo)
+        Assert.assertEquals(42,especie0!!.cantidadInfectados)
+        Assert.assertEquals("Algo",especie0!!.nombre)
+        Assert.assertEquals("Alemania",especie0!!.paisDeOrigen)
+        Assert.assertEquals("",especie0!!.patogeno.tipo)
     }
 
 
@@ -126,6 +128,7 @@ class VectorServiceTest {
         val vector0 = Vector()
         vector0.tipo = tipo
         vector0.estado = estado
+        vector0.ubicacion = ubicacion
         vectorService.crearVector(vector0)
         val n = vector0.id!!.toInt()
         val recuperado = vectorService.recuperarVector(n)
@@ -173,6 +176,7 @@ class VectorServiceTest {
     fun testAlCrearUnVectorElModeloQuedaConsistente(){
         val vector0 = Vector()
         vector0.tipo = tipo
+        vector0.ubicacion = ubicacion
         Assert.assertEquals(null, vector0.id)
         vectorService.crearVector(vector0)
         Assert.assertNotEquals(null, vector0.id)
@@ -183,8 +187,10 @@ class VectorServiceTest {
    fun testElIDEsAutoincrementalALaMedidaQueSeCreanNuevosVectores(){
          val vector0 = Vector()
          vector0.tipo = tipo
+         vector0.ubicacion = ubicacion
          val vector1 = Vector()
          vector1.tipo = tipo
+         vector1.ubicacion = ubicacion
         val id1 = vectorService.crearVector(vector0).id!!
         val id2 = vectorService.crearVector(vector1).id!!
         Assert.assertTrue(id1 < id2)
@@ -195,6 +201,7 @@ class VectorServiceTest {
     fun testAlCrearUnVectorEsteSePuedeRecuperarPorSuID(){
         val vectorAGuardar = Vector()
         vectorAGuardar.tipo = tipo
+        vectorAGuardar.ubicacion = ubicacion
         vectorService.crearVector(vectorAGuardar)
         val vectorRecuperado = vectorService.recuperarVector(vectorAGuardar.id!!.toInt())
         Assert.assertEquals(2, vectorRecuperado.id!!)
@@ -222,7 +229,9 @@ class VectorServiceTest {
 
     @After
     open fun eliminarTodo(){
-        vectorService.borrarTodo()
+        TransactionRunner.runTrx {
+            HibernateDataDAO().clear()
+        }
     }
 
 }
