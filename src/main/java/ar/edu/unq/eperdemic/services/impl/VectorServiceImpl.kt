@@ -35,9 +35,6 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var dataDAO: DataDAO, var ubic
 
     override fun crearVector(vector: Vector): Vector = runTrx {
         var vector1=vectorDao.crear(vector)
-        var ubicacion = ubicacionDao.recuperar(vector.ubicacion?.nombreUbicacion!!)
-        ubicacion.vectores.add(vector1)//"alojo" el vector en ubicacion
-        ubicacionDao.actualizar(ubicacion)
     vector
     }
 

@@ -1,5 +1,6 @@
 package ar.edu.unq.eperdemic.services.impl
 
+import ar.edu.unq.eperdemic.estado.Infectado
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.persistencia.dao.DataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
@@ -8,6 +9,8 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
+import ar.edu.unq.eperdemic.utility.random.RandomMaster
+import ar.edu.unq.eperdemic.utility.random.RandomMasterImpl
 
 class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO, var dataDAO: DataDAO) : UbicacionService {
    var vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateDataDAO(), HibernateUbicacionDAO())
@@ -35,10 +38,16 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO, var dataDAO: DataDAO)
     }
 
     override fun expandir(nombreUbicacion: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val randomGenerator: RandomMaster = RandomMasterImpl()
+        val ubicacion = this.recuperarUbicacion(nombreUbicacion)
+        val vectoresInfectados = ubicacion.vectores.filter { vector -> vector.estado is Infectado }
+        if (vectoresInfectados.isEmpty()) {
+            return
+        }
+        // obtengo un vector infectado aleatoriamente
+        val indiceAleatorio = randomGenerator.giveMeARandonNumberBeetween(1.0, vectoresInfectados.size as Double).toInt() - 1
+        val vectorInfectadoAleatorio = vectoresInfectados.get(indiceAleatorio)
+        val vectoresAContagiar = ubicacion.vectores.filter { vector -> vector.id !== vectorInfectadoAleatorio.id }
+        vectorService.contagiar(vectorInfectadoAleatorio, vectoresAContagiar)
     }
-
-//    override fun borrarTodo() {
-//        TransactionRunner.runTrx { dataDAO.clear() }
-//    }
 }

@@ -8,7 +8,9 @@ import ar.edu.unq.eperdemic.modelo.exception.IDVectorNoEncontradoException
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
+import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
+import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
 import ar.edu.unq.eperdemic.tipo.Humano
 import ar.edu.unq.eperdemic.tipo.Insecto
@@ -21,10 +23,12 @@ import org.junit.Test
 class VectorServiceTest {
 
     lateinit var vectorService : VectorService
+    lateinit var ubicacionService : UbicacionService
     lateinit var vector : Vector
     lateinit var tipo : TipoVector
     lateinit var estado : EstadoVector
     lateinit var especie : Especie
+    lateinit var ubicacion : Ubicacion
 
     @Before
     fun setUp(){
@@ -40,7 +44,13 @@ class VectorServiceTest {
         vector.tipo = tipo
         vector.estado = estado
         vector.agregarEspecie(especie)
-        vectorService.crearVector(vector)
+
+        ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO(), HibernateDataDAO())
+        ubicacion = ubicacionService.crearUbicacion("Quilmes")
+        vector.ubicacion = ubicacion
+        ubicacion.vectores.add(vector)
+        var vectorDB = vectorService.crearVector(vector)
+        ubicacionService.mover(vectorDB.id!!.toInt(), ubicacion.nombreUbicacion)
     }
 
     @Test

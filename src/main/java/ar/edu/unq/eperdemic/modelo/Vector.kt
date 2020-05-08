@@ -30,6 +30,7 @@ class Vector {
     lateinit var estado : EstadoVector
 
     @ManyToOne()
+//    @Column(nullable = false)
     var ubicacion: Ubicacion? =null
 
     init{
