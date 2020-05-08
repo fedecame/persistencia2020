@@ -167,11 +167,6 @@ fun alMoverAMismaUbicacionDondeEstaSeQuedaEnLaMismaUbicacion(){
 
     }
 
-//    @Test
-//    fun expandirConVariosInfectadosEnUbicacion(){
-//
-//    }
-
   @After
   open fun eliminarTodo(){
       TransactionRunner.runTrx {
