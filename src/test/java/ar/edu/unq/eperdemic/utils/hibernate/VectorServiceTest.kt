@@ -196,9 +196,19 @@ class VectorServiceTest {
         val vectorRecuperado = vectorService.recuperarVector(42)
     }
 
-    @Test
+    @Test(expected = IDVectorNoEncontradoException::class)
     fun testBorraVector(){
         vectorService.borrarVector(vector.id!!.toInt())
+        vectorService.recuperarVector(vector.id!!.toInt())
+    }
+
+    @Test
+    fun testBorraVectorDeUbicacion(){
+        val ubicacionAnt = ubicacionService.recuperarUbicacion(ubicacion.nombreUbicacion)
+        Assert.assertTrue(ubicacionAnt.vectores.any { curr -> curr.id == vector.id })
+        vectorService.borrarVector(vector.id!!.toInt())
+        val ubicacionAct = ubicacionService.recuperarUbicacion(ubicacion.nombreUbicacion)
+        Assert.assertFalse(ubicacionAct.vectores.any { curr -> curr.id == vector.id })
     }
 
     @After

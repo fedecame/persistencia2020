@@ -47,7 +47,7 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO, var dataDAO: DataDAO)
         // obtengo un vector infectado aleatoriamente
         val indiceAleatorio = randomGenerator.giveMeARandonNumberBeetween(1.0, vectoresInfectados.size as Double).toInt() - 1
         val vectorInfectadoAleatorio = vectoresInfectados.get(indiceAleatorio)
-        val vectoresAContagiar = ubicacion.vectores.filter { vector -> vector.id !== vectorInfectadoAleatorio.id }
+        val vectoresAContagiar = ubicacion.vectores.filter { vector -> vector.id != vectorInfectadoAleatorio.id }
         vectorService.contagiar(vectorInfectadoAleatorio, vectoresAContagiar)
     }
 }

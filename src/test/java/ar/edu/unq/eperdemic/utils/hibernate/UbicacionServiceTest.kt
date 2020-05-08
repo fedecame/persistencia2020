@@ -1,5 +1,6 @@
 package ar.edu.unq.eperdemic.utils.hibernate
 
+import ar.edu.unq.eperdemic.estado.Infectado
 import ar.edu.unq.eperdemic.estado.Sano
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
@@ -13,6 +14,7 @@ import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.tipo.Humano
+import ar.edu.unq.eperdemic.tipo.Insecto
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -125,6 +127,25 @@ fun alMoverAMismaUbicacionDondeEstaSeQuedaEnLaMismaUbicacion(){
     fun recuperarUbicacionQueNoExiste(){
         ubicacionService.recuperarUbicacion("Avellaneda")
     }
+
+//    @Test
+//    fun expandirSinVectoresInfectadosEnUbicacion(){
+//        ubicacionService.expandir(ubicacionCreada1.nombreUbicacion)
+//    }
+//
+//    @Test
+//    fun expandirCon1VectorInfectadoEnUbicacion(){
+//        vector.estado = Infectado()
+//        val vector2 = Vector()
+//        vector2.estado = Sano()
+//        vector2.tipo = Insecto()
+//
+//    }
+//
+//    @Test
+//    fun expandirConVariosInfectadosEnUbicacion(){
+//
+//    }
 
   @After
   open fun eliminarTodo(){
