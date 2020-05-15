@@ -14,8 +14,13 @@ class HibernateUbicacionDAO : HibernateDAO<Ubicacion>(Ubicacion::class.java), Ub
         return ubicacion
     }
 
+    private fun myRecuperar(nombre : String?):Ubicacion? {
+        val session = TransactionRunner.currentSession
+        return session.get(entityType, nombre)
+    }
+
     override fun recuperar(nombre: String): Ubicacion {
-        var ubicacion = super.recuperar(nombre)
+        var ubicacion = this.myRecuperar(nombre)
         if (ubicacion === null) {
             throw NoExisteUbicacion(nombre)
         }

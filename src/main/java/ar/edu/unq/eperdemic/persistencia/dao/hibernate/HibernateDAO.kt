@@ -17,10 +17,7 @@ open class HibernateDAO<T>(val entityType: Class<T>) {
         return session.get(entityType, id)
     }
 
-    fun recuperar(nombre : String?):T{
-        val session = TransactionRunner.currentSession
-        return session.get(entityType, nombre)
-    }
+
 
     fun eliminar(item: T) {
         val session = TransactionRunner.currentSession
