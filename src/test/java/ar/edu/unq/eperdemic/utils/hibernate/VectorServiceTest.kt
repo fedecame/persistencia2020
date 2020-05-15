@@ -105,7 +105,7 @@ class VectorServiceTest {
         especie2.paisDeOrigen = "Japon"
         val patogenoTest = Patogeno()
         patogenoTest.tipo = "Nisman"
-        especie2.patogeno = Patogeno()
+        especie2.patogeno = patogenoTest
         vector1.agregarEspecie(especie)
         vector1.agregarEspecie(especie2)
         vector1.ubicacion = ubicacion
