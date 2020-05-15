@@ -26,7 +26,9 @@ class ExpText {
     @Test(expected=ClassCastException::class)
     fun testDaLaExcepcionCorrespondienteCuandoSeLePideAgregarUnaClaseDeotroTipo(){
         //Ojo esto
-        sut.add(Patogeno(""))
+        val patogeno = Patogeno()
+        patogeno.tipo = "Sarasa"
+        sut.add(patogeno)
         print(sut.provide().map{it.javaClass.simpleName})
 
     }

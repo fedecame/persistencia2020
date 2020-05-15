@@ -6,8 +6,9 @@ import javax.persistence.*
 class Especie() {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id : Long? = null
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    var id : Int? = null
+    @ManyToOne(cascade=[CascadeType.ALL])
     lateinit var patogeno: Patogeno
     lateinit var nombre: String
     lateinit var paisDeOrigen: String

@@ -1,27 +1,30 @@
 package ar.edu.unq.eperdemic.modelo
 
 import java.io.Serializable
+import javax.persistence.*
 
-class Patogeno(val tipo: String) : Serializable{
+@Entity
+class Patogeno : Serializable{
 
-    var cantidadDeEspecies: Int = 0
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id : Int? = null
-    var factorContagioAnimal = 0
-    var factorContagioInsecto = 0
-    var factorContagioHumano = 0
+    var cantidadDeEspecies : Int = 0
+    var factorContagioAnimal : Int  = 0
+    var factorContagioInsecto :Int  = 0
+    var factorContagioHumano : Int  = 0
 
-    override fun toString(): String {
-        return tipo
-    }
+    @Column(nullable = false)
+    lateinit var tipo : String
 
     fun crearEspecie(nombreEspecie: String, paisDeOrigen: String) : Especie{
         cantidadDeEspecies++
         val especie = Especie()
-        //Aca settearla
+        especie.paisDeOrigen = paisDeOrigen
+        especie.patogeno = this
+        especie.nombre = nombreEspecie
         return Especie()
     }
-
-    //agregar 5 atributos
 
     fun factorContagioAnimal(): Int = factorContagioAnimal
 

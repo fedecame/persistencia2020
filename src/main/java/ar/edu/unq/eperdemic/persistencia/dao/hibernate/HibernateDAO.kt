@@ -5,7 +5,7 @@ import org.hibernate.Transaction
 import java.util.*
 
 
-open class HibernateDAO<T>(private val entityType: Class<T>) {
+open class HibernateDAO<T>(val entityType: Class<T>) {
 
     fun guardar(item: T) {
         val session = TransactionRunner.currentSession

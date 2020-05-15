@@ -25,15 +25,18 @@ class PatogenoServiceTest{
     @Test
     fun alCrearUnPatogenoSinElementosAnterioresElIDAsignadoEs1() {
         this.eliminarModelo()
-        val idPatogenoCreado = service.crearPatogeno(Patogeno("ProbandoService"))
+        val patogenoT = Patogeno()
+        patogenoT.tipo = "ProbandoService"
+        val idPatogenoCreado = service.crearPatogeno(patogenoT)
         val patogenoRecuperado = service.recuperarPatogeno(idPatogenoCreado)
         Assert.assertEquals(1, idPatogenoCreado)
         Assert.assertEquals(idPatogenoCreado, patogenoRecuperado.id)
     }
 
     @Test
-    fun alCrearPatogenoYLuegoRecuperarSeObtienePatogenosSimilares() {
-        val idPatogenoCreado = service.crearPatogeno(Patogeno("ProbandoService"))
+    fun alCrearPatogenoYLuegoRecuperarSeObtienePatogenosSimilares() { val patogenoT = Patogeno()
+        patogenoT.tipo = "ProbandoService"
+        val idPatogenoCreado = service.crearPatogeno(patogenoT)
         val patogenoRecuperado = service.recuperarPatogeno(idPatogenoCreado)
         Assert.assertEquals(idPatogenoCreado, patogenoRecuperado.id)
         Assert.assertEquals("ProbandoService", patogenoRecuperado.tipo)
