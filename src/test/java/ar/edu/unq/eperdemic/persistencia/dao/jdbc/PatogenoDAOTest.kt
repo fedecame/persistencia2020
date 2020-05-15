@@ -27,7 +27,9 @@ class PatogenoDAOTest{
     @Test
     fun alCrearElPrimerPatogenoEsteTieneId1() {
         this.eliminarModelo()
-        val idPrimeroCreado = dao.crear(Patogeno("sarasa"))
+        val patogeno = Patogeno()
+        patogeno.tipo = "sarasa"
+        val idPrimeroCreado = dao.crear(patogeno)
         val patogenoRecuperado = dao.recuperar(1)
         Assert.assertEquals(1, patogenoRecuperado.id)
     }
@@ -35,11 +37,17 @@ class PatogenoDAOTest{
     @Test
     fun alCrearElIdSeAutoincrementa() {
         this.eliminarModelo()
-        val idPrimeroCreado = dao.crear(Patogeno("sarasa1"))
+        val patogeno1 = Patogeno()
+        patogeno1.tipo = "sarasa1"
+        val idPrimeroCreado = dao.crear(patogeno1)
         Assert.assertEquals(1, idPrimeroCreado)
-        val idSegundoCreado = dao.crear(Patogeno("sarasa2"))
+        val patogeno2 = Patogeno()
+        patogeno2.tipo = "sarasa2"
+        val idSegundoCreado = dao.crear(patogeno2)
         Assert.assertEquals(2, idSegundoCreado)
-        val idTerceroCreado = dao.crear(Patogeno("sarasa3"))
+        val patogeno3 = Patogeno()
+        patogeno3.tipo = "sarasa3"
+        val idTerceroCreado = dao.crear(patogeno3)
         Assert.assertEquals(3, idTerceroCreado)
     }
 
@@ -62,7 +70,8 @@ class PatogenoDAOTest{
 
     @Test(expected = PatogenoNotFoundRunTimeException::class)
     fun alActualizarUnPatogenoDeIDNoExistenteParaLaDBLanzaUnaExcepcion() {
-        val patogenoFruta = Patogeno("Sarasa")
+        val patogenoFruta = Patogeno()
+        patogenoFruta.tipo = "Sarasa"
         patogenoFruta.id = 42
         dao.actualizar(patogenoFruta)
     }
@@ -74,7 +83,8 @@ class PatogenoDAOTest{
         Assert.assertEquals("Bacteria", patogenoOriginal.tipo)
         Assert.assertEquals(0, patogenoOriginal.cantidadDeEspecies)
 
-        val patogenoActualizado = Patogeno("Batman")
+        val patogenoActualizado = Patogeno()
+        patogenoActualizado.tipo = "Batman"
         patogenoActualizado.id = 4
         patogenoActualizado.cantidadDeEspecies = 42
         dao.actualizar(patogenoActualizado)
@@ -87,7 +97,8 @@ class PatogenoDAOTest{
 
     @Test(expected = PatogenoNotFoundRunTimeException::class)
     fun alIntentarActualizarUnPatogenoQueNoExisteArrojaUnaExcepcion() {
-        val fruta = Patogeno("Sarasa")
+        val fruta = Patogeno()
+        fruta.tipo = "Sarasa"
         fruta.id = 666
         dao.actualizar(fruta)
     }

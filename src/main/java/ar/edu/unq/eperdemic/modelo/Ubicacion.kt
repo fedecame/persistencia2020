@@ -10,4 +10,8 @@ class Ubicacion() : Serializable {
 
     @OneToMany(mappedBy = "ubicacion", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     var vectores: MutableSet<Vector> = HashSet()
+
+    fun agregarVector(vector : Vector){
+        vectores.add(vector)
+    }
 }

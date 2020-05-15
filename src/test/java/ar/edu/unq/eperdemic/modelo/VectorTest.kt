@@ -16,6 +16,7 @@ class VectorTest {
     private lateinit var vectorSUT : Vector
     private lateinit var especie : Especie
     private lateinit var ubicacion : Ubicacion
+    private lateinit var patogeno : Patogeno
 
     @Before
     fun setUp(){
@@ -30,8 +31,9 @@ class VectorTest {
         especie.cantidadInfectados = 42
         especie.nombre = "Algo"
         especie.paisDeOrigen = "Alemania"
-        especie.patogeno = Patogeno("")
-
+        patogeno = Patogeno()
+        patogeno.tipo = ""
+        especie.patogeno = patogeno
     }
 
     @Test
