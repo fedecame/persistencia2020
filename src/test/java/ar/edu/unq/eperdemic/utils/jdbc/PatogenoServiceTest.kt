@@ -5,7 +5,7 @@ import ar.edu.unq.eperdemic.modelo.exception.PatogenoNotFoundRunTimeException
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.jdbc.JDBCPatogenoDAO
 import ar.edu.unq.eperdemic.services.PatogenoService
-import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
+import ar.edu.unq.eperdemic.services.impl.PatogenoServiceJDBCImpl
 import ar.edu.unq.eperdemic.utils.DataService
 import org.junit.After
 import org.junit.Assert
@@ -15,7 +15,7 @@ import org.junit.Test
 class PatogenoServiceTest{
     private var dao : PatogenoDAO = JDBCPatogenoDAO()
     private val dataService : DataService = DataServiceJDBC(dao)
-    private val service : PatogenoService = PatogenoServiceImpl(dao)
+    private val service : PatogenoService = PatogenoServiceJDBCImpl(dao)
 
     @Before
     fun crearModelo() {

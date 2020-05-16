@@ -17,8 +17,6 @@ open class HibernateDAO<T>(val entityType: Class<T>) {
         return session.get(entityType, id)
     }
 
-
-
     fun eliminar(item: T) {
         val session = TransactionRunner.currentSession
         session.delete(item)
