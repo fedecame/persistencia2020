@@ -14,6 +14,7 @@ class HibernateEspecieDAO : HibernateDAO<Especie>(Especie::class.java), EspecieD
         return especie.id!!
     }
 
+    
     override fun recuperarEspecie(especieId: Int): Especie {
         val session = TransactionRunner.currentSession
         val res = session.get(entityType, especieId)
