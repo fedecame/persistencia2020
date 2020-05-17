@@ -14,6 +14,7 @@
 
         <!-- Echo all executed SQL to stdout -->
         <property name="show_sql">true</property>
+        <property name="show_hql">true</property>
 
         <property name="hibernate.hbm2ddl.auto">create-drop</property>
         <property name="connection.url">jdbc:mysql//localhost/epers_ejemplo_hibernate/InternetProject?
