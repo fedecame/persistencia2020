@@ -14,10 +14,12 @@ class HibernateEstadisticasDAO : EstadisticasDAO {
     }
 
     override fun vectoresInfectados(nombreUbicacion: String): Int {
-        val hql = "SELECT COUNT (*) FROM Vector v WHERE v.ubicacion.nombreUbicacion =:nombreUbicacion AND v.estaInfectado()"
+        val hql = "SELECT COUNT (*) FROM Vector v WHERE v.ubicacion.nombreUbicacion =:nombreUbicacion AND estado =:infectado"
         val session = TransactionRunner.currentSession
         val query = session.createQuery(hql, Long::class.javaObjectType)
         query.setParameter("nombreUbicacion", nombreUbicacion)
+        val estado = "Infectado"
+        query.setParameter("infectado", estado.toCharArray())
         return query.singleResult.toInt()
     }
 

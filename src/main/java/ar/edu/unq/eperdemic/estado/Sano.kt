@@ -4,7 +4,7 @@ import ar.edu.unq.eperdemic.modelo.Vector
 
 class Sano() : EstadoVector {
 
-    override fun estaInfectado(): Boolean = false
+    val nombre = "Sano"
 
     override fun contagiar(vectorQueContagia: Vector, vectoresAContagiar: List<Vector>) {
         //No hace nada

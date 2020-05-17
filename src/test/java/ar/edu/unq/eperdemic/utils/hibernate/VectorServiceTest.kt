@@ -173,7 +173,7 @@ class VectorServiceTest {
         val recuperado = vectorService.recuperarVector(1)
         vectorService.infectar(recuperado,especie2)
         val recupInfectado = vectorService.recuperarVector(1)
-        Assert.assertTrue(recuperado.estado is Infectado)
+        Assert.assertTrue(recupInfectado.estado is Infectado)
     }
 
     @Test
