@@ -1,4 +1,4 @@
-package ar.edu.unq.eperdemic.utils.hibernate
+package ar.edu.unq.eperdemic.persistencia.dao.jdbc
 
 import ar.edu.unq.eperdemic.estado.EstadoVector
 import ar.edu.unq.eperdemic.estado.Infectado
@@ -15,13 +15,12 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEstadisticasDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
-import ar.edu.unq.eperdemic.services.EstadisticasService
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
-import ar.edu.unq.eperdemic.services.impl.EstadisticaServiceImpl
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
+import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 import ar.edu.unq.eperdemic.tipo.Humano
 import ar.edu.unq.eperdemic.tipo.Insecto
 import ar.edu.unq.eperdemic.tipo.TipoVector
@@ -30,9 +29,8 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
-class EstadisticasServiceTest {
+class EstadisticasDAOTest {
     lateinit var estadisticasDAO : EstadisticasDAO
-    lateinit var estadisticasService : EstadisticasService
     lateinit var vectorService : VectorService
     lateinit var ubicacionService : UbicacionService
     lateinit var vector : Vector
@@ -50,7 +48,6 @@ class EstadisticasServiceTest {
     @Before
     fun setUp(){
         estadisticasDAO = HibernateEstadisticasDAO()
-        estadisticasService = EstadisticaServiceImpl(estadisticasDAO)
         dataDAO = HibernateDataDAO()
         vector = Vector()
         dataDAO = HibernateDataDAO()
@@ -76,37 +73,48 @@ class EstadisticasServiceTest {
         ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO(), dataDAO)
         ubicacion0 = ubicacionService.crearUbicacion("Quilmes")
         ubicacion1 = ubicacionService.crearUbicacion("Mar del Plata")
-        vector.ubicacion = ubicacion1
-        ubicacion1.vectores.add(vector)
+        vector.ubicacion = ubicacion0
         vectorService.crearVector(vector)
+        ubicacionService.mover(vector.id!!.toInt(), "Quilmes")
     }
 
     @Test
-    fun elEstadisticasServiceDevuelve0CuandoNoHayNingunVectorEnEsaUbicacion(){
-        val reporte = estadisticasService.reporteDeContagios("Mar del Plata")
-        Assert.assertEquals(0, reporte.vectoresPresentes)
+    fun elEstadisticasDAODevuelve0CuandoNoHayNingunVectorEnEsaUbicacion(){
+        var res = 0
+        runTrx {
+            res = estadisticasDAO.vectoresPresentes("Mar del Plata")
+        }
+        Assert.assertEquals(0, res)
     }
 
     @Test
-    fun elEstadisticasServiceDevuelve1CuandoHayUnSoloVectorEnEsaUbicacion(){
-        val reporte = estadisticasService.reporteDeContagios(ubicacion0.nombreUbicacion)
-        Assert.assertEquals(1, reporte.vectoresPresentes)
+    fun elEstadisticasDAODevuelve1CuandoHayUnVectorEnEsaUbicacion(){
+        var res = 0
+        runTrx {
+            res = estadisticasDAO.vectoresPresentes("Quilmes")
+        }
+        Assert.assertEquals(1, res)
     }
 
+
     @Test
-    fun elEstadisticasServiceDevuelve2CuandoHayUnSoloVectorEnEsaUbicacion(){
+    fun elEstadisticasDAODevuelve2CuandoHayDosVectoresEnEsaUbicacion(){
+        var res = 0
         val vector2 = Vector()
         vector2.tipo = Insecto()
         vector2.estado = Infectado()
         vector2.estado = estado
         vector2.ubicacion = ubicacion0
-        val reporte = estadisticasService.reporteDeContagios("Quilmes")
-        Assert.assertEquals(2, reporte.vectoresPresentes)
+        vectorService.crearVector(vector2)
+        ubicacionService.mover(vector.id!!.toInt(), ubicacion0.nombreUbicacion)
+        runTrx {
+            res = estadisticasDAO.vectoresPresentes("Quilmes")
+        }
+        Assert.assertEquals(2, res)
     }
 
-
     @After
-    open fun eliminarTodo(){
+    fun eliminarTodo(){
         TransactionRunner.runTrx {
             HibernateDataDAO().clear()
         }

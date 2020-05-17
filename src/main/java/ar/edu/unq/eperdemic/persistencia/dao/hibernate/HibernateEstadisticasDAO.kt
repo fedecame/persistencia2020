@@ -6,11 +6,11 @@ import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 class HibernateEstadisticasDAO : EstadisticasDAO {
 
     override fun vectoresPresentes(nombreUbicacion: String): Int {
-        val hql = "SELECT COUNT (*) FROM Vector v WHERE v.ubicacion = :nombreUbicacion"
+        val hql = "SELECT COUNT (*) FROM Vector v WHERE v.ubicacion.nombreUbicacion =:nombreUbicacion"
         val session = TransactionRunner.currentSession
-        val query = session.createQuery(hql, Long::class.javaObjectType )
+        val query = session.createQuery(hql, Long::class.javaObjectType)
         query.setParameter("nombreUbicacion", nombreUbicacion);
-        return query.firstResult.toInt()
+        return query.singleResult.toInt()
     }
 
     override fun vectoresInfectados(nombreUbicacion: String): Int {

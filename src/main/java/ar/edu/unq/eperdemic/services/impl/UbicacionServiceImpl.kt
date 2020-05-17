@@ -28,12 +28,9 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO, var dataDAO: DataDAO)
         ubicacion.nombreUbicacion=nombreUbicacion
         return TransactionRunner.runTrx {
             ubicacionDao.crear(ubicacion)
-
-            //ubicacionDao.recuperar(nombreUbicacion)
         }
     }
     override fun mover(vectorId: Int, nombreUbicacion: String) {
-
         TransactionRunner.runTrx {
             vectorService.mover(vectorId, nombreUbicacion)
         }
