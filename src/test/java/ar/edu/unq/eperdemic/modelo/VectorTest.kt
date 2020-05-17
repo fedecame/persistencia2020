@@ -90,18 +90,19 @@ class VectorTest {
 
     @Test
     fun testElEstadoDelVectorEsElIndicado(){
-        Assert.assertEquals("Sano",vectorSUT.estado.nombre())
+        Assert.assertTrue(vectorSUT.estado is Sano)
     }
+
     @Test
     fun testelVectorSeCreaConUnEstadoSano(){
-        Assert.assertEquals("Sano", vectorSUT.estado.nombre())
+        Assert.assertTrue(vectorSUT.estado is Sano)
     }
 
     @Test
     fun testElVectorPasaAInfectadoAlEnfermarse(){
-        Assert.assertEquals("Sano", vectorSUT.estado.nombre())
+        Assert.assertTrue(vectorSUT.estado is Sano)
         vectorSUT.infectarse(especie)
-        Assert.assertEquals("Infectado", vectorSUT.estado.nombre())
+        Assert.assertTrue(vectorSUT.estado is Infectado)
         Assert.assertEquals(1,vectorSUT.especies.size)
     }
 
