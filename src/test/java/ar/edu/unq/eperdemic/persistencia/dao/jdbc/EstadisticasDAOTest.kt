@@ -78,7 +78,6 @@ class EstadisticasDAOTest {
         ubicacionService.mover(vector.id!!.toInt(), ubicacion0.nombreUbicacion)
     }
 
-
     private fun crearNConEstadoEn(cant : Int, estado : EstadoVector, ubicacion : String){
         repeat(cant){
             var vectorInfectado = Vector()
@@ -91,7 +90,6 @@ class EstadisticasDAOTest {
         }
     }
 
-/*
     @Test
     fun elEstadisticasDAODevuelve0CuandoNoHayNingunVectorEnEsaUbicacion(){
         var res = 0
@@ -120,7 +118,6 @@ class EstadisticasDAOTest {
         }
         Assert.assertEquals(2, res)
     }
-*/
     @Test
     fun elEstadisticasDAODevuelve0CuandoNoHayNingunVectorInfectadoEnEsaUbicacion(){
         var res = 0
@@ -150,7 +147,6 @@ class EstadisticasDAOTest {
         }
         Assert.assertEquals(1, res)
     }
-
 
     @Test
     fun elEstadisticasDAODevuelve1CuandoHayUnVectorInfectadoEnEsaUbicacion(){

@@ -82,22 +82,22 @@ class EstadisticasServiceTest {
         vectorService.crearVector(vector)
         ubicacionService.mover(vector.id!!.toInt(), ubicacion0.nombreUbicacion)
     }
-/*
+
     @Test
-    fun elEstadisticasServiceDevuelve0CuandoNoHayNingunVectorEnEsaUbicacion(){
+    fun elEstadisticasServiceDevuelveUnReporteCon0VectoresPresentes0CuandoNoHayNingunVectorEnEsaUbicacion(){
         val reporte = estadisticasService.reporteDeContagios("Mar del Plata")
         Assert.assertEquals(0, reporte.vectoresPresentes)
     }
-*/
+
     @Test
-    fun elEstadisticasServiceDevuelve1CuandoHayUnSoloVectorEnEsaUbicacion(){
+    fun elEstadisticasServiceDevuelveUnReporteConUnVectorPresente1CuandoHayUnSoloVectorEnEsaUbicacion(){
         Assert.assertEquals("Quilmes", ubicacion0.nombreUbicacion)
         val reporte = estadisticasService.reporteDeContagios("Quilmes")
         Assert.assertEquals(1, reporte.vectoresPresentes)
     }
 
     @Test
-    fun elEstadisticasServiceDevuelve2CuandoHayDosVectoresEnEsaUbicacion(){
+    fun elEstadisticasServiceDevuelveUnReporteConDosVectoresPresentes2CuandoHayDosVectoresEnEsaUbicacion(){
         val vector2 = Vector()
         vector2.tipo = Insecto()
         vector2.estado = Infectado()
@@ -107,6 +107,54 @@ class EstadisticasServiceTest {
         ubicacionService.mover(vector.id!!.toInt(), ubicacion0.nombreUbicacion)
         val reporte = estadisticasService.reporteDeContagios("Quilmes")
         Assert.assertEquals(2, reporte.vectoresPresentes)
+    }
+
+    private fun crearNConEstadoEn(cant : Int, estado : EstadoVector, ubicacion : String){
+        repeat(cant){
+            var vectorInfectado = Vector()
+            vectorInfectado.tipo = tipo
+            vectorInfectado.estado = estado
+            vectorInfectado.ubicacion = ubicacionService.recuperarUbicacion(ubicacion)
+            vectorInfectado.agregarEspecie(especie)
+            vectorService.crearVector(vectorInfectado)
+            ubicacionService.mover(vectorInfectado.id!!.toInt(), ubicacion)
+        }
+    }
+
+    @Test
+    fun elEstadisticasServiceDevuelveUnReporteCon0VectoresInfectadosCuandoNoHayNingunVectorInfectadoEnEsaUbicacion(){
+        val reporte = estadisticasService.reporteDeContagios("Mar del Plata")
+        Assert.assertEquals(0, reporte.vectoresInfecatods)
+    }
+
+    @Test
+    fun elEstadisticaServiceDevuelveUnReporteCon1VectorInfectadoCuandoHayUnVectorInfectadoEnEsaUbicacionMDP(){
+        var res = 0
+        this.crearNConEstadoEn(1, Infectado(),"Mar del Plata")
+        val reporte = estadisticasService.reporteDeContagios("Mar del Plata")
+        Assert.assertEquals(1, reporte.vectoresInfecatods)
+    }
+
+    @Test
+    fun elEstadisticasServiceDevuelveUnReporteCon1VectorInfectadoCuandoHayUnVectorInfectadoEnMarDelPlataCuandoHayOtrosVectoresSanos(){
+        this.crearNConEstadoEn(1, Infectado(), "Mar del Plata")
+        this.crearNConEstadoEn(5, Sano(), "Mar del Plata")
+        val reporte = estadisticasService.reporteDeContagios("Mar del Plata")
+        Assert.assertEquals(1, reporte.vectoresInfecatods)
+    }
+
+    @Test
+    fun elEstadisticasServiceDevuelveUnReporteCon1VectorInfectadoCuandoHayUnVectorInfectadoEnEsaUbicacion(){
+        this.crearNConEstadoEn(1, Infectado(), "Quilmes")
+        val reporte = estadisticasService.reporteDeContagios("Quilmes")
+        Assert.assertEquals(1, reporte.vectoresInfecatods)
+    }
+
+    @Test
+    fun elEstadisticasServiceDevuelveUnReporteCon2VectoresInfectados2CuandoHayDosVectoresInfectadosEnEsaUbicacion(){
+        this.crearNConEstadoEn(2, Infectado(),"Quilmes")
+        val reporte = estadisticasService.reporteDeContagios("Quilmes")
+        Assert.assertEquals(2, reporte.vectoresInfecatods)
     }
 
     @After
