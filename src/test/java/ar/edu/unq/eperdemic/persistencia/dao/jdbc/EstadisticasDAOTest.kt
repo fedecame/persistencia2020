@@ -79,11 +79,11 @@ class EstadisticasDAOTest {
     }
 
 
-    private fun crearNinfectados(cant : Int, ubicacion : String){
+    private fun crearNConEstadoEn(cant : Int, estado : EstadoVector, ubicacion : String){
         repeat(cant){
             var vectorInfectado = Vector()
             vectorInfectado.tipo = tipo
-            vectorInfectado.estado = Infectado()
+            vectorInfectado.estado = estado
             vectorInfectado.ubicacion = ubicacionService.recuperarUbicacion(ubicacion)
             vectorInfectado.agregarEspecie(especie)
             vectorService.crearVector(vectorInfectado)
@@ -113,7 +113,7 @@ class EstadisticasDAOTest {
     @Test
     fun elEstadisticasDAODevuelve2CuandoHayDosVectoresEnEsaUbicacion(){
         var res = 0
-        this.crearNinfectados(1, "Quilmes") //Uno ya habia
+        this.crearNConEstadoEn(1, Infectado(), "Quilmes") //Uno ya habia
         ubicacionService.mover(vector.id!!.toInt(), ubicacion0.nombreUbicacion)
         runTrx {
             res = estadisticasDAO.vectoresPresentes("Quilmes")
@@ -129,12 +129,33 @@ class EstadisticasDAOTest {
         }
         Assert.assertEquals(0, res)
     }
-/*
+
+    @Test
+    fun elEstadisticasDAODevuelve1CuandoHayUnVectorInfectadoEnEsaUbicacionMDP(){
+        var res = 0
+        this.crearNConEstadoEn(1, Infectado(),"Mar del Plata")
+        runTrx {
+            res = estadisticasDAO.vectoresInfectados("Mar del Plata")
+        }
+        Assert.assertEquals(1, res)
+    }
+
+    @Test
+    fun elEstadisticasDAODevuelve1CuandoHayUnVectorInfectadoEnMarDelPlataCuandoHayOtrosVectoresSanos(){
+        var res = 0
+        this.crearNConEstadoEn(1, Infectado(), "Mar del Plata")
+        this.crearNConEstadoEn(5, Sano(), "Mar del Plata")
+        runTrx {
+            res = estadisticasDAO.vectoresInfectados("Mar del Plata")
+        }
+        Assert.assertEquals(1, res)
+    }
+
 
     @Test
     fun elEstadisticasDAODevuelve1CuandoHayUnVectorInfectadoEnEsaUbicacion(){
         var res = 0
-        this.crearNinfectados(1, "Quilmes")
+        this.crearNConEstadoEn(1, Infectado(), "Quilmes")
         runTrx {
             res = estadisticasDAO.vectoresInfectados("Quilmes")
         }
@@ -144,13 +165,12 @@ class EstadisticasDAOTest {
     @Test
     fun elEstadisticasDAODevuelve2CuandoHayDosVectoresInfectadosEnEsaUbicacion(){
         var res = 0
-        this.crearNinfectados(2, "Quilmes")
+        this.crearNConEstadoEn(2, Infectado(),"Quilmes")
         runTrx {
             res = estadisticasDAO.vectoresInfectados("Quilmes")
         }
         Assert.assertEquals(2, res)
     }
- */
 
     @After
     fun eliminarTodo(){

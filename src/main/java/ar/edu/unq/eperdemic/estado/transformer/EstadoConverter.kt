@@ -20,7 +20,5 @@ class EstadoConverter: AttributeConverter<EstadoVector, String>  {
         return sb.toString()
     }
 
-    override fun convertToEntityAttribute(dbEstado : String) : EstadoVector {
-        return EstadoDelivery(mutableListOf(Sano(), Infectado())).get(dbEstado.toString())!! as EstadoVector
-    }
+    override fun convertToEntityAttribute(dbEstado : String) : EstadoVector  = EstadoDelivery(mutableListOf(Sano(), Infectado())).get(dbEstado)!!
 }
