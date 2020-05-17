@@ -7,6 +7,7 @@ import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.modelo.exception.NoExisteUbicacion
 import ar.edu.unq.eperdemic.persistencia.dao.DataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.EstadisticasDAO
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
@@ -79,31 +80,34 @@ class EstadisticasServiceTest {
         vector.ubicacion = ubicacion1
         ubicacion1.vectores.add(vector)
         vectorService.crearVector(vector)
+        ubicacionService.mover(vector.id!!.toInt(), ubicacion0.nombreUbicacion)
     }
-
+/*
     @Test
     fun elEstadisticasServiceDevuelve0CuandoNoHayNingunVectorEnEsaUbicacion(){
         val reporte = estadisticasService.reporteDeContagios("Mar del Plata")
         Assert.assertEquals(0, reporte.vectoresPresentes)
     }
-
+*/
     @Test
     fun elEstadisticasServiceDevuelve1CuandoHayUnSoloVectorEnEsaUbicacion(){
-        val reporte = estadisticasService.reporteDeContagios(ubicacion0.nombreUbicacion)
+        Assert.assertEquals("Quilmes", ubicacion0.nombreUbicacion)
+        val reporte = estadisticasService.reporteDeContagios("Quilmes")
         Assert.assertEquals(1, reporte.vectoresPresentes)
     }
 
     @Test
-    fun elEstadisticasServiceDevuelve2CuandoHayUnSoloVectorEnEsaUbicacion(){
+    fun elEstadisticasServiceDevuelve2CuandoHayDosVectoresEnEsaUbicacion(){
         val vector2 = Vector()
         vector2.tipo = Insecto()
         vector2.estado = Infectado()
         vector2.estado = estado
         vector2.ubicacion = ubicacion0
+        vectorService.crearVector(vector2)
+        ubicacionService.mover(vector.id!!.toInt(), ubicacion0.nombreUbicacion)
         val reporte = estadisticasService.reporteDeContagios("Quilmes")
         Assert.assertEquals(2, reporte.vectoresPresentes)
     }
-
 
     @After
     open fun eliminarTodo(){
