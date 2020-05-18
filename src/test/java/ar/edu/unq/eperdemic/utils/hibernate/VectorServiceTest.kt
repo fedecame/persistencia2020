@@ -164,7 +164,7 @@ class VectorServiceTest {
     @Test
     fun testAlCrearseUnVectorTieneEstadoSano(){
         val recuperado = vectorService.recuperarVector(1)
-        Assert.assertEquals("Sano", recuperado.estado.nombre())
+        Assert.assertTrue(recuperado.estado is Sano)
     }
 
     @Test
@@ -173,7 +173,7 @@ class VectorServiceTest {
         val recuperado = vectorService.recuperarVector(1)
         vectorService.infectar(recuperado,especie2)
         val recupInfectado = vectorService.recuperarVector(1)
-        Assert.assertEquals("Infectado", recupInfectado.estado.nombre())
+        Assert.assertTrue(recupInfectado.estado is Infectado)
     }
 
     @Test
