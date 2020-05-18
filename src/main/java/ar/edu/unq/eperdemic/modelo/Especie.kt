@@ -13,15 +13,15 @@ class Especie() {
     lateinit var patogeno: Patogeno
     lateinit var nombre: String
     lateinit var paisDeOrigen: String
-    @ManyToMany(fetch = FetchType.EAGER, cascade=[CascadeType.ALL])
-    var mutaciones : MutableSet<Mutacion> = mutableSetOf()
-    @ManyToMany(fetch = FetchType.EAGER, cascade=[CascadeType.ALL])
-    var mutacionesDesbloqueadas : MutableSet<Mutacion> = mutableSetOf()
+//    @ManyToMany(fetch = FetchType.EAGER, cascade=[CascadeType.ALL])
+//    var mutaciones : MutableSet<Mutacion> = mutableSetOf()
+//    @ManyToMany(fetch = FetchType.EAGER, cascade=[CascadeType.ALL])
+//    var mutacionesDesbloqueadas : MutableSet<Mutacion> = mutableSetOf()
     var cantidadInfectadosParaADN = 0
 
-    fun agregarInfectadoParaADN() {
-        cantidadInfectadosParaADN++
-    }
+//    fun agregarInfectadoParaADN() {
+//        cantidadInfectadosParaADN++
+//    }
 
     fun factorContagioAnimal(): Int = patogeno.factorContagioAnimal()
 
@@ -52,45 +52,45 @@ class Especie() {
     fun aumentarLetalidad() {
         patogeno.letalidad++
     }
+//
+//    fun cantidadDeADN() : Int {
+//        return cantidadInfectadosParaADN.div(5)
+//    }
+//
+//    fun agregarMutacion(unaMutacion : Mutacion) {
+//        this.mutaciones.add(unaMutacion)
+//    }
+//
+//    fun desbloquearMutaciones(mutaciones : Set<Mutacion>) {
+//        this.mutacionesDesbloqueadas.addAll(mutaciones)
+//    }
+//
+//    fun mutoEn(mutacionId : Long) : Boolean {
+//        return this.mutaciones.any { it.id == mutacionId }
+//    }
+//
+//    fun tieneDesbloqueadaLaMutacion(mutacionId : Long) : Boolean {
+//        return this.mutacionesDesbloqueadas.any { it.id == mutacionId }
+//    }
 
-    fun cantidadDeADN() : Int {
-        return cantidadInfectadosParaADN.div(5)
-    }
+//    private fun puedeMutarEn(unaMutacion: Mutacion) : Boolean {
+//        return this.cantidadDeADN() >= unaMutacion.adnNecesario
+//                && this.tieneDesbloqueadaLaMutacion(unaMutacion.id!!)
+//                && unaMutacion.validaMutacionesNecesarias(this)
+//    }
 
-    fun agregarMutacion(unaMutacion : Mutacion) {
-        this.mutaciones.add(unaMutacion)
-    }
+//    private fun descontarAdn(cantADN: Int) {
+//        this.cantidadInfectadosParaADN -= cantADN * 5
+//    }
 
-    fun desbloquearMutaciones(mutaciones : Set<Mutacion>) {
-        this.mutacionesDesbloqueadas.addAll(mutaciones)
-    }
-
-    fun mutoEn(mutacionId : Long) : Boolean {
-        return this.mutaciones.any { it.id == mutacionId }
-    }
-
-    fun tieneDesbloqueadaLaMutacion(mutacionId : Long) : Boolean {
-        return this.mutacionesDesbloqueadas.any { it.id == mutacionId }
-    }
-
-    private fun puedeMutarEn(unaMutacion: Mutacion) : Boolean {
-        return this.cantidadDeADN() >= unaMutacion.adnNecesario
-                && this.tieneDesbloqueadaLaMutacion(unaMutacion.id!!)
-                && unaMutacion.validaMutacionesNecesarias(this)
-    }
-
-    private fun descontarAdn(cantADN: Int) {
-        this.cantidadInfectadosParaADN -= cantADN * 5
-    }
-
-    fun mutar(unaMutacion : Mutacion) {
-        if (!this.puedeMutarEn(unaMutacion)) {
-            throw EspecieNoCumpleRequisitosParaMutarException(this.id.toString(), unaMutacion.id.toString())
-        }
-
-        this.agregarMutacion(unaMutacion)
-        this.descontarAdn(unaMutacion.adnNecesario)
-        this.desbloquearMutaciones(unaMutacion.mutacionesDesbloqueables)
-        unaMutacion.mutarAtributoDeEspecie(this)
-    }
+//    fun mutar(unaMutacion : Mutacion) {
+//        if (!this.puedeMutarEn(unaMutacion)) {
+//            throw EspecieNoCumpleRequisitosParaMutarException(this.id.toString(), unaMutacion.id.toString())
+//        }
+//
+//        this.agregarMutacion(unaMutacion)
+//        this.descontarAdn(unaMutacion.adnNecesario)
+//        this.desbloquearMutaciones(unaMutacion.mutacionesDesbloqueables)
+//        unaMutacion.mutarAtributoDeEspecie(this)
+//    }
 }
