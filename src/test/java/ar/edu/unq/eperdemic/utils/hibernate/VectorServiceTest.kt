@@ -51,7 +51,7 @@ class VectorServiceTest {
         tipo = Humano()
         estado = Sano()
         especie = Especie()
-        especie.cantidadInfectados = 42
+        especie.cantidadInfectadosParaADN = 42
         especie.nombre = "Algo"
         especie.paisDeOrigen = "Alemania"
         patogeno = Patogeno()
@@ -88,7 +88,7 @@ class VectorServiceTest {
         Assert.assertFalse(list.isEmpty())
         Assert.assertEquals(1,list.size)
         val especie = list.first()
-        Assert.assertEquals(42,especie.cantidadInfectados)
+        Assert.assertEquals(42,especie.cantidadInfectadosParaADN)
         Assert.assertEquals("Algo",especie.nombre)
         Assert.assertEquals("Alemania",especie.paisDeOrigen)
         Assert.assertEquals("",especie.patogeno.tipo)
@@ -100,7 +100,7 @@ class VectorServiceTest {
         vector1.tipo = Insecto()
         vector1.estado = Infectado()
         val especie2 = Especie()
-        especie2.cantidadInfectados = 23
+        especie2.cantidadInfectadosParaADN = 23
         especie2.nombre = "Sarasa"
         especie2.paisDeOrigen = "Japon"
         val patogenoTest = Patogeno()
@@ -115,11 +115,11 @@ class VectorServiceTest {
         Assert.assertEquals(2,list.size)
         val especie1 = list.find { it.nombre == "Sarasa" }
         val especie0 = list.find { it.nombre == "Algo" }
-        Assert.assertEquals(23,especie1!!.cantidadInfectados)
+        Assert.assertEquals(23,especie1!!.cantidadInfectadosParaADN)
         Assert.assertEquals("Sarasa",especie1!!.nombre)
         Assert.assertEquals("Japon",especie1!!.paisDeOrigen)
         Assert.assertEquals("Nisman",especie1!!.patogeno.tipo)
-        Assert.assertEquals(42,especie0!!.cantidadInfectados)
+        Assert.assertEquals(42,especie0!!.cantidadInfectadosParaADN)
         Assert.assertEquals("Algo",especie0!!.nombre)
         Assert.assertEquals("Alemania",especie0!!.paisDeOrigen)
         Assert.assertEquals("",especie0!!.patogeno.tipo)
@@ -149,7 +149,7 @@ class VectorServiceTest {
         Assert.assertFalse(list.isEmpty())
         Assert.assertEquals(1,list.size)
         val especie = list.first()
-        Assert.assertEquals(42,especie.cantidadInfectados)
+        Assert.assertEquals(42,especie.cantidadInfectadosParaADN)
         Assert.assertEquals("Algo",especie.nombre)
         Assert.assertEquals("Alemania",especie.paisDeOrigen)
         Assert.assertEquals("",especie.patogeno.tipo)

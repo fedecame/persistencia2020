@@ -7,7 +7,7 @@ import ar.edu.unq.eperdemic.services.MutacionService
 import ar.edu.unq.eperdemic.services.PatogenoService
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 
-class MutacionServiceImpl(var mutacionDao : MutacionDAO, var dataDao : DataDAO, val patogenoService: PatogenoService) : MutacionService{
+class MutacionServiceImpl(var mutacionDao : MutacionDAO, val patogenoService: PatogenoService) : MutacionService{
     override fun mutar(especieId: Int, mutacionId: Int) {
         runTrx {
             val mutacion = mutacionDao.recuperar(mutacionId)

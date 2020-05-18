@@ -40,4 +40,8 @@ class PatogenoServiceJDBCImpl(var patogenoDAO: PatogenoDAO) : PatogenoService {
     override fun crearEspecie(especie: Especie): Int {
         TODO("Not yet implemented")
     }
+
+    override fun actualizarEspecie(especie: Especie) {
+        TODO("Not yet implemented")
+    }
 }

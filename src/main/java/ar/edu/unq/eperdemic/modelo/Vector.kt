@@ -37,8 +37,6 @@ class Vector {
         this.recuperarse()
     }
 
-    fun estaInfectado() = false
-
     fun recuperarse(){
         this.cambiarEstado(Sano())
     }
@@ -46,6 +44,7 @@ class Vector {
     fun infectarse(especie: Especie){
         this.cambiarEstado(Infectado())
         this.agregarEspecie(especie)
+        tipo.agregarInfectado(especie)
     }
 
     private fun cambiarEstado(unEstado: EstadoVector) {

@@ -17,10 +17,10 @@ class Especie() {
     var mutaciones : MutableSet<Mutacion> = mutableSetOf()
     @ManyToMany(fetch = FetchType.EAGER, cascade=[CascadeType.ALL])
     var mutacionesDesbloqueadas : MutableSet<Mutacion> = mutableSetOf()
-    var cantidadInfectados = 0
+    var cantidadInfectadosParaADN = 0
 
-    fun agregarInfectado() {
-        cantidadInfectados++
+    fun agregarInfectadoParaADN() {
+        cantidadInfectadosParaADN++
     }
 
     fun factorContagioAnimal(): Int = patogeno.factorContagioAnimal()
@@ -54,7 +54,7 @@ class Especie() {
     }
 
     fun cantidadDeADN() : Int {
-        return cantidadInfectados.div(5)
+        return cantidadInfectadosParaADN.div(5)
     }
 
     fun agregarMutacion(unaMutacion : Mutacion) {
@@ -79,12 +79,17 @@ class Especie() {
                 && unaMutacion.validaMutacionesNecesarias(this)
     }
 
+    private fun descontarAdn(cantADN: Int) {
+        this.cantidadInfectadosParaADN -= cantADN * 5
+    }
+
     fun mutar(unaMutacion : Mutacion) {
         if (!this.puedeMutarEn(unaMutacion)) {
             throw EspecieNoCumpleRequisitosParaMutarException(this.id.toString(), unaMutacion.id.toString())
         }
 
         this.agregarMutacion(unaMutacion)
+        this.descontarAdn(unaMutacion.adnNecesario)
         this.desbloquearMutaciones(unaMutacion.mutacionesDesbloqueables)
         unaMutacion.mutarAtributoDeEspecie(this)
     }

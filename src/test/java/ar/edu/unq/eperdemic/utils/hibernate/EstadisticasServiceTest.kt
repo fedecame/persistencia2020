@@ -7,7 +7,6 @@ import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
-import ar.edu.unq.eperdemic.modelo.exception.NoExisteUbicacion
 import ar.edu.unq.eperdemic.persistencia.dao.DataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.EstadisticasDAO
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
@@ -63,7 +62,7 @@ class EstadisticasServiceTest {
         tipo = Humano()
         estado = Sano()
         especie = Especie()
-        especie.cantidadInfectados = 42
+        especie.cantidadInfectadosParaADN = 42
         especie.nombre = "Algo"
         especie.paisDeOrigen = "Alemania"
         patogeno = Patogeno()
