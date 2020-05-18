@@ -4,11 +4,20 @@ import ar.edu.unq.eperdemic.modelo.Mutacion
 import ar.edu.unq.eperdemic.persistencia.dao.DataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.MutacionDAO
 import ar.edu.unq.eperdemic.services.MutacionService
+import ar.edu.unq.eperdemic.services.PatogenoService
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 
-class MutacionServiceImpl(var mutacionDao : MutacionDAO, var dataDao : DataDAO) : MutacionService{
+class MutacionServiceImpl(var mutacionDao : MutacionDAO, var dataDao : DataDAO, val patogenoService: PatogenoService) : MutacionService{
     override fun mutar(especieId: Int, mutacionId: Int) {
-        //fede
+        runTrx {
+            val mutacion = mutacionDao.recuperar(mutacionId)
+            val especie = patogenoService.recuperarEspecie(especieId)
+
+            mutacion.mutar(especie)
+
+            //actualizar especie
+            //patogenoService.actualizarEspecie(especie)
+        }
     }
 
     override fun crearMutacion(mutacion: Mutacion): Mutacion = runTrx {

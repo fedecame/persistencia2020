@@ -13,6 +13,8 @@ class Patogeno : Serializable{
     var factorContagioAnimal : Int  = 0
     var factorContagioInsecto :Int  = 0
     var factorContagioHumano : Int  = 0
+    var defensaContraMicroorganismos : Int = 0
+    var letalidad : Int = 0
 
     @Column(nullable = false)
     lateinit var tipo : String
@@ -31,4 +33,8 @@ class Patogeno : Serializable{
     fun factorContagioInsecto(): Int = factorContagioInsecto
 
     fun factorContagioHumano(): Int = factorContagioHumano
+
+    fun defensaContraMicroorganismos(): Int = defensaContraMicroorganismos
+
+    fun letalidad(): Int = letalidad
 }
