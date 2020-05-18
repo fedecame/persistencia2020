@@ -48,4 +48,9 @@ class PatogenoServiceImpl(var patogenoDAO: PatogenoDAO, var especieDAO : Especie
         TODO("Not yet implemented")
     }
 
+    override fun actualizarEspecie(especie: Especie) {
+        runTrx {
+            especieDAO.actualizar(especie)
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package ar.edu.unq.eperdemic.modelo
 
+import ar.edu.unq.eperdemic.modelo.exception.EspecieNoCumpleRequisitosParaMutarException
 import javax.persistence.*
 
 @Entity
@@ -68,7 +69,23 @@ class Especie() {
         return this.mutaciones.any { it.id == mutacionId }
     }
 
-    fun puedeMutarEn(mutacionId : Long) : Boolean {
+    fun tieneDesbloqueadaLaMutacion(mutacionId : Long) : Boolean {
         return this.mutacionesDesbloqueadas.any { it.id == mutacionId }
+    }
+
+    private fun puedeMutarEn(unaMutacion: Mutacion) : Boolean {
+        return this.cantidadDeADN() >= unaMutacion.adnNecesario
+                && this.tieneDesbloqueadaLaMutacion(unaMutacion.id!!)
+                && unaMutacion.validaMutacionesNecesarias(this)
+    }
+
+    fun mutar(unaMutacion : Mutacion) {
+        if (!this.puedeMutarEn(unaMutacion)) {
+            throw EspecieNoCumpleRequisitosParaMutarException(this.id.toString(), unaMutacion.id.toString())
+        }
+
+        this.agregarMutacion(unaMutacion)
+        this.desbloquearMutaciones(unaMutacion.mutacionesDesbloqueables)
+        unaMutacion.mutarAtributoDeEspecie(this)
     }
 }

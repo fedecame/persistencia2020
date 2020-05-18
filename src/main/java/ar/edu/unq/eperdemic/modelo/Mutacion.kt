@@ -23,22 +23,12 @@ class Mutacion {
     @ManyToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     var mutacionesDesbloqueables : MutableSet<Mutacion> = mutableSetOf()
 
-    private fun validaMutacionDeEspecie(especie : Especie) : Boolean {
-        //TODO Pensar como sacar la validacion y simplemente DELEGAR (para q sea mas objetoso)
-        return especie.cantidadDeADN() >= adnNecesario
-                && especie.puedeMutarEn(this.id!!)
-                && mutacionesNecesarias.all { mutacion -> especie.mutoEn(mutacion.id!!) }
+    fun mutarAtributoDeEspecie(unaEspecie: Especie) {
+        this.tipo.mutarAtributoDeEspecie(unaEspecie)
     }
 
-    fun mutar(unaEspecie : Especie) {
-        //TODO Sacar este if, reemplazar por DELEGACION
-        if (!this.validaMutacionDeEspecie(unaEspecie)) {
-            throw EspecieNoCumpleRequisitosParaMutarException(unaEspecie.id.toString(), this.id!!.toString())
-        }
-
-        unaEspecie.agregarMutacion(this)
-        unaEspecie.desbloquearMutaciones(this.mutacionesDesbloqueables)
-        this.tipo.mutarAtributoDeEspecie(unaEspecie)
+    fun validaMutacionesNecesarias(unaEspecie: Especie) : Boolean {
+        return mutacionesNecesarias.all { mutacion -> unaEspecie.mutoEn(mutacion.id!!) }
     }
 }
 

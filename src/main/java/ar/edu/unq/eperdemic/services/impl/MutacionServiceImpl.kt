@@ -13,10 +13,8 @@ class MutacionServiceImpl(var mutacionDao : MutacionDAO, var dataDao : DataDAO, 
             val mutacion = mutacionDao.recuperar(mutacionId)
             val especie = patogenoService.recuperarEspecie(especieId)
 
-            mutacion.mutar(especie)
-
-            //actualizar especie
-            //patogenoService.actualizarEspecie(especie)
+            especie.mutar(mutacion)
+            patogenoService.actualizarEspecie(especie)
         }
     }
 
