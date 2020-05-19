@@ -13,8 +13,8 @@ class EstadisticasServiceImpl(private var estadisticasDAO : EstadisticasDAO) : E
         TODO("Not yet implemented")
     }
 
-    override fun lideres(): List<Especie> {
-        TODO("Not yet implemented")
+    override fun lideres(): MutableList<Especie> {
+        return runTrx { estadisticasDAO.lideres() }
     }
 
     override fun reporteDeContagios(nombreUbicacion: String): ReporteDeContagios = ReporteDeContagios(this.vectoresPresentes(nombreUbicacion), this.vectoresInfectados(nombreUbicacion), this.especieQueInfectaAMasVectoresEn(nombreUbicacion))

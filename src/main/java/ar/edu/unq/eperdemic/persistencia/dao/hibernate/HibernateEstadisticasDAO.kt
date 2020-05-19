@@ -35,4 +35,22 @@ class HibernateEstadisticasDAO : EstadisticasDAO {
         query.setParameter("nombreUbicacion", nombreUbicacion)
         return query.singleResult.toString()
     }
+
+   override fun lideres(): MutableList<Especie> {
+        val session = TransactionRunner.currentSession
+        val hql = "select e  " +
+                "from Especie e INNER JOIN Vector v ON e.id = v.id " +
+                "where v.tipo=?1 or v.tipo=?2 " +
+                "group by e.id " +
+                "order by count(*)  "
+        val query = session.createQuery(hql, Especie::class.java)
+        var tipo="Animal"
+        var tipo2="Humano"
+        query.setString(1,tipo)
+        query.setString(2,tipo2)
+        query.setMaxResults(10)
+        return query.resultList
+    }
+
+
 }

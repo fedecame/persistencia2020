@@ -37,9 +37,15 @@ class EstadisticasServiceTest {
     lateinit var vectorService : VectorService
     lateinit var ubicacionService : UbicacionService
     lateinit var vector : Vector
+    lateinit var vector2 : Vector
+    lateinit var vector3 : Vector
+    lateinit var vector4 : Vector
+
     lateinit var tipo : TipoVector
     lateinit var estado : EstadoVector
     lateinit var especie : Especie
+    lateinit var especie2 : Especie
+    lateinit var especie3 : Especie
     lateinit var dataDAO : DataDAO
     lateinit var ubicacionDAO : UbicacionDAO
     lateinit var vectorDAO : VectorDAO
@@ -54,6 +60,8 @@ class EstadisticasServiceTest {
         estadisticasService = EstadisticasServiceImpl(estadisticasDAO)
         dataDAO = HibernateDataDAO()
         vector = Vector()
+        vector2 = Vector()
+        vector3 = Vector()
         dataDAO = HibernateDataDAO()
         ubicacionDAO = HibernateUbicacionDAO()
         vectorDAO = HibernateVectorDAO()
@@ -63,22 +71,54 @@ class EstadisticasServiceTest {
         tipo = Humano()
         estado = Sano()
         especie = Especie()
+        especie2=Especie()
+        especie3= Especie()
         especie.cantidadInfectados = 42
         especie.nombre = "Algo"
         especie.paisDeOrigen = "Alemania"
+        especie2.cantidadInfectados = 42
+        especie2.nombre = "Algo2"
+        especie2.paisDeOrigen = "Alemania"
+        especie3.cantidadInfectados = 42
+        especie3.nombre = "Algo3"
+        especie3.paisDeOrigen = "Alemania"
         patogeno = Patogeno()
         patogeno.tipo = ""
         especie.patogeno = patogeno
         vectorService = VectorServiceImpl(HibernateVectorDAO(), dataDAO, HibernateUbicacionDAO())
         vector.tipo = tipo
         vector.estado = estado
+
         vector.infectarse(especie)
+
+        vector.agregarEspecie(especie)
+        vector2.tipo = tipo
+        vector2.estado = estado
+        vector2.agregarEspecie(especie)
+        vector2.agregarEspecie(especie3)
+        vector3.agregarEspecie(especie)
+
+        vector.agregarEspecie(especie3)
+        vector3.tipo = tipo
+        vector3.estado = estado
+        vector3.agregarEspecie(especie2)
+
+
         ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO(), dataDAO)
         ubicacion0 = ubicacionService.crearUbicacion("Quilmes")
         ubicacion1 = ubicacionService.crearUbicacion("Mar del Plata")
         vector.ubicacion = ubicacion1
+        vector2.ubicacion = ubicacion1
+        vector3.ubicacion = ubicacion1
+
         ubicacion1.vectores.add(vector)
+        ubicacion1.vectores.add(vector2)
+        ubicacion1.vectores.add(vector3)
+
         vectorService.crearVector(vector)
+        vectorService.crearVector(vector2)
+        vectorService.crearVector(vector3)
+
         ubicacionService.mover(vector.id!!.toInt(), ubicacion0.nombreUbicacion)
     }
 
@@ -161,6 +201,17 @@ class EstadisticasServiceTest {
         val reporte = estadisticasService.reporteDeContagios("Quilmes")
         Assert.assertEquals("Algo", reporte.nombreDeEspecieMasInfecciosa)
     }
+    @Test
+    fun elEstadisticasServiceDevuelveLasPrimeras10EspeciesCuandoSoloExistenTresEspecies(){
+
+        val especiesLideres=estadisticasService.lideres()
+        Assert.assertEquals(especiesLideres.size, 3)
+    }
+
+
+
+
+
 
     @Test
     fun  laNombreDeLaEspecieMasInfecciosaEsElStringVacioCuandoNoQueHayNingunaEspecieEnLaUbicacion(){
@@ -207,7 +258,9 @@ class EstadisticasServiceTest {
 
 
     @After
-    fun eliminarTodo(){
+
+    open fun eliminarTodo(){
+
         TransactionRunner.runTrx {
             HibernateDataDAO().clear()
        }
