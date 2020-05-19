@@ -28,6 +28,5 @@ class EstadisticaServiceImpl(private var estadisticasDAO : EstadisticasDAO) : Es
     private fun especieQueInfectaAMasVectoresEn(nombreUbicacion: String): String = runTrx {estadisticasDAO.especieQueInfectaAMasVectoresEn(nombreUbicacion)}
 }
 
-   //     a?.length ?: -1
 
 

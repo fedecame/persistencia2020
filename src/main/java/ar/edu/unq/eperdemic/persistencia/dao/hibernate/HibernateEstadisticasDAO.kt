@@ -2,6 +2,7 @@ package ar.edu.unq.eperdemic.persistencia.dao.hibernate
 
 import ar.edu.unq.eperdemic.estado.Infectado
 import ar.edu.unq.eperdemic.estado.Sano
+import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.persistencia.dao.EstadisticasDAO
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
@@ -27,6 +28,11 @@ class HibernateEstadisticasDAO : EstadisticasDAO {
     }
 
     override fun especieQueInfectaAMasVectoresEn(nombreUbicacion: String): String {
+        val hql = "select nombre from Vector_Especie group by "
+
+        val session = TransactionRunner.currentSession
+        val query = session.createQuery(hql, String::class.javaObjectType)
+        query.setParameter("nombreUbicacion", nombreUbicacion)
         return ""
     }
 }
