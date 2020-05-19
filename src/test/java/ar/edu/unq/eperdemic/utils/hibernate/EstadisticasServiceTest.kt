@@ -81,7 +81,7 @@ class EstadisticasServiceTest {
         vectorService.crearVector(vector)
         ubicacionService.mover(vector.id!!.toInt(), ubicacion0.nombreUbicacion)
     }
-/*
+
     @Test
     fun elEstadisticasServiceDevuelveUnReporteCon0VectoresPresentes0CuandoNoHayNingunVectorEnEsaUbicacion(){
         val reporte = estadisticasService.reporteDeContagios("Mar del Plata")
@@ -175,7 +175,7 @@ class EstadisticasServiceTest {
         val reporte = estadisticasService.reporteDeContagios("Tokyo, baby")
         Assert.assertEquals("", reporte.nombreDeEspecieMasInfecciosa)
     }
-*/
+
     @Test
     fun enUnaUbicacionConMasDeUnaEspecieElNombreDeLaEspecieMasInfecciosaEsLaQueInfectaAMasVectores(){
         val paperas = Especie()
@@ -209,7 +209,7 @@ class EstadisticasServiceTest {
     @After
     fun eliminarTodo(){
         TransactionRunner.runTrx {
-            //HibernateDataDAO().clear()
+            HibernateDataDAO().clear()
        }
     }
 }
