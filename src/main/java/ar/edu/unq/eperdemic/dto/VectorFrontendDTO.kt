@@ -20,12 +20,12 @@ class VectorFrontendDTO(val tipoDeVector : TipoDeVector,
         ubicacion.nombreUbicacion = nombreDeUbicacionPresente
         ubicacion.agregarVector(vector)
         vector.ubicacion =  ubicacion
-        vector.tipo = this.aTipoModel(tipoDeVector)
+        vector.tipo = this.aTipoModel()
         return vector
     }
 
-    private fun aTipoModel(_tipoDeVector : TipoDeVector) : TipoVector{
-        var tipo : TipoVector
+    private fun aTipoModel() : TipoVector{
+        val tipo : TipoVector
         when(tipoDeVector){
             TipoDeVector.Persona -> tipo = Humano()
             TipoDeVector.Insecto -> tipo = Insecto()
