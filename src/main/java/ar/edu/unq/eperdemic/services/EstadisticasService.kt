@@ -6,7 +6,7 @@ import ar.edu.unq.eperdemic.modelo.ReporteDeContagios
 interface EstadisticasService {
 
     fun especieLider(): Especie
-    fun lideres(): List<Especie>
+    fun lideres(): MutableList<Especie>
     fun reporteDeContagios(nombreUbicacion: String) : ReporteDeContagios
 
 }

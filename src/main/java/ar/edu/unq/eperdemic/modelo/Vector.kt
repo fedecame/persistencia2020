@@ -37,6 +37,8 @@ class Vector {
         this.recuperarse()
     }
 
+    fun estaInfectado() = false
+
     fun recuperarse(){
         this.cambiarEstado(Sano())
     }

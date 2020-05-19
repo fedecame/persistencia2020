@@ -36,6 +36,7 @@ class VectorServiceTest {
     lateinit var ubicacionDAO : UbicacionDAO
     lateinit var vectorDAO : VectorDAO
     lateinit var ubicacion : Ubicacion
+    lateinit var patogeno : Patogeno
 
     @Before
     fun setUp(){
@@ -53,9 +54,10 @@ class VectorServiceTest {
         especie.cantidadInfectados = 42
         especie.nombre = "Algo"
         especie.paisDeOrigen = "Alemania"
-        especie.patogeno = Patogeno("")
+        patogeno = Patogeno()
+        patogeno.tipo = ""
+        especie.patogeno = patogeno
         vectorService = VectorServiceImpl(HibernateVectorDAO(), dataDAO, HibernateUbicacionDAO())
-        especie.patogeno = Patogeno("")
         vector.tipo = tipo
         vector.estado = estado
         vector.agregarEspecie(especie)
@@ -101,7 +103,9 @@ class VectorServiceTest {
         especie2.cantidadInfectados = 23
         especie2.nombre = "Sarasa"
         especie2.paisDeOrigen = "Japon"
-        especie2.patogeno = Patogeno("Nisman")
+        val patogenoTest = Patogeno()
+        patogenoTest.tipo = "Nisman"
+        especie2.patogeno = patogenoTest
         vector1.agregarEspecie(especie)
         vector1.agregarEspecie(especie2)
         vector1.ubicacion = ubicacion
@@ -160,7 +164,7 @@ class VectorServiceTest {
     @Test
     fun testAlCrearseUnVectorTieneEstadoSano(){
         val recuperado = vectorService.recuperarVector(1)
-        Assert.assertEquals("Sano", recuperado.estado.nombre())
+        Assert.assertTrue(recuperado.estado is Sano)
     }
 
     @Test
@@ -169,7 +173,7 @@ class VectorServiceTest {
         val recuperado = vectorService.recuperarVector(1)
         vectorService.infectar(recuperado,especie2)
         val recupInfectado = vectorService.recuperarVector(1)
-        Assert.assertEquals("Infectado", recupInfectado.estado.nombre())
+        Assert.assertTrue(recupInfectado.estado is Infectado)
     }
 
     @Test

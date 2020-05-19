@@ -4,6 +4,7 @@ import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.exception.NoExisteUbicacion
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
+import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 
 
 class HibernateUbicacionDAO : HibernateDAO<Ubicacion>(Ubicacion::class.java), UbicacionDAO {
@@ -13,20 +14,22 @@ class HibernateUbicacionDAO : HibernateDAO<Ubicacion>(Ubicacion::class.java), Ub
         return ubicacion
     }
 
+    private fun myRecuperar(nombre : String?):Ubicacion? {
+        val session = TransactionRunner.currentSession
+        return session.get(entityType, nombre)
+    }
+
     override fun recuperar(nombre: String): Ubicacion {
-        var ubicacion = super.recuperar(nombre)
-        if (ubicacion == null) {
+        var ubicacion = this.myRecuperar(nombre)
+        if (ubicacion === null) {
             throw NoExisteUbicacion(nombre)
         }
         return ubicacion
     }
-     override fun actualizar(ubicacion:Ubicacion){
-        return super.actualizar(ubicacion)
-    }
 
     override fun agregarVector(vector: Vector, ubicacion: Ubicacion) {
         val ubicacionDB = this.recuperar(ubicacion.nombreUbicacion)
-        ubicacionDB.vectores.add(vector)
+        ubicacionDB.agregarVector(vector)
         this.actualizar(ubicacionDB)
     }
 

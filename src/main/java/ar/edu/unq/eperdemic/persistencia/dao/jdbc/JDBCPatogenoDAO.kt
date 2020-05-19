@@ -50,7 +50,8 @@ class JDBCPatogenoDAO: PatogenoDAO {
     }
 
     private fun setPatogeno(resultSet: ResultSet): Patogeno {
-        val patogeno = Patogeno(resultSet.getString("tipo"))
+        val patogeno = Patogeno()
+        patogeno.tipo = resultSet.getString("tipo")
         patogeno.cantidadDeEspecies = resultSet.getInt("cantidadDeEspecies")
         patogeno.id = resultSet.getInt("id")
         return patogeno

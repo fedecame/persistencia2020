@@ -16,6 +16,7 @@ class VectorTest {
     private lateinit var vectorSUT : Vector
     private lateinit var especie : Especie
     private lateinit var ubicacion : Ubicacion
+    private lateinit var patogeno : Patogeno
 
     @Before
     fun setUp(){
@@ -30,8 +31,9 @@ class VectorTest {
         especie.cantidadInfectados = 42
         especie.nombre = "Algo"
         especie.paisDeOrigen = "Alemania"
-        especie.patogeno = Patogeno("")
-
+        patogeno = Patogeno()
+        patogeno.tipo = ""
+        especie.patogeno = patogeno
     }
 
     @Test
@@ -88,18 +90,19 @@ class VectorTest {
 
     @Test
     fun testElEstadoDelVectorEsElIndicado(){
-        Assert.assertEquals("Sano",vectorSUT.estado.nombre())
+        Assert.assertTrue(vectorSUT.estado is Sano)
     }
+
     @Test
     fun testelVectorSeCreaConUnEstadoSano(){
-        Assert.assertEquals("Sano", vectorSUT.estado.nombre())
+        Assert.assertTrue(vectorSUT.estado is Sano)
     }
 
     @Test
     fun testElVectorPasaAInfectadoAlEnfermarse(){
-        Assert.assertEquals("Sano", vectorSUT.estado.nombre())
+        Assert.assertTrue(vectorSUT.estado is Sano)
         vectorSUT.infectarse(especie)
-        Assert.assertEquals("Infectado", vectorSUT.estado.nombre())
+        Assert.assertTrue(vectorSUT.estado is Infectado)
         Assert.assertEquals(1,vectorSUT.especies.size)
     }
 

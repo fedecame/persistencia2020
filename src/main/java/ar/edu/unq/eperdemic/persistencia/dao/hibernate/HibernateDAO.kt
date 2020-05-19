@@ -5,7 +5,7 @@ import org.hibernate.Transaction
 import java.util.*
 
 
-open class HibernateDAO<T>(private val entityType: Class<T>) {
+open class HibernateDAO<T>(val entityType: Class<T>) {
 
     fun guardar(item: T) {
         val session = TransactionRunner.currentSession
@@ -15,11 +15,6 @@ open class HibernateDAO<T>(private val entityType: Class<T>) {
     fun recuperar(id: Long?): T {
         val session = TransactionRunner.currentSession
         return session.get(entityType, id)
-    }
-
-    fun recuperar(nombre : String?):T{
-        val session = TransactionRunner.currentSession
-        return session.get(entityType, nombre)
     }
 
     fun eliminar(item: T) {
