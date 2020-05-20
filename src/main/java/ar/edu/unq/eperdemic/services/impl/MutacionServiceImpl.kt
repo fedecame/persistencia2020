@@ -1,5 +1,6 @@
 package ar.edu.unq.eperdemic.services.impl
 
+import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Mutacion
 import ar.edu.unq.eperdemic.persistencia.dao.DataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.MutacionDAO
@@ -24,4 +25,10 @@ class MutacionServiceImpl(var mutacionDao : MutacionDAO, val patogenoService: Pa
     }
 
     override fun recuperarMutacion(mutacionId: Int): Mutacion = runTrx { mutacionDao.recuperar(mutacionId) }
+
+    override fun actualizarMutacion(mutacion: Mutacion) {
+        runTrx {
+            mutacionDao.actualizar(mutacion)
+        }
+    }
 }

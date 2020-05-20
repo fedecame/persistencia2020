@@ -7,4 +7,5 @@ interface MutacionService {
     /* Operaciones CRUD */
     fun crearMutacion(mutacion: Mutacion): Mutacion
     fun recuperarMutacion(mutacionId: Int): Mutacion
+    fun actualizarMutacion(mutacion: Mutacion)
 }

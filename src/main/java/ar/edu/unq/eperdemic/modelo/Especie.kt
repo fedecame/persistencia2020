@@ -13,10 +13,23 @@ class Especie() {
     lateinit var patogeno: Patogeno
     lateinit var nombre: String
     lateinit var paisDeOrigen: String
-    @ManyToMany(fetch = FetchType.EAGER, cascade=[CascadeType.ALL])
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = [CascadeType.PERSIST])
+    @JoinTable(
+        name = "Especies_Mutadas",
+        joinColumns = [JoinColumn(name = "especie_id", referencedColumnName = "id")],
+        inverseJoinColumns = [JoinColumn(name = "mutacion_id", referencedColumnName = "id")]
+    )
     var mutaciones : MutableSet<Mutacion> = mutableSetOf()
-    @ManyToMany(fetch = FetchType.EAGER, cascade=[CascadeType.ALL])
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = [CascadeType.PERSIST])
+    @JoinTable(
+        name = "Especies_Desbloqueadoras",
+        joinColumns = [JoinColumn(name = "especie_id", referencedColumnName = "id")],
+        inverseJoinColumns = [JoinColumn(name = "mutacion_id", referencedColumnName = "id")]
+    )
     var mutacionesDesbloqueadas : MutableSet<Mutacion> = mutableSetOf()
+
     var cantidadInfectadosParaADN = 0
 
     fun agregarInfectadoParaADN() {

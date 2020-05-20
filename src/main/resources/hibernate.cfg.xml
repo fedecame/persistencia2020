@@ -23,8 +23,5 @@
         <mapping class="ar.edu.unq.eperdemic.modelo.Especie" />
         <mapping class="ar.edu.unq.eperdemic.modelo.Ubicacion" />
         <mapping class="ar.edu.unq.eperdemic.modelo.Patogeno" />
-        <mapping class="ar.edu.unq.eperdemic.estado.transformer.EstadoConverter" />
-        <mapping class="ar.edu.unq.eperdemic.estado.Infectado" />
-        <mapping class="ar.edu.unq.eperdemic.estado.Sano" />
     </session-factory>
 </hibernate-configuration>
