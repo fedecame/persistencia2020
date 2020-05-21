@@ -45,10 +45,3 @@ class Mutacion {
         return mutacionesNecesarias.all { mutacion -> unaEspecie.fueMutadaEn(mutacion) }
     }
 }
-
-
-//Hay q agregar:
-// *cantidad de ADN necesario para mutar/ya esta
-// *mutaciones previas necesarias para mutar/ver con fede
-// *incremento al valor especifico de la especie
-// *implementar en la especie un mensaje q aumente el valor elegido(ver q opcion)
