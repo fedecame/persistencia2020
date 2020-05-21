@@ -8,9 +8,7 @@ import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 
 class EstadisticaServiceImpl(private var estadisticasDAO : EstadisticasDAO) : EstadisticasService {
 
-    override fun especieLider(): Especie {
-        TODO("Not yet implemented")
-    }
+    override fun especieLider(): Especie = runTrx { estadisticasDAO.especieLider() }
 
     override fun lideres(): List<Especie> {
         TODO("Not yet implemented")
