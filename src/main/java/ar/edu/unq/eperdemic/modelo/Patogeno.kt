@@ -19,12 +19,14 @@ class Patogeno : Serializable{
     @Column(nullable = false)
     lateinit var tipo : String
 
-    fun crearEspecie(nombreEspecie: String, paisDeOrigen: String) : Especie{
+    fun crearEspecie(nombreEspecie: String, paisDeOrigen: String, cantidadInfectadosADN: Int = 0, mutacionesDesbloqueadas: MutableSet<Mutacion> = mutableSetOf()) : Especie{
         cantidadDeEspecies++
         val especie = Especie()
         especie.paisDeOrigen = paisDeOrigen
         especie.patogeno = this
         especie.nombre = nombreEspecie
+        especie.cantidadInfectadosParaADN = cantidadInfectadosADN
+        especie.mutacionesDesbloqueadas = mutacionesDesbloqueadas
         return Especie()
     }
 

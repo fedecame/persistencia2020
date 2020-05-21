@@ -78,17 +78,17 @@ class Especie() {
         this.mutacionesDesbloqueadas.addAll(mutaciones)
     }
 
-    fun mutoEn(mutacionId : Long) : Boolean {
-        return this.mutaciones.any { it.id == mutacionId }
+    fun fueMutadaEn(mutacion: Mutacion) : Boolean {
+        return this.mutaciones.any { (it.id ?: it) == (mutacion.id ?: mutacion) }
     }
 
-    fun tieneDesbloqueadaLaMutacion(mutacionId : Long) : Boolean {
-        return this.mutacionesDesbloqueadas.any { it.id == mutacionId }
+    fun tieneDesbloqueadaLaMutacion(mutacion : Mutacion) : Boolean {
+        return this.mutacionesDesbloqueadas.any { (it.id ?: it) == (mutacion.id ?: mutacion) }
     }
 
     private fun puedeMutarEn(unaMutacion: Mutacion) : Boolean {
         return this.cantidadDeADN() >= unaMutacion.adnNecesario
-                && this.tieneDesbloqueadaLaMutacion(unaMutacion.id!!)
+                && this.tieneDesbloqueadaLaMutacion(unaMutacion)
                 && unaMutacion.validaMutacionesNecesarias(this)
     }
 
@@ -98,7 +98,7 @@ class Especie() {
 
     fun mutar(unaMutacion : Mutacion) {
         if (!this.puedeMutarEn(unaMutacion)) {
-            throw EspecieNoCumpleRequisitosParaMutarException(this.id.toString(), unaMutacion.id.toString())
+            throw EspecieNoCumpleRequisitosParaMutarException(this, unaMutacion)
         }
 
         this.agregarMutacion(unaMutacion)

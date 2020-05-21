@@ -42,7 +42,7 @@ class Mutacion {
     }
 
     fun validaMutacionesNecesarias(unaEspecie: Especie) : Boolean {
-        return mutacionesNecesarias.all { mutacion -> unaEspecie.mutoEn(mutacion.id!!) }
+        return mutacionesNecesarias.all { mutacion -> unaEspecie.fueMutadaEn(mutacion) }
     }
 }
 
