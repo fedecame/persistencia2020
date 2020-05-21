@@ -39,14 +39,33 @@ class HibernateEstadisticasDAO : EstadisticasDAO {
 
     override fun especieLider(): Especie {
         val session = TransactionRunner.currentSession
-        val hql = "SELECT v FROM Vector v WHERE v.estado=:estado AND v.tipo=:tipo"
+//        val hql = """
+//
+//
+//             SELECT e, COUNT (*)as ocu
+//             FROM Especie e WHERE e.id IN
+//             (SELECT v.especies FROM Vector v WHERE v.estado=:estado AND v.tipo=:tipo)
+//             GROUP BY e
+//             ORDER BY ocu desc
+//            """
+//        val hql = """
+//            select e
+//            from Especie e inner join Vector.especies ve
+//            on e.id = ve.id and ve.id IN
+//          aca esta mal porq no deben ser id de vectores  (SELECT v.id FROM Vector v WHERE v.estado=:estado AND v.tipo=:tipo)
+//            GROUP BY e
+//            order by count (e)
+//
+//        """
+
+
 
         val query = session.createQuery(hql, Especie::class.java)
         query.setParameter("estado", Infectado())
         query.setParameter("tipo",Humano() )
+        query.maxResults = 1
 
-
-        return Especie()
+        return query.singleResult
     }
 
    override fun lideres(): MutableList<Especie> {
