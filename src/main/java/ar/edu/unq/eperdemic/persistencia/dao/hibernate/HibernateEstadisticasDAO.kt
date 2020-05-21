@@ -41,6 +41,6 @@ class HibernateEstadisticasDAO : EstadisticasDAO {
         query.setParameter("tipo",Humano() )
 
 
-        return query.
+        return Especie()
     }
 }

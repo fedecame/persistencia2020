@@ -183,8 +183,8 @@ class EstadisticasServiceTest {
 
     @Test
     fun elEstadisticasServiceDevuelveUnReporteCon1VectorInfectadoCuandoHayUnVectorInfectadoEnEsaUbicacion(){
-        this.crearNConEstadoEn(1, Infectado(), "Quilmes")
-        val reporte = estadisticasService.reporteDeContagios("Quilmes")
+        this.crearNConEstadoEn(1, Infectado(), "Mar del Plata")
+        val reporte = estadisticasService.reporteDeContagios("Mar del Plata")
         Assert.assertEquals(1, reporte.vectoresInfecatods)
     }
 
@@ -202,7 +202,9 @@ class EstadisticasServiceTest {
     }
 
     @Test
-    fun NingunaEspecie
+    fun NingunaEspecie(){
+
+    }
 
 
     @After

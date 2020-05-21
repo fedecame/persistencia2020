@@ -162,6 +162,8 @@ class MutacionServiceTest {
         Assert.assertTrue(especieNueva.mutacionesDesbloqueadas.size == 1)
     }
 
+    //agregar otros 3 tests de ManyToMany
+
     @Test
     fun mutarUnaEspeciePersistidaAUnaMutacionPersistidaCumpliendoConLosRequisitos() {
         mutacionService.mutar(especie.id!!, mutacion1.id!!.toInt())
@@ -208,21 +210,6 @@ class MutacionServiceTest {
     }
 
     @Test
-    fun testAlCrearUnaMutacionSeRecuperaConSuId(){
-        val recuperado = mutacionService.recuperarMutacion(1)
-        Assert.assertEquals(1,recuperado.id!!)
-    }
-
-    @Test(expected = IDMutacionNoEncontradoException::class)
-    fun testAlRecuperarUnaMutacionConIdInexistenteRetornaNull(){
-        val mutacionRecuperada = mutacionService.recuperarMutacion(50)
-    }
-
-    @After
-    open fun eliminarTodo(){
-        TransactionRunner.runTrx {
-            HibernateDataDAO().clear()
-        }
     fun mutarUnaEspeciePersistidaAUnaMutacionPersistidaYMutarlaDeNuevoAUnaMutacionPersistidaRecienDesbloqueada() {
         especie.cantidadInfectadosParaADN = 22
         patogenoService.actualizarEspecie(especie)
@@ -239,6 +226,17 @@ class MutacionServiceTest {
         Assert.assertNotNull(especieDB.mutacionesDesbloqueadas.find { it.id == mutacion3.id })
         Assert.assertNotNull(especieDB.mutacionesDesbloqueadas.find { it.id == mutacion5.id })
         Assert.assertTrue(especieDB.mutacionesDesbloqueadas.size == 4)
+    }
+
+    @Test
+    fun testAlCrearUnaMutacionSeRecuperaConSuId(){
+        val recuperado = mutacionService.recuperarMutacion(1)
+        Assert.assertEquals(1,recuperado.id!!)
+    }
+
+    @Test(expected = IDMutacionNoEncontradoException::class)
+    fun testAlRecuperarUnaMutacionConIdInexistenteRetornaNull(){
+        val mutacionRecuperada = mutacionService.recuperarMutacion(50)
     }
 
     @After
