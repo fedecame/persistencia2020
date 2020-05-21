@@ -236,7 +236,7 @@ class MutacionServiceTest {
 
     @Test(expected = IDMutacionNoEncontradoException::class)
     fun testAlRecuperarUnaMutacionConIdInexistenteRetornaNull(){
-        val mutacionRecuperada = mutacionService.recuperarMutacion(50)
+        mutacionService.recuperarMutacion(50)
     }
 
     @After

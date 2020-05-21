@@ -9,9 +9,7 @@ import javax.persistence.NoResultException
 
 class EstadisticasServiceImpl(private var estadisticasDAO : EstadisticasDAO) : EstadisticasService {
 
-    override fun especieLider(): Especie {
-        TODO("Not yet implemented")
-    }
+    override fun especieLider(): Especie = runTrx { estadisticasDAO.especieLider() }
 
     override fun lideres(): MutableList<Especie> {
         return runTrx { estadisticasDAO.lideres() }

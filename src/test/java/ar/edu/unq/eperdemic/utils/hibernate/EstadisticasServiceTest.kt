@@ -107,6 +107,7 @@ class EstadisticasServiceTest {
         ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO(), dataDAO)
         ubicacion0 = ubicacionService.crearUbicacion("Quilmes")
         ubicacion1 = ubicacionService.crearUbicacion("Mar del Plata")
+        ubicacion2 = ubicacionService.crearUbicacion("Berazategui")
         vector.ubicacion = ubicacion1
         vector2.ubicacion = ubicacion1
         vector3.ubicacion = ubicacion1
@@ -124,7 +125,7 @@ class EstadisticasServiceTest {
 
     @Test
     fun elEstadisticasServiceDevuelveUnReporteCon0VectoresPresentes0CuandoNoHayNingunVectorEnEsaUbicacion(){
-        val reporte = estadisticasService.reporteDeContagios("Mar del Plata")
+        val reporte = estadisticasService.reporteDeContagios("Berazategui")
         Assert.assertEquals(0, reporte.vectoresPresentes)
     }
 
