@@ -29,7 +29,12 @@ class HibernateEstadisticasDAO : EstadisticasDAO {
     }
 
     override fun especieQueInfectaAMasVectoresEn(nombreUbicacion: String): String {
-        return ""
+        val q1 = "(SELECT e.nombre, COUNT(*) AS occ FROM Especie e INNER JOIN Vector_Especie ve ON e.id = ve.especies_id AND ve.Vector_id IN (SELECT v.id FROM Vector v WHERE v.ubicacion_nombreUbicacion=:nombreUbicacion) GROUP BY e.id ORDER BY occ DESC LIMIT 1) AS q;"
+        val hql = "SELECT nombre FROM " + q1
+        val session = TransactionRunner.currentSession
+        val query = session.createNativeQuery(hql)
+        query.setParameter("nombreUbicacion", nombreUbicacion)
+        return query.singleResult.toString()
     }
 
     override fun especieLider(): Especie {
@@ -43,4 +48,22 @@ class HibernateEstadisticasDAO : EstadisticasDAO {
 
         return Especie()
     }
+
+   override fun lideres(): MutableList<Especie> {
+        val session = TransactionRunner.currentSession
+        val hql = "select e  " +
+                "from Especie e INNER JOIN Vector v ON e.id = v.id " +
+                "where v.tipo=?1 or v.tipo=?2 " +
+                "group by e.id " +
+                "order by count(*)  "
+        val query = session.createQuery(hql, Especie::class.java)
+        var tipo="Animal"
+        var tipo2="Humano"
+        query.setString(1,tipo)
+        query.setString(2,tipo2)
+        query.setMaxResults(10)
+        return query.resultList
+    }
+
+
 }
