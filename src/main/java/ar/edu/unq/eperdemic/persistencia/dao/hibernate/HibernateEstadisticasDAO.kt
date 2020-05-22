@@ -39,33 +39,25 @@ class HibernateEstadisticasDAO : EstadisticasDAO {
 
     override fun especieLider(): Especie {
         val session = TransactionRunner.currentSession
-//        val hql = """
-//
-//
-//             SELECT e, COUNT (*)as ocu
-//             FROM Especie e WHERE e.id IN
-//             (SELECT v.especies FROM Vector v WHERE v.estado=:estado AND v.tipo=:tipo)
-//             GROUP BY e
-//             ORDER BY ocu desc
-//            """
-//        val hql = """
-//            select e
-//            from Especie e inner join Vector.especies ve
-//            on e.id = ve.id and ve.id IN
-//          aca esta mal porq no deben ser id de vectores  (SELECT v.id FROM Vector v WHERE v.estado=:estado AND v.tipo=:tipo)
-//            GROUP BY e
-//            order by count (e)
-//
-//        """
+        val hql = """
+           select id,cantidadInfectaddosParaADN,nombre,paisDeOrigen,patogeno_id
+           from Especie 
+           inner join 
+           (select count(comb.especies_id) as cantidad_humanos_contagiados,comb.especies_id
+           from Vector_Especie as comb
+           inner join Vector on
+           Vector.id = comb.Vector_id
+           where Vector.tipo = 'Humano'
+           group by comb.especies_id
+           order by cantidad_humanos_contagiados desc
+           limit 1
+           ) as temp on
+           Especie.id = temp.especies_id
+        """.trimIndent()
 
+       val query = session.createNativeQuery(hql, Especie::class.java)
 
-
-        val query = session.createQuery(hql, Especie::class.java)
-        query.setParameter("estado", Infectado())
-        query.setParameter("tipo",Humano() )
-        query.maxResults = 1
-
-        return query.singleResult
+        return query.singleResult as Especie::class.java
     }
 
    override fun lideres(): MutableList<Especie> {
