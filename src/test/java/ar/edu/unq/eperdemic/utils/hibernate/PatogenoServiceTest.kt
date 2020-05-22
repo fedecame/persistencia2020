@@ -111,7 +111,8 @@ class PatogenoServiceTest {
 
     @Test
     fun alUnPatogenoAgregarUnaespecieEstaSeCreaUnaEspecie(){
-        patogenoService.agregarEspecie(1,"Covic-19","China")
+        patogenoService.agregarEspecie(1,"Covid-19","China")
+
 
         /**
          *  TODO Fede hacer test
@@ -130,6 +131,7 @@ class PatogenoServiceTest {
         /**
          *  TODO Fede hacer test
          **/
+        throw Exception()
     }
 
     @Test
@@ -165,6 +167,7 @@ class PatogenoServiceTest {
         /**
          *  TODO Fede hacer test
          **/
+        throw Exception()
     }
 
 
