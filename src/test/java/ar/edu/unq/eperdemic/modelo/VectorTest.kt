@@ -3,14 +3,9 @@ package ar.edu.unq.eperdemic.modelo
 import ar.edu.unq.eperdemic.estado.Infectado
 import ar.edu.unq.eperdemic.estado.Sano
 import ar.edu.unq.eperdemic.tipo.Animal
-import ar.edu.unq.eperdemic.tipo.Humano
-import ar.edu.unq.eperdemic.tipo.Insecto
-import ar.edu.unq.eperdemic.tipo.TipoVector
-import ar.edu.unq.eperdemic.utility.random.RandomMaster
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito
 
 class VectorTest {
     private lateinit var vectorSUT : Vector
@@ -28,7 +23,7 @@ class VectorTest {
         ubicacion.nombreUbicacion = "Rusia"
         vectorSUT.ubicacion= ubicacion
         especie = Especie()
-        especie.cantidadInfectados = 42
+        especie.cantidadInfectadosParaADN = 42
         especie.nombre = "Algo"
         especie.paisDeOrigen = "Alemania"
         patogeno = Patogeno()
@@ -77,7 +72,7 @@ class VectorTest {
         Assert.assertFalse(list.isEmpty())
         Assert.assertEquals(1,list.size)
         val especie = list.first()
-        Assert.assertEquals(42,especie.cantidadInfectados)
+        Assert.assertEquals(42,especie.cantidadInfectadosParaADN)
         Assert.assertEquals("Algo",especie.nombre)
         Assert.assertEquals("Alemania",especie.paisDeOrigen)
         Assert.assertEquals("",especie.patogeno.tipo)

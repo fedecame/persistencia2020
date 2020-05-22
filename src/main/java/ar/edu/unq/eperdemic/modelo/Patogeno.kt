@@ -13,16 +13,20 @@ class Patogeno : Serializable{
     var factorContagioAnimal : Int  = 0
     var factorContagioInsecto :Int  = 0
     var factorContagioHumano : Int  = 0
+    var defensaContraMicroorganismos : Int = 0
+    var letalidad : Int = 0
 
     @Column(nullable = false)
     lateinit var tipo : String
 
-    fun crearEspecie(nombreEspecie: String, paisDeOrigen: String) : Especie{
+    fun crearEspecie(nombreEspecie: String, paisDeOrigen: String, cantidadInfectadosADN: Int = 0, mutacionesDesbloqueadas: MutableSet<Mutacion> = mutableSetOf()) : Especie{
         cantidadDeEspecies++
         val especie = Especie()
         especie.paisDeOrigen = paisDeOrigen
         especie.patogeno = this
         especie.nombre = nombreEspecie
+        especie.cantidadInfectadosParaADN = cantidadInfectadosADN
+        especie.mutacionesDesbloqueadas = mutacionesDesbloqueadas
         return Especie()
     }
 
@@ -31,4 +35,8 @@ class Patogeno : Serializable{
     fun factorContagioInsecto(): Int = factorContagioInsecto
 
     fun factorContagioHumano(): Int = factorContagioHumano
+
+    fun defensaContraMicroorganismos(): Int = defensaContraMicroorganismos
+
+    fun letalidad(): Int = letalidad
 }

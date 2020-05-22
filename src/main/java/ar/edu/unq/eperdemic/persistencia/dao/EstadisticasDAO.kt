@@ -9,6 +9,7 @@ interface EstadisticasDAO {
     fun vectoresInfectados(nombreUbicacion : String) : Int
 
     fun especieQueInfectaAMasVectoresEn(nombreUbicacion : String) : String
+    fun especieLider(): Especie
 
     fun lideres(): MutableList<Especie>
 }

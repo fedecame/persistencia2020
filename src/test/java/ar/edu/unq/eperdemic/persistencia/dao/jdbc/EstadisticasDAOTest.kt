@@ -21,6 +21,7 @@ import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
+import ar.edu.unq.eperdemic.tipo.Animal
 import ar.edu.unq.eperdemic.tipo.Humano
 import ar.edu.unq.eperdemic.tipo.Insecto
 import ar.edu.unq.eperdemic.tipo.TipoVector
@@ -28,6 +29,7 @@ import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import javax.persistence.NoResultException
 
 class EstadisticasDAOTest {
     lateinit var estadisticasDAO : EstadisticasDAO
@@ -59,7 +61,7 @@ class EstadisticasDAOTest {
         tipo = Humano()
         estado = Sano()
         especie = Especie()
-        especie.cantidadInfectados = 42
+        especie.cantidadInfectadosParaADN = 42
         especie.nombre = "Algo"
         especie.paisDeOrigen = "Alemania"
         patogeno = Patogeno()
@@ -167,6 +169,62 @@ class EstadisticasDAOTest {
         }
         Assert.assertEquals(2, res)
     }
+
+    @Test
+    fun  laEspecieMasInfecciosaEsLaUnicaEspecieQueHayEnQuilmesYEsAlgo(){
+        var res = ""
+        runTrx {
+            res = estadisticasDAO.especieQueInfectaAMasVectoresEn("Quilmes")
+        }
+        Assert.assertEquals("Algo", res)
+    }
+
+    @Test(expected= NoResultException::class)
+    fun  elNombreDeLaEspecieMasInfecciosaArrojaUnaExcepcionCuandoNoQueHayNingunaEspecieEnLaUbicacion(){
+        runTrx {
+            estadisticasDAO.especieQueInfectaAMasVectoresEn("Mar del Plata")
+        }
+    }
+
+    @Test(expected= NoResultException::class)
+    fun  elEstadisticasDAOArrojaUnaExcepcionCuandoLaUbicacionNoExiste(){
+        runTrx {
+            estadisticasDAO.especieQueInfectaAMasVectoresEn("The twilight zone")
+        }
+    }
+
+    @Test
+    fun enUnaUbicacionConMasDeUnaEspecieElNombreDeLaEspecieMasInfecciosaEsLaQueInfectaAMasVectores(){
+        val paperas = Especie()
+        val ubicacionFinal = ubicacionService.crearUbicacion("Maeame")
+        paperas.paisDeOrigen = "Rusia"
+        paperas.nombre = "Paperas"
+        val ubi = "Maeame"
+        val vectorRandom = Vector()
+        val vectorAlfa = Vector()
+        val vectorBeta = Vector()
+        vectorRandom.tipo = Humano()
+        vectorAlfa.tipo = Insecto()
+        vectorBeta.tipo = Animal()
+        vectorRandom.ubicacion = ubicacionFinal
+        vectorRandom.infectarse(paperas)
+        vectorAlfa.infectarse(paperas)
+        vectorBeta.infectarse(paperas)
+        vectorAlfa.ubicacion = ubicacionFinal
+        vectorBeta.ubicacion= ubicacionFinal
+        vectorService.crearVector(vectorAlfa)
+        vectorService.crearVector(vectorBeta)
+        vectorService.crearVector(vectorRandom)
+        ubicacionService.mover(vectorRandom.id!!.toInt(),ubi)
+        ubicacionService.mover(vectorAlfa.id!!.toInt(), ubi)
+        ubicacionService.mover(vectorBeta.id!!.toInt(),ubi)
+        var res = ""
+        runTrx {
+            res = estadisticasDAO.especieQueInfectaAMasVectoresEn("Maeame")
+        }
+        Assert.assertEquals("Paperas", res)
+    }
+
 
     @After
     fun eliminarTodo(){

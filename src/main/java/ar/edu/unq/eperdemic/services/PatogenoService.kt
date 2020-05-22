@@ -14,4 +14,5 @@ interface PatogenoService {
     fun recuperarEspecie(id: Int): Especie
 
     fun crearEspecie(especie : Especie) : Int
+    fun actualizarEspecie(especie: Especie)
 }

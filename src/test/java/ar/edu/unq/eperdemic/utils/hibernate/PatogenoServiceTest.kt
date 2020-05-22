@@ -109,8 +109,8 @@ class PatogenoServiceTest {
     }
 
     @Test
-    fun alUnPatogenoAgregarUnaespecieEstaSeCrea(){
-        //TO DO
+    fun alUnPatogenoAgregarUnaespecieEstaSeCreaUnaEspecie(){
+        patogenoService.agregarEspecie(1,"Covic-19","China")
     }
 
     @After
