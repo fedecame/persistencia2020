@@ -304,15 +304,6 @@ class VectorServiceTest {
 
     }
 
-    @Test
-    fun kotlinDiv() {
-        Assert.assertEquals(2, 5.div(2))
-
-        /**
-         *  TODO: Borrar este test FEDE
-         * */
-    }
-
 //    @After
 //    open fun eliminarTodo(){
 //        TransactionRunner.runTrx {

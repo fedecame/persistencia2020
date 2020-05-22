@@ -17,6 +17,7 @@ import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import kotlin.math.exp
 
 class PatogenoServiceTest {
 
@@ -111,7 +112,61 @@ class PatogenoServiceTest {
     @Test
     fun alUnPatogenoAgregarUnaespecieEstaSeCreaUnaEspecie(){
         patogenoService.agregarEspecie(1,"Covic-19","China")
+
+        /**
+         *  TODO Fede hacer test
+         **/
     }
+
+    @Test
+    fun cantidadDeVectoresInfectadosParaUnaEsepecieCreada() {
+        /**
+         *  TODO Fede hacer test
+         **/
+    }
+
+    @Test(expected = Exception::class)
+    fun cantidadDeVectoresInfectadosParaUnaEsepecieQueNoExiste() {
+        /**
+         *  TODO Fede hacer test
+         **/
+    }
+
+    @Test
+    fun esPandemiaUnaEspecieQueSeEncuentraEnMasDeLaMitadDeLasUbicaciones() {
+        /**
+         *  TODO Fede hacer test
+         **/
+    }
+
+    @Test
+    fun noEsPandemiaPorqueSoloSeEncuentraEnAlgunaUbicacionPeroMenosDeLaMitadDelTotal() {
+        /**
+         *  TODO Fede hacer test
+         **/
+    }
+
+    @Test
+    fun noEsPandemiaPorqueNoSeEncuentraEnNingunaUbicacion() {
+        /**
+         *  TODO Fede hacer test
+         **/
+    }
+
+    @Test
+    fun noEsPandemiaPorqueNoExistenUbicaciones() {
+        /**
+         *  TODO Fede hacer test
+         **/
+    }
+
+    @Test(expected = Exception::class)
+    fun noEsPandemiaArrojaExcepcionPorqueLaEspecieNoExiste() {
+        /**
+         *  TODO Fede hacer test
+         **/
+    }
+
 
     @After
     fun clean(){
