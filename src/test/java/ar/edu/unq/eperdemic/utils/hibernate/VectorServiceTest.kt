@@ -296,6 +296,8 @@ class VectorServiceTest {
 
         Assert.assertEquals(5, patogenoService.cantidadDeInfectados(1))
 
+        Assert.assertTrue(patogenoService.esPandemia(1))
+        Assert.assertFalse(patogenoService.esPandemia(2))
         /**
          *  TODO: Borrar este test FEDE
          * */

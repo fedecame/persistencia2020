@@ -46,7 +46,8 @@ class PatogenoServiceImpl(var patogenoDAO: PatogenoDAO, var especieDAO : Especie
     }
 
     override fun esPandemia(especieId: Int): Boolean {
-        TODO("Not yet implemented")
+        val especieDB = this.recuperarEspecie(especieId)
+        return runTrx { especieDAO.esPandemia(especieDB) }
     }
 
     override fun actualizarEspecie(especie: Especie) {
