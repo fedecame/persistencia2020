@@ -21,4 +21,21 @@ class HibernateEspecieDAO : HibernateDAO<Especie>(Especie::class.java), EspecieD
         }
         return res
     }
+
+    override fun cantidadDeInfectados(especie: Especie): Int {
+        val sql = """
+                SELECT 
+                    COUNT(id) AS cantidad_infectados
+                FROM
+                    Vector
+                        INNER JOIN
+                    Vector_Especie ON Vector.id = Vector_Especie.Vector_id
+                WHERE
+                    especies_id =:especieId
+            """.trimIndent()
+        val session = TransactionRunner.currentSession
+        val query = session.createNativeQuery(sql)
+        query.setParameter("especieId", especie.id)
+        return query.singleResult.toString().toInt()
+    }
 }

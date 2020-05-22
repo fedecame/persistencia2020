@@ -8,11 +8,10 @@ import ar.edu.unq.eperdemic.modelo.exception.IDVectorNoEncontradoException
 import ar.edu.unq.eperdemic.persistencia.dao.DataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
+import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
@@ -291,10 +290,25 @@ class VectorServiceTest {
         vectorService.infectar(vector3, especie3)
         vectorService.infectar(vector3, especie5)
 
+        val especieDAO = HibernateEspecieDAO()
+        val patogenoDAO = HibernatePatogenoDAO()
+        val patogenoService = PatogenoServiceImpl(patogenoDAO, especieDAO)
+
+        Assert.assertEquals(5, patogenoService.cantidadDeInfectados(1))
+
         /**
          *  TODO: Borrar este test FEDE
          * */
 
+    }
+
+    @Test
+    fun kotlinDiv() {
+        Assert.assertEquals(2, 5.div(2))
+
+        /**
+         *  TODO: Borrar este test FEDE
+         * */
     }
 
 //    @After

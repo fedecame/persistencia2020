@@ -11,4 +11,5 @@ interface EspecieDAO {
 
     fun actualizar(especie: Especie)
 
+    fun cantidadDeInfectados(especie: Especie) : Int
 }
