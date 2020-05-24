@@ -7,6 +7,7 @@ import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.modelo.exception.NoHayEspecieQueInfectaronHumanos
 import ar.edu.unq.eperdemic.persistencia.dao.DataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.EstadisticasDAO
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
@@ -90,18 +91,18 @@ class EstadisticasServiceTest {
         vector.estado = estado
 
         vector.infectarse(especie)
-//
-//        vector.agregarEspecie(especie)
-//        vector2.tipo = tipo
-//        vector2.estado = estado
-//        vector2.agregarEspecie(especie)
-//        vector2.agregarEspecie(especie3)
-//        vector3.agregarEspecie(especie)
-//
-//        vector.agregarEspecie(especie3)
-//        vector3.tipo = tipo
-//        vector3.estado = estado
-//        vector3.agregarEspecie(especie2)
+
+        vector.agregarEspecie(especie)
+        vector2.tipo = tipo
+        vector2.estado = estado
+        vector2.agregarEspecie(especie)
+        vector2.agregarEspecie(especie3)
+        vector3.agregarEspecie(especie)
+
+        vector.agregarEspecie(especie3)
+        vector3.tipo = tipo
+        vector3.estado = estado
+        vector3.agregarEspecie(especie2)
 
 
         ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO(), dataDAO)
@@ -113,169 +114,205 @@ class EstadisticasServiceTest {
         vector3.ubicacion = ubicacion1
 
         ubicacion1.vectores.add(vector)
-//        ubicacion1.vectores.add(vector2)
-//        ubicacion1.vectores.add(vector3)
+        ubicacion1.vectores.add(vector2)
+        ubicacion1.vectores.add(vector3)
 
         vectorService.crearVector(vector)
-//        vectorService.crearVector(vector2)
-//        vectorService.crearVector(vector3)
+        vectorService.crearVector(vector2)
+        vectorService.crearVector(vector3)
 
-//        ubicacionService.mover(vector.id!!.toInt(), ubicacion0.nombreUbicacion)
+        ubicacionService.mover(vector.id!!.toInt(), ubicacion0.nombreUbicacion)
     }
-//
-//    @Test
-//    fun elEstadisticasServiceDevuelveUnReporteCon0VectoresPresentes0CuandoNoHayNingunVectorEnEsaUbicacion(){
-//        val reporte = estadisticasService.reporteDeContagios("Berazategui")
-//        Assert.assertEquals(0, reporte.vectoresPresentes)
-//    }
-//
-//    @Test
-//    fun elEstadisticasServiceDevuelveUnReporteConUnVectorPresente1CuandoHayUnSoloVectorEnEsaUbicacion(){
-//        Assert.assertEquals("Quilmes", ubicacion0.nombreUbicacion)
-//        val reporte = estadisticasService.reporteDeContagios("Quilmes")
-//        Assert.assertEquals(1, reporte.vectoresPresentes)
-//    }
-//
-//    @Test
-//    fun elEstadisticasServiceDevuelveUnReporteConDosVectoresPresentes2CuandoHayDosVectoresEnEsaUbicacion(){
-//        val vector2 = Vector()
-//        vector2.tipo = Insecto()
-//        vector2.estado = Infectado()
-//        vector2.estado = estado
-//        vector2.ubicacion = ubicacion0
-//        vectorService.crearVector(vector2)
-//        ubicacionService.mover(vector.id!!.toInt(), ubicacion0.nombreUbicacion)
-//        val reporte = estadisticasService.reporteDeContagios("Quilmes")
-//        Assert.assertEquals(2, reporte.vectoresPresentes)
-//    }
-//
-//    private fun crearNConEstadoEn(cant : Int, estado : EstadoVector, ubicacion : String){
-//        repeat(cant){
-//            var vectorInfectado = Vector()
-//            vectorInfectado.tipo = tipo
-//            vectorInfectado.estado = estado
-//            vectorInfectado.ubicacion = ubicacionService.recuperarUbicacion(ubicacion)
-//            vectorInfectado.agregarEspecie(especie)
-//            vectorService.crearVector(vectorInfectado)
-//            ubicacionService.mover(vectorInfectado.id!!.toInt(), ubicacion)
-//        }
-//    }
-//
-//    @Test
-//    fun elEstadisticasServiceDevuelveUnReporteCon0VectoresInfectadosCuandoNoHayNingunVectorInfectadoEnEsaUbicacion(){
-//        val reporte = estadisticasService.reporteDeContagios("Mar del Plata")
-//        Assert.assertEquals(0, reporte.vectoresInfecatods)
-//    }
-//
-//    @Test
-//    fun elEstadisticaServiceDevuelveUnReporteCon1VectorInfectadoCuandoHayUnVectorInfectadoEnEsaUbicacionMDP(){
-//        var res = 0
-//        this.crearNConEstadoEn(1, Infectado(),"Mar del Plata")
-//        val reporte = estadisticasService.reporteDeContagios("Mar del Plata")
-//        Assert.assertEquals(1, reporte.vectoresInfecatods)
-//    }
-//
-//    @Test
-//    fun elEstadisticasServiceDevuelveUnReporteCon1VectorInfectadoCuandoHayUnVectorInfectadoEnMarDelPlataCuandoHayOtrosVectoresSanos(){
-//        this.crearNConEstadoEn(1, Infectado(), "Mar del Plata")
-//        this.crearNConEstadoEn(5, Sano(), "Mar del Plata")
-//        val reporte = estadisticasService.reporteDeContagios("Mar del Plata")
-//        Assert.assertEquals(1, reporte.vectoresInfecatods)
-//    }
-//
-//    @Test
-//    fun elEstadisticasServiceDevuelveUnReporteCon1VectorInfectadoCuandoHayUnVectorInfectadoEnEsaUbicacion(){
-//        this.crearNConEstadoEn(1, Infectado(), "Quilmes")
-//        val reporte = estadisticasService.reporteDeContagios("Quilmes")
-//        Assert.assertEquals(2, reporte.vectoresInfecatods)
-//    }
-//
-//    @Test
-//    fun elEstadisticasServiceDevuelveUnReporteCon2VectoresInfectados2CuandoHayDosVectoresInfectadosEnEsaUbicacion(){
-//        this.crearNConEstadoEn(2, Infectado(),"Quilmes")
-//        val reporte = estadisticasService.reporteDeContagios("Quilmes")
-//        Assert.assertEquals(3, reporte.vectoresInfecatods)
-//    }
-//
-//    @Test
-//    fun  laEspecieMasInfecciosaEsLaUnicaEspecieQueHayEnQuilmesYEsAlgo(){
-//        val reporte = estadisticasService.reporteDeContagios("Quilmes")
-//        Assert.assertEquals("Algo", reporte.nombreDeEspecieMasInfecciosa)
-//    }
-//    @Test
-//    fun elEstadisticasServiceDevuelveLasPrimeras10EspeciesCuandoSoloExistenTresEspecies(){
-//
-//        val especiesLideres=estadisticasService.lideres()
-//        Assert.assertEquals(especiesLideres.size, 3)
-//    }
-//
-//
-//
-//
-//
-//
-//    @Test
-//    fun  laNombreDeLaEspecieMasInfecciosaEsElStringVacioCuandoNoQueHayNingunaEspecieEnLaUbicacion(){
-//        val ubicacionDesconocida = Ubicacion()
-//        ubicacionDesconocida.nombreUbicacion = "The twilight zone"
-//        val reporte = estadisticasService.reporteDeContagios("The twilight zone")
-//        Assert.assertEquals("", reporte.nombreDeEspecieMasInfecciosa)
-//    }
-//
-//    @Test
-//    fun  laNombreDeLaEspecieMasInfecciosaEsElStringVacioCuandoLaUbicacionNoExiste(){
-//        val reporte = estadisticasService.reporteDeContagios("Tokyo, baby")
-//        Assert.assertEquals("", reporte.nombreDeEspecieMasInfecciosa)
-//    }
-//
-//    @Test
-//    fun enUnaUbicacionConMasDeUnaEspecieElNombreDeLaEspecieMasInfecciosaEsLaQueInfectaAMasVectores(){
-//        val paperas = Especie()
-//        val ubicacionFinal = ubicacionService.crearUbicacion("Maeame")
-//        paperas.paisDeOrigen = "Rusia"
-//        paperas.nombre = "Paperas"
-//        val ubi = "Maeame"
-//        val vectorRandom = Vector()
-//        val vectorAlfa = Vector()
-//        val vectorBeta = Vector()
-//        vectorRandom.tipo = Humano()
-//        vectorAlfa.tipo = Insecto()
-//        vectorBeta.tipo = Animal()
-//        vectorRandom.ubicacion = ubicacionFinal
-//        vectorRandom.infectarse(paperas)
-//        vectorAlfa.infectarse(paperas)
-//        vectorBeta.infectarse(paperas)
-//        vectorAlfa.ubicacion = ubicacionFinal
-//        vectorBeta.ubicacion= ubicacionFinal
-//        vectorService.crearVector(vectorAlfa)
-//        vectorService.crearVector(vectorBeta)
-//        vectorService.crearVector(vectorRandom)
-//        ubicacionService.mover(vectorRandom.id!!.toInt(),ubi)
-//        ubicacionService.mover(vectorAlfa.id!!.toInt(), ubi)
-//        ubicacionService.mover(vectorBeta.id!!.toInt(),ubi)
-//        val reporte = estadisticasService.reporteDeContagios("Maeame")
-//        Assert.assertEquals("Paperas", reporte.nombreDeEspecieMasInfecciosa)
-//    }
+
+    @Test
+    fun elEstadisticasServiceDevuelveUnReporteCon0VectoresPresentes0CuandoNoHayNingunVectorEnEsaUbicacion(){
+        val reporte = estadisticasService.reporteDeContagios("Berazategui")
+        Assert.assertEquals(0, reporte.vectoresPresentes)
+    }
+
+    @Test
+    fun elEstadisticasServiceDevuelveUnReporteConUnVectorPresente1CuandoHayUnSoloVectorEnEsaUbicacion(){
+        Assert.assertEquals("Quilmes", ubicacion0.nombreUbicacion)
+        val reporte = estadisticasService.reporteDeContagios("Quilmes")
+        Assert.assertEquals(1, reporte.vectoresPresentes)
+    }
+
+    @Test
+    fun elEstadisticasServiceDevuelveUnReporteConDosVectoresPresentes2CuandoHayDosVectoresEnEsaUbicacion(){
+        val vector2 = Vector()
+        vector2.tipo = Insecto()
+        vector2.estado = Infectado()
+        vector2.estado = estado
+        vector2.ubicacion = ubicacion0
+        vectorService.crearVector(vector2)
+        ubicacionService.mover(vector.id!!.toInt(), ubicacion0.nombreUbicacion)
+        val reporte = estadisticasService.reporteDeContagios("Quilmes")
+        Assert.assertEquals(2, reporte.vectoresPresentes)
+    }
+
+    private fun crearNConEstadoEn(cant : Int, estado : EstadoVector, ubicacion : String){
+        repeat(cant){
+            var vectorInfectado = Vector()
+            vectorInfectado.tipo = tipo
+            vectorInfectado.estado = estado
+            vectorInfectado.ubicacion = ubicacionService.recuperarUbicacion(ubicacion)
+            vectorInfectado.agregarEspecie(especie)
+            vectorService.crearVector(vectorInfectado)
+            ubicacionService.mover(vectorInfectado.id!!.toInt(), ubicacion)
+        }
+    }
+
+    @Test
+    fun elEstadisticasServiceDevuelveUnReporteCon0VectoresInfectadosCuandoNoHayNingunVectorInfectadoEnEsaUbicacion(){
+        val reporte = estadisticasService.reporteDeContagios("Mar del Plata")
+        Assert.assertEquals(0, reporte.vectoresInfecatods)
+    }
+
+    @Test
+    fun elEstadisticaServiceDevuelveUnReporteCon1VectorInfectadoCuandoHayUnVectorInfectadoEnEsaUbicacionMDP(){
+        this.crearNConEstadoEn(1, Infectado(),"Mar del Plata")
+        val reporte = estadisticasService.reporteDeContagios("Mar del Plata")
+        Assert.assertEquals(1, reporte.vectoresInfecatods)
+    }
+
+    @Test
+    fun elEstadisticasServiceDevuelveUnReporteCon1VectorInfectadoCuandoHayUnVectorInfectadoEnMarDelPlataCuandoHayOtrosVectoresSanos(){
+        this.crearNConEstadoEn(1, Infectado(), "Mar del Plata")
+        this.crearNConEstadoEn(5, Sano(), "Mar del Plata")
+        val reporte = estadisticasService.reporteDeContagios("Mar del Plata")
+        Assert.assertEquals(1, reporte.vectoresInfecatods)
+    }
+
+    @Test
+    fun elEstadisticasServiceDevuelveUnReporteCon1VectorInfectadoCuandoHayUnVectorInfectadoEnEsaUbicacion(){
+        this.crearNConEstadoEn(1, Infectado(), "Quilmes")
+        val reporte = estadisticasService.reporteDeContagios("Quilmes")
+        Assert.assertEquals(2, reporte.vectoresInfecatods)
+    }
+
+    @Test
+    fun elEstadisticasServiceDevuelveUnReporteCon2VectoresInfectados2CuandoHayDosVectoresInfectadosEnEsaUbicacion(){
+        this.crearNConEstadoEn(2, Infectado(),"Quilmes")
+        val reporte = estadisticasService.reporteDeContagios("Quilmes")
+        Assert.assertEquals(3, reporte.vectoresInfecatods)
+    }
+
+    @Test
+    fun  laEspecieMasInfecciosaEsLaUnicaEspecieQueHayEnQuilmesYEsAlgo(){
+        val reporte = estadisticasService.reporteDeContagios("Quilmes")
+        Assert.assertEquals("Algo", reporte.nombreDeEspecieMasInfecciosa)
+    }
+    @Test
+    fun elEstadisticasServiceDevuelveLasPrimeras10EspeciesCuandoSoloExistenTresEspecies(){
+
+        val especiesLideres=estadisticasService.lideres()
+        Assert.assertEquals(especiesLideres.size, 3)
+    }
+
+
+
+
+
+
+    @Test
+    fun  laNombreDeLaEspecieMasInfecciosaEsElStringVacioCuandoNoQueHayNingunaEspecieEnLaUbicacion(){
+        val ubicacionDesconocida = Ubicacion()
+        ubicacionDesconocida.nombreUbicacion = "The twilight zone"
+        val reporte = estadisticasService.reporteDeContagios("The twilight zone")
+        Assert.assertEquals("", reporte.nombreDeEspecieMasInfecciosa)
+    }
+
+    @Test
+    fun  laNombreDeLaEspecieMasInfecciosaEsElStringVacioCuandoLaUbicacionNoExiste(){
+        val reporte = estadisticasService.reporteDeContagios("Tokyo, baby")
+        Assert.assertEquals("", reporte.nombreDeEspecieMasInfecciosa)
+    }
+
+    @Test
+    fun enUnaUbicacionConMasDeUnaEspecieElNombreDeLaEspecieMasInfecciosaEsLaQueInfectaAMasVectores(){
+        val paperas = Especie()
+        val ubicacionFinal = ubicacionService.crearUbicacion("Maeame")
+        paperas.paisDeOrigen = "Rusia"
+        paperas.nombre = "Paperas"
+        val ubi = "Maeame"
+        val vectorRandom = Vector()
+        val vectorAlfa = Vector()
+        val vectorBeta = Vector()
+        vectorRandom.tipo = Humano()
+        vectorAlfa.tipo = Insecto()
+        vectorBeta.tipo = Animal()
+        vectorRandom.ubicacion = ubicacionFinal
+        vectorRandom.infectarse(paperas)
+        vectorAlfa.infectarse(paperas)
+        vectorBeta.infectarse(paperas)
+        vectorAlfa.ubicacion = ubicacionFinal
+        vectorBeta.ubicacion= ubicacionFinal
+        vectorService.crearVector(vectorAlfa)
+        vectorService.crearVector(vectorBeta)
+        vectorService.crearVector(vectorRandom)
+        ubicacionService.mover(vectorRandom.id!!.toInt(),ubi)
+        ubicacionService.mover(vectorAlfa.id!!.toInt(), ubi)
+        ubicacionService.mover(vectorBeta.id!!.toInt(),ubi)
+        val reporte = estadisticasService.reporteDeContagios("Maeame")
+        Assert.assertEquals("Paperas", reporte.nombreDeEspecieMasInfecciosa)
+    }
 
 
     @Test
     fun laEspecieQueMasHumanosInfectaEsEspecie(){
-
-        Assert.assertEquals(especie, estadisticasService.especieLider())
+        Assert.assertEquals(1, estadisticasService.especieLider().id)
     }
 
-    @Test
-    fun NingunaEspecie(){
-
+    @Test(expected = NoHayEspecieQueInfectaronHumanos::class)
+    fun NingunHumanoInfectado(){
+        eliminarTodo()
+        val ubicacionFinal = ubicacionService.crearUbicacion("Maeame")
+        val vectorRandom = Vector()
+        val vectorAlfa = Vector()
+        val vectorBeta = Vector()
+        vectorRandom.tipo = Humano()
+        vectorAlfa.tipo = Humano()
+        vectorBeta.tipo = Humano()
+        vectorRandom.ubicacion = ubicacionFinal
+        vectorAlfa.ubicacion = ubicacionFinal
+        vectorBeta.ubicacion= ubicacionFinal
+        vectorService.crearVector(vectorAlfa)
+        vectorService.crearVector(vectorBeta)
+        vectorService.crearVector(vectorRandom)
+        estadisticasService.especieLider()
     }
 
 
+    @Test(expected = NoHayEspecieQueInfectaronHumanos::class)
+    fun TodosLosVectoresExistentesEstanInfectadosPeroNoSonHumanos() {
+        eliminarTodo()
+        val ubicacionFinal = ubicacionService.crearUbicacion("Maeame")
+        val vectorRandom = Vector()
+        val vectorAlfa = Vector()
+        val vectorBeta = Vector()
+        vectorRandom.tipo = Animal()
+        vectorAlfa.tipo = Insecto()
+        vectorBeta.tipo = Insecto()
+        especie = Especie()
+        especie.cantidadInfectadosParaADN = 42
+        especie.nombre = "Algo"
+        especie.paisDeOrigen = "Alemania"
+        vectorRandom.infectarse(especie)
+        vectorAlfa.infectarse(especie)
+        vectorBeta.infectarse(especie)
+        vectorRandom.ubicacion = ubicacionFinal
+        vectorAlfa.ubicacion = ubicacionFinal
+        vectorBeta.ubicacion= ubicacionFinal
+        vectorService.crearVector(vectorAlfa)
+        vectorService.crearVector(vectorBeta)
+        vectorService.crearVector(vectorRandom)
+        estadisticasService.especieLider()
+    }
     @After
-
-    open fun eliminarTodo(){
+    fun eliminarTodo() {
 
         TransactionRunner.runTrx {
             HibernateDataDAO().clear()
-       }
+        }
     }
 }
