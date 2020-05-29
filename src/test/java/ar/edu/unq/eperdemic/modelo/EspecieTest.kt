@@ -108,22 +108,42 @@ class EspecieTest {
 
     @Test
     fun aumentarFactorContagioInsecto() {
-        //TODO Mati
+        val patogenoSpy = Mockito.spy(Patogeno())
+        Assert.assertEquals(0, patogenoSpy.factorContagioInsecto)
+        especie.patogeno = patogenoSpy
+        especie.aumentarfactorContagioInsecto()
+        Mockito.verify(patogenoSpy, times(2)).factorContagioInsecto
+        Assert.assertEquals(1,patogenoSpy.factorContagioInsecto)
     }
 
     @Test
     fun aumentarFactorContagioHumano() {
-        //TODO Mati
+        val patogenoSpy = Mockito.spy(Patogeno())
+        Assert.assertEquals(0,patogenoSpy.factorContagioHumano)
+        especie.patogeno = patogenoSpy
+        especie.aumentarfactorContagioHumano()
+        Mockito.verify(patogenoSpy,times(2)).factorContagioHumano
+        Assert.assertEquals(1,patogenoSpy.factorContagioHumano)
     }
 
     @Test
     fun aumentarDefensaContraMicroorganismos() {
-        //TODO Mati
+        val patogenoSpy = Mockito.spy(Patogeno())
+        Assert.assertEquals(0,patogenoSpy.defensaContraMicroorganismos)
+        especie.patogeno = patogenoSpy
+        especie.aumentarDefensaContraMicroorganismos()
+        Mockito.verify(patogenoSpy, times(2)).defensaContraMicroorganismos
+        Assert.assertEquals(1,patogenoSpy.defensaContraMicroorganismos)
     }
 
     @Test
     fun aumentarLetalidad() {
-        //TODO Mati
+        val patogenoSpy = Mockito.spy(Patogeno())
+        Assert.assertEquals(0,patogenoSpy.letalidad)
+        especie.patogeno = patogenoSpy
+        especie.aumentarLetalidad()
+        Mockito.verify(patogenoSpy, times(2)).letalidad
+        Assert.assertEquals(1,patogenoSpy.letalidad)
     }
 
     @Test
@@ -144,15 +164,43 @@ class EspecieTest {
     }
 
     @Test
-    fun agregarMutacion() {
-        //TODO Mati
+    fun agregarMutacion(){
+        Assert.assertTrue(especie.mutaciones.isEmpty())
+        especie.agregarMutacion(mutacion)
+        Assert.assertTrue(especie.mutaciones.isNotEmpty())
+        Assert.assertEquals(1,especie.mutaciones.size )
     }
 
     @Test
-    fun desbloquearMutaciones() {
-        //TODO Mati
+    fun agregarMutaciones() {
+        Assert.assertTrue(especie.mutaciones.isEmpty())
+        especie.agregarMutacion(mutacion)
+        especie.agregarMutacion(mutacion1)
+        Assert.assertTrue(especie.mutaciones.isNotEmpty())
+        Assert.assertEquals(2,especie.mutaciones.size )
     }
 
+    @Test
+    fun desbloquearUnaMutacion() {
+        Assert.assertTrue(especie.mutacionesDesbloqueadas.isEmpty())
+        var mutacionesADesbloquear : MutableSet<Mutacion> = mutableSetOf()
+        mutacionesADesbloquear.add(mutacion)
+        especie.desbloquearMutaciones(mutacionesADesbloquear)
+        Assert.assertTrue(especie.mutacionesDesbloqueadas.isNotEmpty())
+        Assert.assertEquals(1,especie.mutacionesDesbloqueadas.size)
+    }
+
+    @Test
+    fun desbloquear3Mutaciones(){
+        Assert.assertTrue(especie.mutacionesDesbloqueadas.isEmpty())
+        var mutacionesADesbloquear : MutableSet<Mutacion> = mutableSetOf()
+        mutacionesADesbloquear.add(mutacion)
+        mutacionesADesbloquear.add(mutacion1)
+        mutacionesADesbloquear.add(mutacion2)
+        especie.desbloquearMutaciones(mutacionesADesbloquear)
+        Assert.assertTrue(especie.mutacionesDesbloqueadas.isNotEmpty())
+        Assert.assertEquals(3,especie.mutacionesDesbloqueadas.size)
+    }
     @Test
     fun especieFueMutadaEnMutacion() {
         Assert.assertTrue(especie.mutaciones.isEmpty())
@@ -170,7 +218,31 @@ class EspecieTest {
 
     @Test
     fun especieTieneDesbloqueadaLaMutacion() {
-        //TODO Mati (casi igual al test de arriba)
+        Assert.assertTrue(especie.mutacionesDesbloqueadas.isEmpty())
+        Assert.assertFalse(especie.tieneDesbloqueadaLaMutacion(mutacion))
+        var mutacionesADesbloquear : MutableSet<Mutacion> = mutableSetOf()
+        mutacionesADesbloquear.add(mutacion)
+        especie.desbloquearMutaciones(mutacionesADesbloquear)
+        Assert.assertTrue(especie.mutacionesDesbloqueadas.isNotEmpty())
+        Assert.assertEquals(1, especie.mutacionesDesbloqueadas.size)
+        Assert.assertTrue(especie.tieneDesbloqueadaLaMutacion(mutacion))
+    }
+
+    @Test
+    fun especieTieneDesbloqueadasLasMutaciones(){
+        Assert.assertTrue(especie.mutacionesDesbloqueadas.isEmpty())
+        Assert.assertFalse(especie.tieneDesbloqueadaLaMutacion(mutacion))
+        Assert.assertFalse(especie.tieneDesbloqueadaLaMutacion(mutacion1))
+        Assert.assertFalse(especie.tieneDesbloqueadaLaMutacion(mutacion3))
+        var mutacionesADesbloquear : MutableSet<Mutacion> = mutableSetOf()
+        mutacionesADesbloquear.add(mutacion)
+        mutacionesADesbloquear.add(mutacion1)
+        especie.desbloquearMutaciones(mutacionesADesbloquear)
+        Assert.assertTrue(especie.mutacionesDesbloqueadas.isNotEmpty())
+        Assert.assertEquals(2, especie.mutacionesDesbloqueadas.size)
+        Assert.assertTrue(especie.tieneDesbloqueadaLaMutacion(mutacion))
+        Assert.assertTrue(especie.tieneDesbloqueadaLaMutacion(mutacion1))
+        Assert.assertFalse(especie.tieneDesbloqueadaLaMutacion(mutacion3))
     }
 
     @Test
@@ -236,10 +308,5 @@ class EspecieTest {
         Assert.assertFalse(especie.mutaciones.containsAll(mutacion3.mutacionesNecesarias))
 
         especie.mutar(mutacion1)
-    }
-
-    @Test
-    fun descontarAdnDescuenta5ALaCantidadDeInfectaodsParaAdn() {
-        //TODO Mati (parecido al de cantidad de adn)
     }
 }

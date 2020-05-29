@@ -8,9 +8,8 @@ import ar.edu.unq.eperdemic.modelo.exception.IDVectorNoEncontradoException
 import ar.edu.unq.eperdemic.persistencia.dao.DataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
+import ar.edu.unq.eperdemic.services.HibernateDataService
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
@@ -37,16 +36,17 @@ class VectorServiceTest {
     lateinit var vectorDAO : VectorDAO
     lateinit var ubicacion : Ubicacion
     lateinit var patogeno : Patogeno
+    lateinit var hibernateData : HibernateDataService
 
     @Before
     fun setUp(){
-        dataDAO = HibernateDataDAO()
+        hibernateData = HibernateDataService()
         vector = Vector()
         dataDAO = HibernateDataDAO()
         ubicacionDAO = HibernateUbicacionDAO()
         vectorDAO = HibernateVectorDAO()
-        vectorService = VectorServiceImpl(vectorDAO, dataDAO, ubicacionDAO)
-        ubicacionService = UbicacionServiceImpl(ubicacionDAO, dataDAO)
+        vectorService = VectorServiceImpl(vectorDAO, ubicacionDAO)
+        ubicacionService = UbicacionServiceImpl(ubicacionDAO)
         ubicacion = ubicacionService.crearUbicacion("Alemania")
         tipo = Humano()
         estado = Sano()
@@ -57,17 +57,17 @@ class VectorServiceTest {
         patogeno = Patogeno()
         patogeno.tipo = ""
         especie.patogeno = patogeno
-        vectorService = VectorServiceImpl(HibernateVectorDAO(), dataDAO, HibernateUbicacionDAO())
+        vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateUbicacionDAO())
         vector.tipo = tipo
         vector.estado = estado
         vector.agregarEspecie(especie)
 
-        ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO(), dataDAO)
+        ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO())
         ubicacion = ubicacionService.crearUbicacion("Quilmes")
         vector.ubicacion = ubicacion
         ubicacion.vectores.add(vector)
-        var vectorDB = vectorService.crearVector(vector)
-        ubicacionService.mover(vectorDB.id!!.toInt(), ubicacion.nombreUbicacion)
+        vectorService.crearVector(vector)
+        ubicacionService.mover(vector.id!!.toInt(), ubicacion.nombreUbicacion)
     }
 
     @Test
@@ -187,18 +187,18 @@ class VectorServiceTest {
         Assert.assertEquals(1, vector.id!!.toInt())
     }
 
-     @Test
-   fun testElIDEsAutoincrementalALaMedidaQueSeCreanNuevosVectores(){
-         val vector0 = Vector()
-         vector0.tipo = tipo
-         vector0.ubicacion = ubicacion
-         val vector1 = Vector()
-         vector1.tipo = tipo
-         vector1.ubicacion = ubicacion
+    @Test
+    fun testElIDEsAutoincrementalALaMedidaQueSeCreanNuevosVectores(){
+        val vector0 = Vector()
+        vector0.tipo = tipo
+        vector0.ubicacion = ubicacion
+        val vector1 = Vector()
+        vector1.tipo = tipo
+        vector1.ubicacion = ubicacion
         val id1 = vectorService.crearVector(vector0).id!!
         val id2 = vectorService.crearVector(vector1).id!!
         Assert.assertTrue(id1 < id2)
-         Assert.assertEquals(id1+1, id2)
+        Assert.assertEquals(id1+1, id2)
     }
 
     @Test
@@ -232,10 +232,8 @@ class VectorServiceTest {
     }
 
     @After
-    open fun eliminarTodo(){
-        TransactionRunner.runTrx {
-            HibernateDataDAO().clear()
-        }
+    fun eliminarTodo(){
+        hibernateData.eliminarTodo()
     }
 
 }

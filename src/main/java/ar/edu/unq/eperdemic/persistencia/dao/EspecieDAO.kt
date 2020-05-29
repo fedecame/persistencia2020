@@ -11,4 +11,7 @@ interface EspecieDAO {
 
     fun actualizar(especie: Especie)
 
+    fun cantidadDeInfectados(especie: Especie) : Int
+
+    fun esPandemia(especie: Especie) : Boolean
 }

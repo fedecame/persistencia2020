@@ -55,8 +55,8 @@ class EstadisticasDAOTest {
         dataDAO = HibernateDataDAO()
         ubicacionDAO = HibernateUbicacionDAO()
         vectorDAO = HibernateVectorDAO()
-        vectorService = VectorServiceImpl(vectorDAO, dataDAO, ubicacionDAO)
-        ubicacionService = UbicacionServiceImpl(ubicacionDAO, dataDAO)
+        vectorService = VectorServiceImpl(vectorDAO, ubicacionDAO)
+        ubicacionService = UbicacionServiceImpl(ubicacionDAO)
         ubicacion2 = ubicacionService.crearUbicacion("Alemania")
         tipo = Humano()
         estado = Sano()
@@ -67,12 +67,12 @@ class EstadisticasDAOTest {
         patogeno = Patogeno()
         patogeno.tipo = ""
         especie.patogeno = patogeno
-        vectorService = VectorServiceImpl(HibernateVectorDAO(), dataDAO, HibernateUbicacionDAO())
+        vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateUbicacionDAO())
         vector.tipo = tipo
         vector.estado = estado
         vector.agregarEspecie(especie)
 
-        ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO(), dataDAO)
+        ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO())
         ubicacion0 = ubicacionService.crearUbicacion("Quilmes")
         ubicacion1 = ubicacionService.crearUbicacion("Mar del Plata")
         vector.ubicacion = ubicacion0

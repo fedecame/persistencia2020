@@ -22,16 +22,15 @@ class PatogenoServiceImpl(var patogenoDAO: PatogenoDAO, var especieDAO : Especie
         return runTrx { patogenoDAO.recuperarATodos()  }
     }
 
-    override fun agregarEspecie(id: Int, nombreEspecie: String, paisDeOrigen: String): Especie =
+    override fun agregarEspecie(idPatogeno: Int, nombreEspecie: String, paisDeOrigen: String): Especie =
             runTrx {
-                val patogenoAAgregarEspecie = patogenoDAO.recuperar(id)
+                val patogenoAAgregarEspecie = patogenoDAO.recuperar(idPatogeno)
                 val especieResultado = patogenoAAgregarEspecie.crearEspecie(nombreEspecie, paisDeOrigen)
                 especieDAO.crearEspecie(especieResultado)
                 patogenoDAO.actualizar(patogenoAAgregarEspecie)
                 especieResultado
             }
 
-    //Esto lo cree para ver que se crea correctamente, cuando Nelson haga lo de agregarEspecie, se vuela, no?
     override fun crearEspecie(especie: Especie) : Int {
         return runTrx { especieDAO.crearEspecie(especie) }
     }
@@ -41,11 +40,13 @@ class PatogenoServiceImpl(var patogenoDAO: PatogenoDAO, var especieDAO : Especie
     }
 
     override fun cantidadDeInfectados(especieId: Int): Int {
-        TODO("Not yet implemented")
+        val especieDB = this.recuperarEspecie(especieId)
+        return runTrx { especieDAO.cantidadDeInfectados(especieDB) }
     }
 
     override fun esPandemia(especieId: Int): Boolean {
-        TODO("Not yet implemented")
+        val especieDB = this.recuperarEspecie(especieId)
+        return runTrx { especieDAO.esPandemia(especieDB) }
     }
 
     override fun actualizarEspecie(especie: Especie) {
