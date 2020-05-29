@@ -5,11 +5,11 @@ import ar.edu.unq.eperdemic.estado.Sano
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.exception.IDVectorNoEncontradoException
-import ar.edu.unq.eperdemic.modelo.exception.MoverUnVectorQueNoEstaCreado
 import ar.edu.unq.eperdemic.modelo.exception.NoExisteUbicacion
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
+import ar.edu.unq.eperdemic.services.HibernateDataService
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
@@ -21,13 +21,12 @@ import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import org.mockito.ArgumentMatchers
 import org.mockito.Mockito
 import org.mockito.Mockito.*
 
 class UbicacionServiceTest {
-    var vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateDataDAO(), HibernateUbicacionDAO())
-    var ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO(), HibernateDataDAO())
+    var vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateUbicacionDAO())
+    var ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO())
      val vector = Vector()
     val vector1=Vector()
     val tipo = Humano()
@@ -35,10 +34,12 @@ class UbicacionServiceTest {
    lateinit var ubicacionCreada:Ubicacion
     lateinit var ubicacionCreada1:Ubicacion
     lateinit var randomGenerator: RandomMaster
+    lateinit var hibernateData : HibernateDataService
 
     @Before
     fun setUp(){
-    vector.tipo=tipo
+        hibernateData = HibernateDataService()
+        vector.tipo=tipo
         vector.estado=estado
         vector1.tipo=tipo
         vector1.estado=estado
@@ -167,10 +168,8 @@ fun alMoverAMismaUbicacionDondeEstaSeQuedaEnLaMismaUbicacion(){
 
     }
 
-  @After
-  open fun eliminarTodo(){
-      TransactionRunner.runTrx {
-          HibernateDataDAO().clear()
-      }
-  }
+    @After
+    fun eliminarTodo(){
+        hibernateData.eliminarTodo()
+    }
 }

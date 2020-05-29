@@ -16,6 +16,7 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEstadisticasDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.EstadisticasService
+import ar.edu.unq.eperdemic.services.HibernateDataService
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.impl.EstadisticasServiceImpl
@@ -53,9 +54,11 @@ class EstadisticasServiceTest {
     lateinit var ubicacion1 : Ubicacion
     lateinit var ubicacion2 : Ubicacion
     lateinit var patogeno : Patogeno
+    lateinit var hibernateData : HibernateDataService
 
     @Before
     fun setUp(){
+        hibernateData = HibernateDataService()
         estadisticasDAO = HibernateEstadisticasDAO()
         estadisticasService = EstadisticasServiceImpl(estadisticasDAO)
         dataDAO = HibernateDataDAO()
@@ -65,8 +68,8 @@ class EstadisticasServiceTest {
         dataDAO = HibernateDataDAO()
         ubicacionDAO = HibernateUbicacionDAO()
         vectorDAO = HibernateVectorDAO()
-        vectorService = VectorServiceImpl(vectorDAO, dataDAO, ubicacionDAO)
-        ubicacionService = UbicacionServiceImpl(ubicacionDAO, dataDAO)
+        vectorService = VectorServiceImpl(vectorDAO, ubicacionDAO)
+        ubicacionService = UbicacionServiceImpl(ubicacionDAO)
         ubicacion2 = ubicacionService.crearUbicacion("Alemania")
         tipo = Humano()
         estado = Sano()
@@ -85,7 +88,7 @@ class EstadisticasServiceTest {
         patogeno = Patogeno()
         patogeno.tipo = ""
         especie.patogeno = patogeno
-        vectorService = VectorServiceImpl(HibernateVectorDAO(), dataDAO, HibernateUbicacionDAO())
+        vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateUbicacionDAO())
         vector.tipo = tipo
         vector.estado = estado
 
@@ -104,7 +107,7 @@ class EstadisticasServiceTest {
         vector3.agregarEspecie(especie2)
 
 
-        ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO(), dataDAO)
+        ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO())
         ubicacion0 = ubicacionService.crearUbicacion("Quilmes")
         ubicacion1 = ubicacionService.crearUbicacion("Mar del Plata")
         ubicacion2 = ubicacionService.crearUbicacion("Berazategui")
@@ -260,7 +263,6 @@ class EstadisticasServiceTest {
 
     @Test
     fun laEspecieQueMasHumanosInfectaEsEspecie(){
-
         Assert.assertEquals(especie, estadisticasService.especieLider())
     }
 
@@ -271,11 +273,7 @@ class EstadisticasServiceTest {
 
 
     @After
-
-    open fun eliminarTodo(){
-
-        TransactionRunner.runTrx {
-            HibernateDataDAO().clear()
-       }
+    fun eliminarTodo(){
+        hibernateData.eliminarTodo()
     }
 }
