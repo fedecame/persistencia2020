@@ -69,12 +69,12 @@ class PatogenoServiceTest {
 
         dataDAO = HibernateDataDAO()
 
-        ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO(), dataDAO)
+        ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO())
         ubicacion = ubicacionService.crearUbicacion("Japon")
         ubicacion1 = ubicacionService.crearUbicacion("Australia")
         ubicacion2 = ubicacionService.crearUbicacion("Rusia")
 
-        vectorService = VectorServiceImpl(HibernateVectorDAO(), dataDAO, HibernateUbicacionDAO())
+        vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateUbicacionDAO())
         vector = Vector()
         vector.tipo = Humano()
         vector.estado = Sano()
