@@ -13,7 +13,6 @@ import javax.persistence.Converter
 class EstadoConverter: AttributeConverter<EstadoVector, String>  {
 
     override fun convertToDatabaseColumn(estadoVector: EstadoVector): String{
-        print("ACAAAAA >>>>>>>>>>>>>>>>>>>>>>: " + estadoVector)
         val clase = estadoVector::class.java
         val sb = StringBuilder()
         sb.append(clase.simpleName)

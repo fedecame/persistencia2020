@@ -11,7 +11,6 @@ import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
-import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
@@ -44,8 +43,8 @@ class VectorServiceTest {
         dataDAO = HibernateDataDAO()
         ubicacionDAO = HibernateUbicacionDAO()
         vectorDAO = HibernateVectorDAO()
-        vectorService = VectorServiceImpl(vectorDAO, dataDAO, ubicacionDAO)
-        ubicacionService = UbicacionServiceImpl(ubicacionDAO, dataDAO)
+        vectorService = VectorServiceImpl(vectorDAO, ubicacionDAO)
+        ubicacionService = UbicacionServiceImpl(ubicacionDAO)
         ubicacion = ubicacionService.crearUbicacion("Alemania")
         tipo = Humano()
         estado = Sano()
@@ -56,12 +55,12 @@ class VectorServiceTest {
         patogeno = Patogeno()
         patogeno.tipo = ""
         especie.patogeno = patogeno
-        vectorService = VectorServiceImpl(HibernateVectorDAO(), dataDAO, HibernateUbicacionDAO())
+        vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateUbicacionDAO())
         vector.tipo = tipo
         vector.estado = estado
         vector.agregarEspecie(especie)
 
-        ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO(), dataDAO)
+        ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO())
         ubicacion = ubicacionService.crearUbicacion("Quilmes")
         vector.ubicacion = ubicacion
         ubicacion.vectores.add(vector)

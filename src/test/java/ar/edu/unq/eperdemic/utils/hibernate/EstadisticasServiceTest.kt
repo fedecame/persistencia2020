@@ -65,8 +65,8 @@ class EstadisticasServiceTest {
         dataDAO = HibernateDataDAO()
         ubicacionDAO = HibernateUbicacionDAO()
         vectorDAO = HibernateVectorDAO()
-        vectorService = VectorServiceImpl(vectorDAO, dataDAO, ubicacionDAO)
-        ubicacionService = UbicacionServiceImpl(ubicacionDAO, dataDAO)
+        vectorService = VectorServiceImpl(vectorDAO, ubicacionDAO)
+        ubicacionService = UbicacionServiceImpl(ubicacionDAO)
         ubicacion2 = ubicacionService.crearUbicacion("Alemania")
         tipo = Humano()
         estado = Sano()
@@ -85,7 +85,7 @@ class EstadisticasServiceTest {
         patogeno = Patogeno()
         patogeno.tipo = ""
         especie.patogeno = patogeno
-        vectorService = VectorServiceImpl(HibernateVectorDAO(), dataDAO, HibernateUbicacionDAO())
+        vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateUbicacionDAO())
         vector.tipo = tipo
         vector.estado = estado
 
@@ -104,7 +104,7 @@ class EstadisticasServiceTest {
         vector3.agregarEspecie(especie2)
 
 
-        ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO(), dataDAO)
+        ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO())
         ubicacion0 = ubicacionService.crearUbicacion("Quilmes")
         ubicacion1 = ubicacionService.crearUbicacion("Mar del Plata")
         ubicacion2 = ubicacionService.crearUbicacion("Berazategui")
@@ -260,8 +260,7 @@ class EstadisticasServiceTest {
 
     @Test
     fun laEspecieQueMasHumanosInfectaEsEspecie(){
-
-        Assert.assertEquals(especie, estadisticasService.especieLider())
+        Assert.assertEquals(especie.nombre, estadisticasService.especieLider().nombre)
     }
 
     @Test
