@@ -7,6 +7,7 @@ import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.modelo.exception.NoHayEspecieQueInfectaronHumanos
 import ar.edu.unq.eperdemic.persistencia.dao.DataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.EstadisticasDAO
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
@@ -169,7 +170,6 @@ class EstadisticasServiceTest {
 
     @Test
     fun elEstadisticaServiceDevuelveUnReporteCon1VectorInfectadoCuandoHayUnVectorInfectadoEnEsaUbicacionMDP(){
-        var res = 0
         this.crearNConEstadoEn(1, Infectado(),"Mar del Plata")
         val reporte = estadisticasService.reporteDeContagios("Mar del Plata")
         Assert.assertEquals(1, reporte.vectoresInfecatods)
@@ -260,22 +260,59 @@ class EstadisticasServiceTest {
 
     @Test
     fun laEspecieQueMasHumanosInfectaEsEspecie(){
-
-        Assert.assertEquals(especie, estadisticasService.especieLider())
+        Assert.assertEquals(1, estadisticasService.especieLider().id)
     }
 
-    @Test
-    fun NingunaEspecie(){
-
+    @Test(expected = NoHayEspecieQueInfectaronHumanos::class)
+    fun NingunHumanoInfectado(){
+        eliminarTodo()
+        val ubicacionFinal = ubicacionService.crearUbicacion("Maeame")
+        val vectorRandom = Vector()
+        val vectorAlfa = Vector()
+        val vectorBeta = Vector()
+        vectorRandom.tipo = Humano()
+        vectorAlfa.tipo = Humano()
+        vectorBeta.tipo = Humano()
+        vectorRandom.ubicacion = ubicacionFinal
+        vectorAlfa.ubicacion = ubicacionFinal
+        vectorBeta.ubicacion= ubicacionFinal
+        vectorService.crearVector(vectorAlfa)
+        vectorService.crearVector(vectorBeta)
+        vectorService.crearVector(vectorRandom)
+        estadisticasService.especieLider()
     }
 
 
+    @Test(expected = NoHayEspecieQueInfectaronHumanos::class)
+    fun TodosLosVectoresExistentesEstanInfectadosPeroNoSonHumanos() {
+        eliminarTodo()
+        val ubicacionFinal = ubicacionService.crearUbicacion("Maeame")
+        val vectorRandom = Vector()
+        val vectorAlfa = Vector()
+        val vectorBeta = Vector()
+        vectorRandom.tipo = Animal()
+        vectorAlfa.tipo = Insecto()
+        vectorBeta.tipo = Insecto()
+        especie = Especie()
+        especie.cantidadInfectadosParaADN = 42
+        especie.nombre = "Algo"
+        especie.paisDeOrigen = "Alemania"
+        vectorRandom.infectarse(especie)
+        vectorAlfa.infectarse(especie)
+        vectorBeta.infectarse(especie)
+        vectorRandom.ubicacion = ubicacionFinal
+        vectorAlfa.ubicacion = ubicacionFinal
+        vectorBeta.ubicacion= ubicacionFinal
+        vectorService.crearVector(vectorAlfa)
+        vectorService.crearVector(vectorBeta)
+        vectorService.crearVector(vectorRandom)
+        estadisticasService.especieLider()
+    }
     @After
-
-    open fun eliminarTodo(){
+    fun eliminarTodo() {
 
         TransactionRunner.runTrx {
             HibernateDataDAO().clear()
-       }
+        }
     }
 }
