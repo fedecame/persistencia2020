@@ -110,13 +110,13 @@ class PatogenoServiceTest {
     }
 
     @Test
-    fun alUnPatogenoAgregarUnaespecieEstaSeCreaUnaEspecie(){
-        patogenoService.agregarEspecie(1,"Covid-19","China")
-
-
-        /**
-         *  TODO Fede hacer test
-         **/
+    fun alUnPatogenoAgregarUnaespecieEstaSeCrea(){
+        val especieCreada = patogenoService.agregarEspecie(patogeno.id!!,"Covid-19","China")
+        Assert.assertTrue(especieCreada.id != null)
+        Assert.assertEquals("Covid-19", especieCreada.nombre)
+        Assert.assertEquals("China", especieCreada.paisDeOrigen)
+        Assert.assertEquals(patogeno.id!!, especieCreada.patogeno.id!!)
+        Assert.assertEquals(patogeno.id!!, patogenoService.recuperarEspecie(especieCreada.id!!).patogeno.id!!)
     }
 
     @Test

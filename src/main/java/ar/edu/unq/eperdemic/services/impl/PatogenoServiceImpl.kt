@@ -22,9 +22,9 @@ class PatogenoServiceImpl(var patogenoDAO: PatogenoDAO, var especieDAO : Especie
         return runTrx { patogenoDAO.recuperarATodos()  }
     }
 
-    override fun agregarEspecie(id: Int, nombreEspecie: String, paisDeOrigen: String): Especie =
+    override fun agregarEspecie(idPatogeno: Int, nombreEspecie: String, paisDeOrigen: String): Especie =
             runTrx {
-                val patogenoAAgregarEspecie = patogenoDAO.recuperar(id)
+                val patogenoAAgregarEspecie = patogenoDAO.recuperar(idPatogeno)
                 val especieResultado = patogenoAAgregarEspecie.crearEspecie(nombreEspecie, paisDeOrigen)
                 especieDAO.crearEspecie(especieResultado)
                 patogenoDAO.actualizar(patogenoAAgregarEspecie)
