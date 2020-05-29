@@ -31,7 +31,6 @@ class PatogenoServiceImpl(var patogenoDAO: PatogenoDAO, var especieDAO : Especie
                 especieResultado
             }
 
-    //Esto lo cree para ver que se crea correctamente, cuando Nelson haga lo de agregarEspecie, se vuela, no?
     override fun crearEspecie(especie: Especie) : Int {
         return runTrx { especieDAO.crearEspecie(especie) }
     }
