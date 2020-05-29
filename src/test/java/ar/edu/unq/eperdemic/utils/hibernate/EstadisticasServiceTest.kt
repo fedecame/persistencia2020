@@ -16,6 +16,7 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEstadisticasDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.EstadisticasService
+import ar.edu.unq.eperdemic.services.HibernateDataService
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.impl.EstadisticasServiceImpl
@@ -53,9 +54,11 @@ class EstadisticasServiceTest {
     lateinit var ubicacion1 : Ubicacion
     lateinit var ubicacion2 : Ubicacion
     lateinit var patogeno : Patogeno
+    lateinit var hibernateData : HibernateDataService
 
     @Before
     fun setUp(){
+        hibernateData = HibernateDataService()
         estadisticasDAO = HibernateEstadisticasDAO()
         estadisticasService = EstadisticasServiceImpl(estadisticasDAO)
         dataDAO = HibernateDataDAO()
@@ -260,7 +263,7 @@ class EstadisticasServiceTest {
 
     @Test
     fun laEspecieQueMasHumanosInfectaEsEspecie(){
-        Assert.assertEquals(especie.nombre, estadisticasService.especieLider().nombre)
+        Assert.assertEquals(especie, estadisticasService.especieLider())
     }
 
     @Test
@@ -270,11 +273,7 @@ class EstadisticasServiceTest {
 
 
     @After
-
-    open fun eliminarTodo(){
-
-        TransactionRunner.runTrx {
-            HibernateDataDAO().clear()
-       }
+    fun eliminarTodo(){
+        hibernateData.eliminarTodo()
     }
 }

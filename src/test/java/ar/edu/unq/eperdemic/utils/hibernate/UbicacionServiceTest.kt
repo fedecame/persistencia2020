@@ -9,6 +9,7 @@ import ar.edu.unq.eperdemic.modelo.exception.NoExisteUbicacion
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
+import ar.edu.unq.eperdemic.services.HibernateDataService
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
@@ -33,10 +34,12 @@ class UbicacionServiceTest {
    lateinit var ubicacionCreada:Ubicacion
     lateinit var ubicacionCreada1:Ubicacion
     lateinit var randomGenerator: RandomMaster
+    lateinit var hibernateData : HibernateDataService
 
     @Before
     fun setUp(){
-    vector.tipo=tipo
+        hibernateData = HibernateDataService()
+        vector.tipo=tipo
         vector.estado=estado
         vector1.tipo=tipo
         vector1.estado=estado
@@ -165,10 +168,8 @@ fun alMoverAMismaUbicacionDondeEstaSeQuedaEnLaMismaUbicacion(){
 
     }
 
-  @After
-  open fun eliminarTodo(){
-      TransactionRunner.runTrx {
-          HibernateDataDAO().clear()
-      }
-  }
+    @After
+    fun eliminarTodo(){
+        hibernateData.eliminarTodo()
+    }
 }

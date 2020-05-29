@@ -9,6 +9,7 @@ import ar.edu.unq.eperdemic.persistencia.dao.DataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
+import ar.edu.unq.eperdemic.services.HibernateDataService
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
@@ -35,10 +36,11 @@ class VectorServiceTest {
     lateinit var vectorDAO : VectorDAO
     lateinit var ubicacion : Ubicacion
     lateinit var patogeno : Patogeno
+    lateinit var hibernateData : HibernateDataService
 
     @Before
     fun setUp(){
-        dataDAO = HibernateDataDAO()
+        hibernateData = HibernateDataService()
         vector = Vector()
         dataDAO = HibernateDataDAO()
         ubicacionDAO = HibernateUbicacionDAO()
@@ -304,10 +306,8 @@ class VectorServiceTest {
 //    }
 
     @After
-    open fun eliminarTodo(){
-        TransactionRunner.runTrx {
-            HibernateDataDAO().clear()
-        }
+    fun eliminarTodo(){
+        hibernateData.eliminarTodo()
     }
 
 }

@@ -9,6 +9,7 @@ import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
+import ar.edu.unq.eperdemic.services.HibernateDataService
 import ar.edu.unq.eperdemic.services.PatogenoService
 import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
@@ -26,9 +27,11 @@ class PatogenoServiceTest {
     lateinit var especieDAO : EspecieDAO
     lateinit var patogenoDAO : PatogenoDAO
     lateinit var especie : Especie
+    lateinit var hibernateData : HibernateDataService
 
     @Before
     fun setUp(){
+        hibernateData = HibernateDataService()
         patogeno = Patogeno()
         patogeno.tipo = "Nisman"
         especie = Especie()
@@ -170,11 +173,8 @@ class PatogenoServiceTest {
         throw Exception()
     }
 
-
     @After
-    fun clean(){
-        TransactionRunner.runTrx {
-            HibernateDataDAO().clear()
-        }
+    fun eliminarTodo(){
+        hibernateData.eliminarTodo()
     }
 }

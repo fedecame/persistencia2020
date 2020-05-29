@@ -14,6 +14,7 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateMutacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
+import ar.edu.unq.eperdemic.services.HibernateDataService
 import ar.edu.unq.eperdemic.services.MutacionService
 import ar.edu.unq.eperdemic.services.PatogenoService
 import ar.edu.unq.eperdemic.services.impl.MutacionServiceImpl
@@ -39,9 +40,11 @@ class MutacionServiceTest {
     lateinit var patogenoDAO: PatogenoDAO
     lateinit var especieDAO: EspecieDAO
     lateinit var mutacionDAO: MutacionDAO
+    lateinit var hibernateData : HibernateDataService
 
     @Before
     fun setUp(){
+        hibernateData = HibernateDataService()
         patogenoDAO = HibernatePatogenoDAO()
         especieDAO = HibernateEspecieDAO()
         patogenoService = PatogenoServiceImpl(patogenoDAO, especieDAO)
@@ -241,8 +244,6 @@ class MutacionServiceTest {
 
     @After
     fun eliminarTodo(){
-        TransactionRunner.runTrx {
-            HibernateDataDAO().clear()
-        }
+        hibernateData.eliminarTodo()
     }
 }
