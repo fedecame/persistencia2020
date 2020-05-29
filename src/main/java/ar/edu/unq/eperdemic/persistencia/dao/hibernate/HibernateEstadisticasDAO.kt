@@ -55,25 +55,30 @@ class HibernateEstadisticasDAO : EstadisticasDAO {
            Especie.id = temp.especies_id
         """.trimIndent()
 
-       val query = session.createNativeQuery(hql, Especie::class.java)
+        val query = session.createNativeQuery(hql, Especie::class.java)
 
         return query.singleResult as Especie::class.java
     }
 
    override fun lideres(): MutableList<Especie> {
         val session = TransactionRunner.currentSession
-        val hql = "select e  " +
-                "from Especie e INNER JOIN Vector v ON e.id = v.id " +
-                "where v.tipo=?1 or v.tipo=?2 " +
-                "group by e.id " +
-                "order by count(*)  "
-        val query = session.createQuery(hql, Especie::class.java)
-        var tipo="Animal"
-        var tipo2="Humano"
-        query.setString(1,tipo)
-        query.setString(2,tipo2)
+        val hql = """
+           select id,cantidadInfectadosParaADN,nombre,paisDeOrigen,patogeno_id
+           from Especie 
+           inner join 
+           (select count(comb.especies_id) as cantidad_humanos_contagiados,comb.especies_id
+           from Vector_Especie as comb
+           inner join Vector on
+           Vector.id = comb.Vector_id
+           where Vector.tipo = 'Humano' OR Vector.tipo = "Animal"
+           group by comb.especies_id
+           order by cantidad_humanos_contagiados desc
+           ) as temp on
+           Especie.id = temp.especies_id
+        """.trimIndent()
+        val query = session.createNativeQuery(hql, Especie::class.java)
         query.setMaxResults(10)
-        return query.resultList
+        return query.resultList as MutableList<Especie>
     }
 
 

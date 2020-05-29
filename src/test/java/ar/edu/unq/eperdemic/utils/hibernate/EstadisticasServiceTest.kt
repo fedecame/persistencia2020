@@ -212,7 +212,61 @@ class EstadisticasServiceTest {
         Assert.assertEquals(especiesLideres.size, 3)
     }
 
+    @Test
+    fun lideresImprov() {
+        hibernateData.eliminarTodo()
 
+        especie = Especie()
+        especie2 = Especie()
+        especie3 = Especie()
+        especie.cantidadInfectadosParaADN = 42
+        especie.nombre = "Algo"
+        especie.paisDeOrigen = "Alemania"
+        especie2.cantidadInfectadosParaADN = 42
+        especie2.nombre = "Algo2"
+        especie2.paisDeOrigen = "Alemania"
+        especie3.cantidadInfectadosParaADN = 42
+        especie3.nombre = "Algo3"
+        especie3.paisDeOrigen = "Alemania"
+
+        val ubicacionFinal = ubicacionService.crearUbicacion("Maeame")
+        val vectorRandom = Vector()
+        val vectorAlfa = Vector()
+        val vectorBeta = Vector()
+        val vectorGama = Vector()
+        vectorRandom.tipo = Animal()
+        vectorAlfa.tipo = Humano()
+        vectorBeta.tipo = Insecto()
+        vectorGama.tipo = Humano()
+
+        vectorRandom.ubicacion = ubicacionFinal
+        vectorAlfa.ubicacion = ubicacionFinal
+        vectorBeta.ubicacion= ubicacionFinal
+        vectorGama.ubicacion= ubicacionFinal
+
+//        especie1 infecta a vector humano
+        vectorAlfa.infectarse(especie)
+
+//        especie2 infecta a vector humano
+//        especie2 infecta a vector humano
+//        especie2 infecta a vector animal
+        vectorAlfa.infectarse(especie2)
+        vectorGama.infectarse(especie2)
+        vectorRandom.infectarse(especie2)
+
+//        especie3 infecta a vector humano
+//        especie3 infecta a vector humano
+        vectorAlfa.infectarse(especie3)
+        vectorGama.infectarse(especie3)
+
+        vectorService.crearVector(vectorRandom)
+        vectorService.crearVector(vectorAlfa)
+        vectorService.crearVector(vectorBeta)
+        vectorService.crearVector(vectorGama)
+
+        val especiesLideres=estadisticasService.lideres()
+        Assert.assertEquals(1, especiesLideres.first().id!!)
+    }
 
 
 
