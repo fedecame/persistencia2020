@@ -66,8 +66,8 @@ class VectorServiceTest {
         ubicacion = ubicacionService.crearUbicacion("Quilmes")
         vector.ubicacion = ubicacion
         ubicacion.vectores.add(vector)
-        var vectorDB = vectorService.crearVector(vector)
-        ubicacionService.mover(vectorDB.id!!.toInt(), ubicacion.nombreUbicacion)
+        vectorService.crearVector(vector)
+        ubicacionService.mover(vector.id!!.toInt(), ubicacion.nombreUbicacion)
     }
 
     @Test
@@ -187,18 +187,18 @@ class VectorServiceTest {
         Assert.assertEquals(1, vector.id!!.toInt())
     }
 
-     @Test
-   fun testElIDEsAutoincrementalALaMedidaQueSeCreanNuevosVectores(){
-         val vector0 = Vector()
-         vector0.tipo = tipo
-         vector0.ubicacion = ubicacion
-         val vector1 = Vector()
-         vector1.tipo = tipo
-         vector1.ubicacion = ubicacion
+    @Test
+    fun testElIDEsAutoincrementalALaMedidaQueSeCreanNuevosVectores(){
+        val vector0 = Vector()
+        vector0.tipo = tipo
+        vector0.ubicacion = ubicacion
+        val vector1 = Vector()
+        vector1.tipo = tipo
+        vector1.ubicacion = ubicacion
         val id1 = vectorService.crearVector(vector0).id!!
         val id2 = vectorService.crearVector(vector1).id!!
         Assert.assertTrue(id1 < id2)
-         Assert.assertEquals(id1+1, id2)
+        Assert.assertEquals(id1+1, id2)
     }
 
     @Test
@@ -230,80 +230,6 @@ class VectorServiceTest {
         val ubicacionAct = ubicacionService.recuperarUbicacion(ubicacion.nombreUbicacion)
         Assert.assertFalse(ubicacionAct.vectores.any { curr -> curr.id == vector.id })
     }
-
-//    @Test
-//    fun infectateUnVectorNuevoFEDEEE(){
-//        val vectorsito = Vector()
-//        vectorsito.tipo = Insecto()
-//        vectorsito.estado = Infectado()
-//        vectorsito.ubicacion = ubicacion
-//        vectorsito.agregarEspecie(especie)
-//        vectorService.crearVector(vectorsito)
-//
-//        val especie2 = Especie()
-//        vectorService.infectar(vectorsito, especie2)
-//
-//        val especie3 = Especie()
-//        val especie4 = Especie()
-//        val especie5 = Especie()
-//        especie3.cantidadInfectadosParaADN = 42
-//        especie3.nombre = "Algo3"
-//        especie3.paisDeOrigen = "Alemania3"
-////        especie3.patogeno = patogeno
-//        especie4.cantidadInfectadosParaADN = 42
-//        especie4.nombre = "Algo4"
-//        especie4.paisDeOrigen = "Alemania4"
-////        especie4.patogeno = patogeno
-//        especie5.cantidadInfectadosParaADN = 42
-//        especie5.nombre = "Algo5"
-//        especie5.paisDeOrigen = "Alemania5"
-////        especie5.patogeno = patogeno
-//
-//        vectorService.infectar(vectorsito, especie3)
-//
-//        val vector1 = Vector()
-//        vector1.tipo = Humano()
-//        vector1.estado = Infectado()
-//        val ubicacion1 = ubicacionService.crearUbicacion("Avellaneda")
-//        vector1.ubicacion = ubicacion1
-//        vector1.agregarEspecie(especie)
-//        vectorService.crearVector(vector1)
-//
-//        val vector2 = Vector()
-//        vector2.tipo = Humano()
-//        vector2.estado = Infectado()
-//        vector2.ubicacion = ubicacion1
-//        vector2.agregarEspecie(especie)
-//        vectorService.crearVector(vector2)
-//
-//        val vector3 = Vector()
-//        vector3.tipo = Humano()
-//        vector3.estado = Infectado()
-//        vector3.ubicacion = ubicacion
-//        vector3.agregarEspecie(especie)
-//        vectorService.crearVector(vector3)
-//
-//        vectorService.infectar(vector1, especie3)
-//        vectorService.infectar(vector1, especie4)
-//
-//        vectorService.infectar(vector2, especie4)
-//
-//        vectorService.infectar(vector3, especie3)
-//        vectorService.infectar(vector3, especie5)
-//
-//        val especieDAO = HibernateEspecieDAO()
-//        val patogenoDAO = HibernatePatogenoDAO()
-//        val patogenoService = PatogenoServiceImpl(patogenoDAO, especieDAO)
-//
-//        Assert.assertEquals(5, patogenoService.cantidadDeInfectados(1))
-//
-//        Assert.assertTrue(patogenoService.esPandemia(1))
-//        Assert.assertFalse(patogenoService.esPandemia(2))
-//        /**
-//         *  TODO: Borrar este test FEDE
-//         * */
-//
-//    }
 
     @After
     fun eliminarTodo(){

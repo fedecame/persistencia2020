@@ -42,9 +42,11 @@ class Vector {
     }
 
     fun infectarse(especie: Especie){
-        this.cambiarEstado(Infectado())
-        this.agregarEspecie(especie)
-        tipo.agregarInfectado(especie)
+        if (especies.find { it.id == especie.id } == null) {
+            this.cambiarEstado(Infectado())
+            this.agregarEspecie(especie)
+            tipo.agregarInfectado(especie)
+        }
     }
 
     private fun cambiarEstado(unEstado: EstadoVector) {

@@ -27,7 +27,7 @@ class Patogeno : Serializable{
         especie.nombre = nombreEspecie
         especie.cantidadInfectadosParaADN = cantidadInfectadosADN
         especie.mutacionesDesbloqueadas = mutacionesDesbloqueadas
-        return Especie()
+        return especie
     }
 
     fun factorContagioAnimal(): Int = factorContagioAnimal
