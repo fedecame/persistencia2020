@@ -6,7 +6,6 @@ class Neo4jUbicacionDAO {
         driverNeo4j.driver.session().use { session ->
             session.writeTransaction {
                 val query = "Create ($ubicacion1-(:$tipoCamino)->$ubicacion2"
-
             }
         }
     }
