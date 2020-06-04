@@ -32,12 +32,10 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.neo4j:neo4j-ogm-core")
     implementation("org.neo4j:neo4j-ogm-bolt-driver")
-    implementation("org.slf4j:slf4j-simple")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
     testImplementation("junit:junit:4.12")
-    testImplementation("org.slf4j:slf4j-log4j12:1.7.30")
     runtimeOnly("mysql:mysql-connector-java")
 
     repositories {
