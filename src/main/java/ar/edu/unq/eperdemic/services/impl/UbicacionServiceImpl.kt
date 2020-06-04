@@ -21,6 +21,10 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO) : UbicacionService {
         }
     }
 
+    override fun conectar(ubicacion1: String, ubicacion2: String, tipoCamino: String) {
+        TODO("Not yet implemented")
+    }
+
     override fun crearUbicacion(nombreUbicacion: String): Ubicacion {
         val ubicacion= Ubicacion()
         ubicacion.nombreUbicacion=nombreUbicacion
