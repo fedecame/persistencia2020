@@ -59,6 +59,7 @@ class TransactionRunnerTest {
 */
     @Test
     fun AlAgregarMuchasVecesRepetidosTieneSolamente2Elementos(){
+        TransactionRunner.clear()
         val l0 = TransactionRunner.transactions.size
         Assert.assertEquals(0, l0)
         TransactionRunner.addHibernate()
