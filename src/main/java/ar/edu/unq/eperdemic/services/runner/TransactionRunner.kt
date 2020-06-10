@@ -4,17 +4,21 @@ package ar.edu.unq.eperdemic.services.runner
 import org.hibernate.Session
 
 object TransactionRunner {
-    private var session: Session? = null
+    private var transactions:List<Transaction> = listOf(TransactionHibernate())
 
-    val currentSession: Session
-        get() {
-            if (session == null) {
-                throw RuntimeException("No hay ninguna session en el contexto")
-            }
-            return session!!
+    fun <T> runTrx(bloque: ()->T): T {
+        try{
+           transactions.forEach { it.start() }
+           val result = bloque()
+           transactions.forEach { it.commit() }
+           return result
+        } catch (exception:Throwable){
+           transactions.forEach { it.rollback() }
+           throw exception
         }
+    }
 
-
+     /*
     fun <T> runTrx(bloque: ()->T): T {
         session = SessionFactoryProvider.instance.createSession()
         session.use {
@@ -31,5 +35,6 @@ object TransactionRunner {
         }
         session = null
     }
+    */
 
 }
