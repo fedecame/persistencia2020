@@ -4,6 +4,7 @@ import ar.edu.unq.eperdemic.services.runner.TransactionHibernate
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import org.junit.After
 import org.junit.Assert
+import org.junit.Before
 import org.junit.Test
 
 class TransactionRunnerTest {
@@ -76,6 +77,8 @@ class TransactionRunnerTest {
         val l2 = TransactionRunner.transactions.size
         Assert.assertEquals(l2, l1)
     }
+
+    @Before
     @After
     fun clear(){
         TransactionRunner.clear()
