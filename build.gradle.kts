@@ -38,7 +38,9 @@ dependencies {
     testImplementation("junit:junit:4.12")
     runtimeOnly("mysql:mysql-connector-java")
 
-
+    repositories {
+        mavenCentral()
+    }
 }
 
 tasks.withType<Test> {

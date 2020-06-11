@@ -24,6 +24,10 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO) : UbicacionService {
         }
     }
 
+    override fun conectar(ubicacion1: String, ubicacion2: String, tipoCamino: String) {
+        TODO("Not yet implemented")
+    }
+
     override fun crearUbicacion(nombreUbicacion: String): Ubicacion {
         val ubicacion= Ubicacion()
         ubicacion.nombreUbicacion=nombreUbicacion
@@ -33,11 +37,17 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO) : UbicacionService {
     }
     override fun mover(vectorId: Int, nombreUbicacion: String) {
         TransactionRunner.runTrx {
-            vectorService.mover(vectorId, nombreUbicacion)
-            var vectorAMover= vectorService.recuperarVector(vectorId)
+//            vectorService.mover(vectorId, nombreUbicacion)
+//            ubicacionDao.recuperar(nombreUbicacion)
+            var vectorDao = HibernateVectorDAO()
+            var vector= vectorDao.recuperar(vectorId)
+//            var ubicacionOrigen=ubicacionDao.recuperar(vector.ubicacion?.nombreUbicacion!!)
+            vector.ubicacion=ubicacionDao.recuperar(nombreUbicacion)//actualizo Ubicacion de Vector
+            vectorDao.actualizar(vector)
+          
+//            var vectorAMover= vectorService.recuperarVector(vectorId)
 
-                neo4jUbicacionDAO.mover(vectorAMover, nombreUbicacion)
-
+//            neo4jUbicacionDAO.mover(vectorAMover, nombreUbicacion)
         }
 
     }
