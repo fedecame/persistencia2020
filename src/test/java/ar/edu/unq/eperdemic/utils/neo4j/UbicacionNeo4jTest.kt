@@ -7,14 +7,20 @@ import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jUbicacionDAO
+import ar.edu.unq.eperdemic.services.Neo4jDataService
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.tipo.Humano
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.mock
 
 class UbicacionNeo4jTest {
+    lateinit var neo4jData: Neo4jDataService
+
+
     var ubicacionService=UbicacionServiceImpl(HibernateUbicacionDAO())
     var mockUbicacionService = mock(UbicacionServiceImpl(HibernateUbicacionDAO()).javaClass)
     var mockVectorService=mock(VectorServiceImpl(HibernateVectorDAO(),HibernateUbicacionDAO()).javaClass)
@@ -23,6 +29,11 @@ class UbicacionNeo4jTest {
     var ubicacionBichoLandia=Ubicacion()
     var ubicacionTibetDojo=Ubicacion()
     var vectorService=VectorServiceImpl(HibernateVectorDAO(),HibernateUbicacionDAO())
+
+    @Before
+    fun setUp() {
+        neo4jData = Neo4jDataService()
+    }
 
     @Test
     fun vectorQuiereMoverAUbicacionNoAledaña() {
@@ -42,4 +53,10 @@ class UbicacionNeo4jTest {
         }
 
 
-    }}
+    }
+
+    @After
+    fun eliminarTodo() {
+        neo4jData.eliminarTodo()
+    }
+}
