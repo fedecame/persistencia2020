@@ -11,6 +11,7 @@ class DataTest {
 
     @Before
     fun setUp(){
+        neo4DataDao.eliminarTodo()
         neo4DataDao.crearSetDeDatosIniciales()
     }
 
@@ -21,6 +22,6 @@ class DataTest {
 
     @After
     fun eliminarTodo(){
-        neo4DataDao.eliminarTodo()
+//        neo4DataDao.eliminarTodo()
     }
 }
