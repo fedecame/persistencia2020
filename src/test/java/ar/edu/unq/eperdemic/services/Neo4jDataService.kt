@@ -6,7 +6,7 @@ import ar.edu.unq.eperdemic.utils.DataService
 
 class Neo4jDataService : DataService{
     //NonePlace es un nodo huerfano
-    private val ubicaciones = listOf("Quilmes", "Remedios de Escalada", "Ezpeleta", "Narnia", "Babilonia", "Zion", "Mordor", "WonderLand", "NonePlace")
+    private val ubicaciones = listOf("Quilmes", "Remedios de Escalada", "Ezpeleta", "Narnia", "Babilonia", "Zion", "Mordor", "WonderLand", "elNodoSolitario")
     val neo4jDataDAO = Neo4jDataDAO()
 
     //Esto genera un grafo como el de la imagen
