@@ -78,6 +78,7 @@ class EstadisticasDAOTest {
         vector.ubicacion = ubicacion0
         vectorService.crearVector(vector)
         ubicacionService.mover(vector.id!!.toInt(), ubicacion0.nombreUbicacion)
+
     }
 
     private fun crearNConEstadoEn(cant : Int, estado : EstadoVector, ubicacion : String){
