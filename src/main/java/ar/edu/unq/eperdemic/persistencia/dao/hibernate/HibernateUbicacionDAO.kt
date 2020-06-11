@@ -34,6 +34,18 @@ class HibernateUbicacionDAO : HibernateDAO<Ubicacion>(Ubicacion::class.java), Ub
         this.actualizar(ubicacionDB)
     }
 
+    override fun conectar(ubicacion1: String, ubicacion2: String, tipoCamino: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun conectados(nombreDeUbicacion: String): List<Ubicacion> {
+        TODO("Not yet implemented")
+    }
+
+    override fun mover(vector: Vector, nombreUbicacion: String) {
+        TODO("Not yet implemented")
+    }
+
 }
 
 
