@@ -8,6 +8,6 @@ import ar.edu.unq.eperdemic.utils.DataService
 class HibernateDataService() {
 
     fun eliminarTodo() {
-        TransactionRunner.runTrx { HibernateDataDAO().clear() }
+        TransactionRunner.addHibernate().runTrx { HibernateDataDAO().clear() }
     }
 }

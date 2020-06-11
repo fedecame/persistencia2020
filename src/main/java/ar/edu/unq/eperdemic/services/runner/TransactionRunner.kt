@@ -1,7 +1,7 @@
 package ar.edu.unq.eperdemic.services.runner
 
 object TransactionRunner{
-    var transactions: MutableList<Transaction> = mutableListOf(TransactionHibernate, TransactionNeo4j)
+    var transactions: MutableList<Transaction> = mutableListOf()
 
     private fun addIf(transaction: Transaction): TransactionRunner {
         if (!this.isThere(transaction)) {
@@ -15,13 +15,13 @@ object TransactionRunner{
         transactions.forEach(bloque)
     }
     private fun start() {
-        this.forAll { it.start() }
+        forAll { it.start() }
     }
     private fun commit() {
-        this.forAll { it.commit() }
+        forAll { it.commit() }
     }
     private fun rollback() {
-        this.forAll { it.rollback() }
+        forAll { it.rollback() }
     }
     fun clear() {
         transactions = mutableListOf()
@@ -40,6 +40,8 @@ object TransactionRunner{
         } catch (e: RuntimeException) {
             this.rollback()
             throw e
+        } finally {
+            this.clear()
         }
     }
 }

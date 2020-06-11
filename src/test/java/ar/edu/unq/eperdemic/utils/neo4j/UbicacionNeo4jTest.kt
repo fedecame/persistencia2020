@@ -9,7 +9,7 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jUbicacionDAO
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
-import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
+import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.tipo.Humano
 import org.junit.Test
 import org.mockito.Mockito.mock
@@ -27,7 +27,7 @@ class UbicacionNeo4jTest {
     @Test
     fun vectorQuiereMoverAUbicacionNoAledaña() {
         var daoNeo4j = Neo4jUbicacionDAO()
-        runTrx {
+        TransactionRunner.addNeo4j().runTrx {
             daoNeo4j.conectar("Plantalandia", "TibetDojo", "Terrestre")
         }
         ubicacionService.crearUbicacion("BichoLandia")
