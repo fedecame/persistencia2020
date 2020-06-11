@@ -2,14 +2,14 @@ package ar.edu.unq.eperdemic.services.runner
 
 
 object TransactionRunner{
-    var transactions: List<Transaction> = listOf(TransactionHibernate)
+    var transactions: MutableList<Transaction> = mutableListOf(TransactionHibernate, TransactionNeo4j)
 
-//    private fun addIf(transaction: Transaction): TransactionRunner {
-//        if (!this.isThere(transaction)) {
-//            transactions.add(transaction)
-//        }
-//        return this
-//    }
+    private fun addIf(transaction: Transaction): TransactionRunner {
+        if (!this.isThere(transaction)) {
+            transactions.add(transaction)
+        }
+        return this
+    }
 
     private fun isThere(transaction: Transaction): Boolean = transactions.any { it.javaClass.name == transaction.javaClass.name }
     private fun forAll(bloque: (Transaction) -> Unit) {
@@ -25,23 +25,21 @@ object TransactionRunner{
         this.forAll { it.rollback() }
     }
     fun clear() {
-        transactions = listOf()
+        transactions = mutableListOf()
     }
 
-//    fun addHibernate(): TransactionRunner = this.addIf(TransactionHibernate())
+    fun addHibernate(): TransactionRunner = this.addIf(TransactionHibernate)
 
-    //fun addNeo4j() : TransactionRunner = this.addIf(TransactionNeo4j())
+    fun addNeo4j() : TransactionRunner = this.addIf(TransactionNeo4j)
 
     fun <T> runTrx(bloque: () -> T): T {
-        transactions.forEach{it.start()}
         try {
+            this.start()
             val resultado = bloque()
-            transactions.forEach{it.commit()}
+            this.commit()
             return resultado
         } catch (e: RuntimeException) {
-            print("ACA ESTA EL ERROR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"+  e.cause)
-            print(e.message)
-            transactions.forEach{it.rollback()}
+            this.rollback()
             throw e
         }
     }

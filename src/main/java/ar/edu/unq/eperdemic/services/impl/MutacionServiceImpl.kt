@@ -13,11 +13,9 @@ class MutacionServiceImpl(var mutacionDao : MutacionDAO, val patogenoService: Pa
             val especieDAO = HibernateEspecieDAO()
 
             val mutacion = mutacionDao.recuperar(mutacionId)
-//            val especie = patogenoService.recuperarEspecie(especieId)
             val especie = especieDAO.recuperarEspecie(especieId)
 
             especie.mutar(mutacion)
-//            patogenoService.actualizarEspecie(especie)
             especieDAO.actualizar(especie)
         }
     }
