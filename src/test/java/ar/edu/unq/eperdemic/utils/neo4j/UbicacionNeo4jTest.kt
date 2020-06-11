@@ -33,6 +33,7 @@ class UbicacionNeo4jTest {
     @Before
     fun setUp() {
         neo4jData = Neo4jDataService()
+        neo4jData.crearSetDeDatosIniciales()
     }
 
     @Test
@@ -56,17 +57,65 @@ class UbicacionNeo4jTest {
     }
 
     @Test(expected = Exception::class)
-    fun intentaMoverMasCortoAUnVectorNoPersistido() {
+    fun unVectorNoPersistidoIntentaMoverMasCorto() {
         throw Exception()
+        /**
+         *  TODO Fede
+         * */
     }
 
     @Test(expected = Exception::class)
     fun intentaMoverMasCortoAUnaUbicacionNoPersistida() {
         throw Exception()
+        /**
+         *  TODO Fede
+         * */
     }
 
-//    @Test
-//    fun
+    @Test(expected = Exception::class)
+    fun intentaMoverMasCortoPeroNoHayCaminosQueLleguenAEsaUbicacion() {
+        throw Exception()
+        /**
+         *  TODO Fede
+         * */
+    }
+
+    @Test(expected = Exception::class)
+    fun unVectorHumanoIntentaMoverMasCortoPeroNoHayCaminosDeSusTiposViables() {
+        throw Exception()
+        /**
+         *  TODO Fede
+         * */
+    }
+
+    @Test(expected = Exception::class)
+    fun unVectorInsenctoIntentaMoverMasCortoPeroNoHayCaminosDeSusTiposViables() {
+        throw Exception()
+        /**
+         *  TODO Fede
+         * */
+    }
+
+    @Test
+    fun unVectorHumanoIntentaMoverMasCortoYMueveLaCombinacionMasCortaPosible() {
+        /**
+         *  TODO Fede
+         * */
+    }
+
+    @Test
+    fun unVectorInsectoIntentaMoverMasCortoYMueveLaCombinacionMasCortaPosible() {
+        /**
+         *  TODO Fede
+         * */
+    }
+
+    @Test
+    fun unVectorAnimalIntentaMoverMasCortoYMueveLaCombinacionMasCortaPosible() {
+        /**
+         *  TODO Fede
+         * */
+    }
 
     @After
     fun eliminarTodo() {

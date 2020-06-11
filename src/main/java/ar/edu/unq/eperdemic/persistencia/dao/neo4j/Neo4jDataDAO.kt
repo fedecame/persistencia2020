@@ -27,8 +27,7 @@ class Neo4jDataDAO : DataDAO {
         CREATE (a)-[:${tipo}]->(b)""".trimIndent()
         transaction.run(conectQuery, Values.parameters(
             "ubicacionOrigin", ubicacionOrigin,
-            "ubicacionFinal", ubicacionFinal,
-            "tipo", tipo
+            "ubicacionFinal", ubicacionFinal
         ))
     }
 

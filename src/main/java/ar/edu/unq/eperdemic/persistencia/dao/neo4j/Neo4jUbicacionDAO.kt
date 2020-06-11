@@ -5,6 +5,7 @@ import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.exception.CaminoNoSoportado
 import ar.edu.unq.eperdemic.modelo.exception.UbicacionMuyLejana
+import ar.edu.unq.eperdemic.modelo.exception.UbicacionNoAlcanzable
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.services.runner.TransactionNeo4j
 
@@ -92,6 +93,31 @@ class Neo4jUbicacionDAO : UbicacionDAO {
 
     override fun agregarVector(vector: Vector, ubicacion: Ubicacion) {
         TODO("Not yet implemented")
+    }
+
+    override fun moverMasCorto(vector: Vector, ubicacion: Ubicacion) {
+        val transaction = TransactionNeo4j.currentTransaction
+        val tiposDeCaminosPosibles = vector.tipo.posiblesCaminos.map { it.name }
+        val stringDeTiposParaQuery = tiposDeCaminosPosibles.toString().replace(",", "|")
+
+        val query = """
+            MATCH p=shortestPath(
+            (salida:Ubicacion {nombre:${vector.ubicacion!!.nombreUbicacion}})-[:${stringDeTiposParaQuery}*]->(llegada:Ubicacion {nombre:${ubicacion.nombreUbicacion}})
+            )
+            RETURN p
+        """.trimIndent()
+
+        val caminoMasCorto = transaction.run(query).list()
+        if (caminoMasCorto.isEmpty()) {
+            throw UbicacionNoAlcanzable()
+        }
+
+        this.moverPorUbicaciones(vector, caminoMasCorto.toSet().filter { it.size() > 0 }.toList().map{it.get("nombre").toString()})
+
+    }
+
+    private fun moverPorUbicaciones(vector: Vector, nombresDeUbicaciones: List<String>) {
+        nombresDeUbicaciones.forEach { this.mover(vector, it) }
     }
 }
 

@@ -46,6 +46,10 @@ class HibernateUbicacionDAO : HibernateDAO<Ubicacion>(Ubicacion::class.java), Ub
         TODO("Not yet implemented")
     }
 
+    override fun moverMasCorto(vector: Vector, ubicacion: Ubicacion) {
+        TODO("Not yet implemented")
+    }
+
 }
 
 

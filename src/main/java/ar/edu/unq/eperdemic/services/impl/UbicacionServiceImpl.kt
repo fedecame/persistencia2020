@@ -70,16 +70,10 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO) : UbicacionService {
     }
 
     override fun moverMasCorto(vectorId: Long, nombreDeUbicacion: String) {
-        lateinit var vector: Vector
-        TransactionRunner.addHibernate().runTrx {
-            vector = vectorDao.recuperar(vectorId)
-        }
-
-        TransactionRunner.addNeo4j().runTrx {
+        TransactionRunner.addNeo4j().addHibernate().runTrx {
+            val vector = vectorDao.recuperar(vectorId)
             val ubicacion = ubicacionDao.recuperar(nombreDeUbicacion)
             ubicacionDao.moverMasCorto(vector, ubicacion)
         }
-
-        TODO("Not yet implemented")
     }
 }
