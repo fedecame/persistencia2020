@@ -1,10 +1,6 @@
 package ar.edu.unq.eperdemic.persistencia.dao.hibernate
 
 import ar.edu.unq.eperdemic.services.runner.TransactionHibernate
-import ar.edu.unq.eperdemic.services.runner.TransactionRunner
-import org.hibernate.Transaction
-import java.util.*
-
 
 open class HibernateDAO<T>(val entityType: Class<T>) {
 
