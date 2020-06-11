@@ -9,12 +9,12 @@ object TransactionNeo4j: Transaction {
     private var transaction : org.neo4j.driver.Transaction? =null
     private var session: Session? = null
 
-    val currentSession: Session
+    val currentTransaction: org.neo4j.driver.Transaction
         get() {
-            if (session == null) {
-                throw RuntimeException("No hay ninguna session en el contexto")
+            if(transaction == null) {
+                throw RuntimeException("No hay ninguna transaction en el contexto")
             }
-            return session!!
+            return transaction!!
         }
 
 
