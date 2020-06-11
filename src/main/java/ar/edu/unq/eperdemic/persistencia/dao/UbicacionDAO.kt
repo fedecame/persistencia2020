@@ -9,4 +9,5 @@ interface UbicacionDAO {
    // fun recuperarAll():MutableList<Ubicacion>
     fun actualizar(ubicacion:Ubicacion)
     fun agregarVector(vector: Vector, ubicacion: Ubicacion)
+    fun moverMasCorto(vector: Vector, ubicacion: Ubicacion)
 }

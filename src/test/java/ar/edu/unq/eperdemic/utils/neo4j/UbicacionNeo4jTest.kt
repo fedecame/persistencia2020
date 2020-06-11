@@ -55,6 +55,19 @@ class UbicacionNeo4jTest {
 
     }
 
+    @Test(expected = Exception::class)
+    fun intentaMoverMasCortoAUnVectorNoPersistido() {
+        throw Exception()
+    }
+
+    @Test(expected = Exception::class)
+    fun intentaMoverMasCortoAUnaUbicacionNoPersistida() {
+        throw Exception()
+    }
+
+//    @Test
+//    fun
+
     @After
     fun eliminarTodo() {
         neo4jData.eliminarTodo()

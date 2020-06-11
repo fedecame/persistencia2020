@@ -15,7 +15,8 @@ import ar.edu.unq.eperdemic.utility.random.RandomMaster
 import ar.edu.unq.eperdemic.utility.random.RandomMasterImpl
 
 class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO) : UbicacionService {
-    var vectorService: VectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateUbicacionDAO())
+    var vectorDao = HibernateVectorDAO()
+//    var vectorService: VectorService = VectorServiceImpl(vectorDao, HibernateUbicacionDAO())
     var randomGenerator: RandomMaster = RandomMasterImpl()
     var neo4jUbicacionDAO=Neo4jUbicacionDAO()
     override fun recuperarUbicacion(nombreUbicacion: String):Ubicacion{
@@ -39,7 +40,6 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO) : UbicacionService {
         TransactionRunner.addHibernate().addNeo4j().runTrx {
 //            vectorService.mover(vectorId, nombreUbicacion)
 //            ubicacionDao.recuperar(nombreUbicacion)
-            var vectorDao = HibernateVectorDAO()
             var vector= vectorDao.recuperar(vectorId)
 //            var ubicacionOrigen=ubicacionDao.recuperar(vector.ubicacion?.nombreUbicacion!!)
             vector.ubicacion=ubicacionDao.recuperar(nombreUbicacion)//actualizo Ubicacion de Vector
@@ -64,9 +64,22 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO) : UbicacionService {
         val vectoresAContagiar = ubicacion.vectores.filter { vector -> vector.id != vectorInfectadoAleatorio.id }
 //        vectorService.contagiar(vectorInfectadoAleatorio, vectoresAContagiar)
 
-        val vectorDao = HibernateVectorDAO()
         TransactionRunner.addHibernate().runTrx {
             vectorDao.contagiar(vectorInfectadoAleatorio, vectoresAContagiar)
         }
+    }
+
+    override fun moverMasCorto(vectorId: Long, nombreDeUbicacion: String) {
+        lateinit var vector: Vector
+        TransactionRunner.addHibernate().runTrx {
+            vector = vectorDao.recuperar(vectorId)
+        }
+
+        TransactionRunner.addNeo4j().runTrx {
+            val ubicacion = ubicacionDao.recuperar(nombreDeUbicacion)
+            ubicacionDao.moverMasCorto(vector, ubicacion)
+        }
+
+        TODO("Not yet implemented")
     }
 }

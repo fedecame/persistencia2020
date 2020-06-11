@@ -5,6 +5,7 @@ import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.exception.CaminoNoSoportado
 import ar.edu.unq.eperdemic.modelo.exception.UbicacionMuyLejana
+import ar.edu.unq.eperdemic.services.runner.Neo4jSessionFactoryProvider
 import ar.edu.unq.eperdemic.services.runner.TransactionNeo4j
 
 
