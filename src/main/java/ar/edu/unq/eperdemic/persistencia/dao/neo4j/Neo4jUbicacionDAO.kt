@@ -5,10 +5,11 @@ import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.exception.CaminoNoSoportado
 import ar.edu.unq.eperdemic.modelo.exception.UbicacionMuyLejana
+import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.services.runner.TransactionNeo4j
 
 
-class Neo4jUbicacionDAO :UbicacionDaoNeo4j{
+class Neo4jUbicacionDAO : UbicacionDAO {
 //    val session =DriverNeo4j().driver.session()
 
     override fun conectar(ubicacion1: String, ubicacion2: String, tipoCamino: String) {
@@ -19,11 +20,9 @@ class Neo4jUbicacionDAO :UbicacionDaoNeo4j{
         transaction.run(query)
     }
 
-
     override fun conectados(nombreDeUbicacion:String): List<Ubicacion>{
        val ubicacion= Ubicacion()
         ubicacion.nombreUbicacion="TibetDojo"
-
         val list= listOf(ubicacion)
         return list
     }
@@ -50,17 +49,15 @@ class Neo4jUbicacionDAO :UbicacionDaoNeo4j{
         }
         return excepcion
     }
-private fun darTipo(camino:String) : TipoCamino? {
-    when(camino){
-        "Terrestre"-> return TipoCamino.Terrestre
-        "Aereo"->return TipoCamino.Aereo
-        "Maritimo"-> return TipoCamino.Maritimo
-      else -> return null
-  }
 
-}
-
-
+    private fun darTipo(camino:String) : TipoCamino? {
+        when(camino){
+            "Terrestre"-> return TipoCamino.Terrestre
+            "Aereo"->return TipoCamino.Aereo
+            "Maritimo"-> return TipoCamino.Maritimo
+            else -> return null
+        }
+    }
 
     private fun noEsCapazDeMoverPorCamino(vector: Vector, ubicacionDestino: Ubicacion?):Boolean {
 //        val session = TransactionNeo4j.currentSession
@@ -79,7 +76,24 @@ private fun darTipo(camino:String) : TipoCamino? {
            return vector.tipo.posiblesCaminos().contains(darTipo(camino.toString())).not()
 
        }
-}}
+}
+
+    override fun crear(ubicacion: Ubicacion): Ubicacion {
+        TODO("Not yet implemented")
+    }
+
+    override fun recuperar(nombre: String): Ubicacion {
+        TODO("Not yet implemented")
+    }
+
+    override fun actualizar(ubicacion: Ubicacion) {
+        TODO("Not yet implemented")
+    }
+
+    override fun agregarVector(vector: Vector, ubicacion: Ubicacion) {
+        TODO("Not yet implemented")
+    }
+}
 
 
 
