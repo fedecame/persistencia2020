@@ -49,12 +49,9 @@ class UbicacionNeo4jTest {
 
     }
 
-    @Test
+    @Test(expected = UbicacionMuyLejana::class)
     fun vectorNoPuedeMoverPorqueUbicacionEsLejana() {
-
-              ubicacionService.conectar("Plantalandia", "FlorencioVarela", "Maritimo")
-            ubicacionService.mover(id,"Bicholandia")
-
-
+        
+        ubicacionService.mover(id,"")
     }
 }
