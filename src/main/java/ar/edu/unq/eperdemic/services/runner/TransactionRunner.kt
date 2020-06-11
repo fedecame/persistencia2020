@@ -33,14 +33,16 @@ object TransactionRunner{
     //fun addNeo4j() : TransactionRunner = this.addIf(TransactionNeo4j())
 
     fun <T> runTrx(bloque: () -> T): T {
+        transactions.forEach{it.start()}
         try {
-            transactions.forEach{it.start()}
             val resultado = bloque()
             transactions.forEach{it.commit()}
             return resultado
         } catch (e: RuntimeException) {
+            print("ACA ESTA EL ERROR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"+  e.cause)
+            print(e.message)
             transactions.forEach{it.rollback()}
-            throw(e)
+            throw e
         }
     }
 }

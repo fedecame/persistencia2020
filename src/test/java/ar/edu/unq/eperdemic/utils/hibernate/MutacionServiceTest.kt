@@ -121,19 +121,19 @@ class MutacionServiceTest {
         patogenoService.crearEspecie(especie)
     }
 
-//    //exception
-//    @Test(expected = EspecieNotFoundRunTimeException::class)
-//    fun mutarUnaEspecieNoPersistida() {
-//        val especieNoPersistida = Especie()
-//        especieNoPersistida.nombre = "EspecieDeVirus"
-//        especieNoPersistida.paisDeOrigen = "USA"
-//        especieNoPersistida.mutacionesDesbloqueadas.addAll(mutableListOf(mutacion1, mutacion2))
-//        especieNoPersistida.cantidadInfectadosParaADN = 5
-//        especieNoPersistida.patogeno = patogeno
-//        especieNoPersistida.id = especieNoPersistida.id ?: 250
-//
-//        mutacionService.mutar(especieNoPersistida.id!!, mutacion.id!!.toInt())
-//    }
+    //exception
+    @Test(expected = EspecieNotFoundRunTimeException::class)
+    fun mutarUnaEspecieNoPersistida() {
+        val especieNoPersistida = Especie()
+        especieNoPersistida.nombre = "EspecieDeVirus"
+        especieNoPersistida.paisDeOrigen = "USA"
+        especieNoPersistida.mutacionesDesbloqueadas.addAll(mutableListOf(mutacion1, mutacion2))
+        especieNoPersistida.cantidadInfectadosParaADN = 5
+        especieNoPersistida.patogeno = patogeno
+        especieNoPersistida.id = especieNoPersistida.id ?: 250
+
+        mutacionService.mutar(especieNoPersistida.id!!, mutacion.id!!.toInt())
+    }
 
     //exception
     @Test(expected = IDMutacionNoEncontradoException::class)
@@ -167,69 +167,69 @@ class MutacionServiceTest {
 
     //agregar otros 3 tests de ManyToMany
 
-//    @Test
-//    fun mutarUnaEspeciePersistidaAUnaMutacionPersistidaCumpliendoConLosRequisitos() {
-//        mutacionService.mutar(especie.id!!, mutacion1.id!!.toInt())
-//
-//        Assert.assertTrue(mutacion1.mutacionesDesbloqueables.size == 1)
-//        Assert.assertNotNull(mutacion1.mutacionesDesbloqueables.find { it.id == mutacion.id })
-//        val mutacionDB = mutacionService.recuperarMutacion(mutacion1.id!!.toInt())
-//        Assert.assertTrue(mutacionDB.mutacionesDesbloqueables.isNotEmpty())
-//        Assert.assertTrue(mutacionDB.mutacionesDesbloqueables.size == 1)
-//        Assert.assertNotNull(mutacionDB.mutacionesDesbloqueables.find { it.id == mutacion.id })
-//
-//        Assert.assertNotEquals(13, especie.cantidadInfectadosParaADN)
-//        Assert.assertNull(especie.mutaciones.find { it.id == mutacion1.id })
-//        Assert.assertNull(especie.mutacionesDesbloqueadas.find { it.id == mutacion.id })
-//        val especieDB = patogenoService.recuperarEspecie(especie.id!!)
-//        Assert.assertEquals(13, especieDB.cantidadInfectadosParaADN)
-//        Assert.assertNotNull(especieDB.mutaciones.find { it.id == mutacion1.id })
-//        Assert.assertNotNull(especieDB.mutacionesDesbloqueadas.find { it.id == mutacion.id })
-//    }
-//
-//    //exception
-//    @Test(expected = EspecieNoCumpleRequisitosParaMutarException::class)
-//    fun mutarUnaEspeciePersistidaAUnaMutacionPersistidaSinSuficienteADN() {
-//        especie.cantidadInfectadosParaADN = 2
-//        patogenoService.actualizarEspecie(especie)
-//        val especieDB = patogenoService.recuperarEspecie(especie.id!!)
-//
-//        mutacionService.mutar(especieDB.id!!, mutacion1.id!!.toInt())
-//    }
-//
-//    //exception
-//    @Test(expected = EspecieNoCumpleRequisitosParaMutarException::class)
-//    fun mutarUnaEspeciePersistidaAUnaMutacionPersistidaSinTenerTodasLasMutacionesPreviasNecesarias() {
-//        especie.mutacionesDesbloqueadas.add(mutacion5)
-//        mutacionService.mutar(especie.id!!, mutacion5.id!!.toInt())
-//    }
-//
-//    //exception
-//    @Test(expected = EspecieNoCumpleRequisitosParaMutarException::class)
-//    fun mutarUnaEspeciePersistidaAUnaMutacionPersistidaSinTenerDesbloqueadaLaMutacion() {
-//        Assert.assertTrue(especie.mutaciones.isEmpty())
-//        mutacionService.mutar(especie.id!!, mutacion1.id!!.toInt())
-//        mutacionService.mutar(especie.id!!, mutacion2.id!!.toInt())
-//    }
-//
-//    @Test
-//    fun mutarUnaEspeciePersistidaAUnaMutacionPersistidaYMutarlaDeNuevoAUnaMutacionPersistidaRecienDesbloqueada() {
-//        especie.cantidadInfectadosParaADN = 22
-//        patogenoService.actualizarEspecie(especie)
-//
-//        mutacionService.mutar(especie.id!!, mutacion1.id!!.toInt())
-//        mutacionService.mutar(especie.id!!, mutacion.id!!.toInt())
-//
-//        val especieDB = patogenoService.recuperarEspecie(especie.id!!)
-//        Assert.assertEquals(2, especieDB.cantidadInfectadosParaADN)
-//        Assert.assertNotNull(especieDB.mutaciones.find { it.id == mutacion.id })
-//        Assert.assertNotNull(especieDB.mutaciones.find { it.id == mutacion1.id })
-//        Assert.assertTrue(especieDB.mutaciones.size == 2)
-//        Assert.assertNotNull(especieDB.mutacionesDesbloqueadas.find { it.id == mutacion.id })
-//        Assert.assertNotNull(especieDB.mutacionesDesbloqueadas.find { it.id == mutacion3.id })
-//        Assert.assertNotNull(especieDB.mutacionesDesbloqueadas.find { it.id == mutacion5.id })
-//        Assert.assertTrue(especieDB.mutacionesDesbloqueadas.size == 4)
-//    }
+    @Test
+    fun mutarUnaEspeciePersistidaAUnaMutacionPersistidaCumpliendoConLosRequisitos() {
+        mutacionService.mutar(especie.id!!, mutacion1.id!!.toInt())
+
+        Assert.assertTrue(mutacion1.mutacionesDesbloqueables.size == 1)
+        Assert.assertNotNull(mutacion1.mutacionesDesbloqueables.find { it.id == mutacion.id })
+        val mutacionDB = mutacionService.recuperarMutacion(mutacion1.id!!.toInt())
+        Assert.assertTrue(mutacionDB.mutacionesDesbloqueables.isNotEmpty())
+        Assert.assertTrue(mutacionDB.mutacionesDesbloqueables.size == 1)
+        Assert.assertNotNull(mutacionDB.mutacionesDesbloqueables.find { it.id == mutacion.id })
+
+        Assert.assertNotEquals(13, especie.cantidadInfectadosParaADN)
+        Assert.assertNull(especie.mutaciones.find { it.id == mutacion1.id })
+        Assert.assertNull(especie.mutacionesDesbloqueadas.find { it.id == mutacion.id })
+        val especieDB = patogenoService.recuperarEspecie(especie.id!!)
+        Assert.assertEquals(13, especieDB.cantidadInfectadosParaADN)
+        Assert.assertNotNull(especieDB.mutaciones.find { it.id == mutacion1.id })
+        Assert.assertNotNull(especieDB.mutacionesDesbloqueadas.find { it.id == mutacion.id })
+    }
+
+    //exception
+    @Test(expected = EspecieNoCumpleRequisitosParaMutarException::class)
+    fun mutarUnaEspeciePersistidaAUnaMutacionPersistidaSinSuficienteADN() {
+        especie.cantidadInfectadosParaADN = 2
+        patogenoService.actualizarEspecie(especie)
+        val especieDB = patogenoService.recuperarEspecie(especie.id!!)
+
+        mutacionService.mutar(especieDB.id!!, mutacion1.id!!.toInt())
+    }
+
+    //exception
+    @Test(expected = EspecieNoCumpleRequisitosParaMutarException::class)
+    fun mutarUnaEspeciePersistidaAUnaMutacionPersistidaSinTenerTodasLasMutacionesPreviasNecesarias() {
+        especie.mutacionesDesbloqueadas.add(mutacion5)
+        mutacionService.mutar(especie.id!!, mutacion5.id!!.toInt())
+    }
+
+    //exception
+    @Test(expected = EspecieNoCumpleRequisitosParaMutarException::class)
+    fun mutarUnaEspeciePersistidaAUnaMutacionPersistidaSinTenerDesbloqueadaLaMutacion() {
+        Assert.assertTrue(especie.mutaciones.isEmpty())
+        mutacionService.mutar(especie.id!!, mutacion1.id!!.toInt())
+        mutacionService.mutar(especie.id!!, mutacion2.id!!.toInt())
+    }
+
+    @Test
+    fun mutarUnaEspeciePersistidaAUnaMutacionPersistidaYMutarlaDeNuevoAUnaMutacionPersistidaRecienDesbloqueada() {
+        especie.cantidadInfectadosParaADN = 22
+        patogenoService.actualizarEspecie(especie)
+
+        mutacionService.mutar(especie.id!!, mutacion1.id!!.toInt())
+        mutacionService.mutar(especie.id!!, mutacion.id!!.toInt())
+
+        val especieDB = patogenoService.recuperarEspecie(especie.id!!)
+        Assert.assertEquals(2, especieDB.cantidadInfectadosParaADN)
+        Assert.assertNotNull(especieDB.mutaciones.find { it.id == mutacion.id })
+        Assert.assertNotNull(especieDB.mutaciones.find { it.id == mutacion1.id })
+        Assert.assertTrue(especieDB.mutaciones.size == 2)
+        Assert.assertNotNull(especieDB.mutacionesDesbloqueadas.find { it.id == mutacion.id })
+        Assert.assertNotNull(especieDB.mutacionesDesbloqueadas.find { it.id == mutacion3.id })
+        Assert.assertNotNull(especieDB.mutacionesDesbloqueadas.find { it.id == mutacion5.id })
+        Assert.assertTrue(especieDB.mutacionesDesbloqueadas.size == 4)
+    }
 
     @Test
     fun testAlCrearUnaMutacionSeRecuperaConSuId(){

@@ -34,7 +34,13 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO) : UbicacionService {
     }
     override fun mover(vectorId: Int, nombreUbicacion: String) {
         TransactionRunner.runTrx {
-            vectorService.mover(vectorId, nombreUbicacion)
+//            vectorService.mover(vectorId, nombreUbicacion)
+//            ubicacionDao.recuperar(nombreUbicacion)
+            var vectorDao = HibernateVectorDAO()
+            var vector= vectorDao.recuperar(vectorId)
+//            var ubicacionOrigen=ubicacionDao.recuperar(vector.ubicacion?.nombreUbicacion!!)
+            vector.ubicacion=ubicacionDao.recuperar(nombreUbicacion)//actualizo Ubicacion de Vector
+            vectorDao.actualizar(vector)
         }
     }
 

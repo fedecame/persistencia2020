@@ -22,15 +22,15 @@ object TransactionHibernate: Transaction{
     override fun commit() {
         transaction!!.commit()
         session!!.close()
-//        session = null
-//        transaction = null
+        session = null
+        transaction = null
     }
 
     override fun rollback() {
         transaction!!.rollback()
         session!!.close()
-//        session = null
-//        transaction = null
+        session = null
+        transaction = null
     }
 
 }
