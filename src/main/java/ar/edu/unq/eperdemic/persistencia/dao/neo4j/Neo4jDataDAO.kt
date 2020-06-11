@@ -22,7 +22,7 @@ class Neo4jDataDAO : DataDAO {
     fun conectUni(ubicacionOrigin: String, ubicacionFinal: String, tipo : String) {
         val transaction = TransactionNeo4j.currentTransaction
         val conectQuery = """MATCH (a:Ubicacion),(b:Ubicacion)
-        WHERE a.nombre = "$ubicacionOrigin" AND b.nombre = "$ubicacionOrigin"
+        WHERE a.nombre = "$ubicacionOrigin" AND b.nombre = "$ubicacionFinal"
         CREATE (a)-[r:"$tipo"]->(b)"""
         transaction.run(conectQuery)
     }

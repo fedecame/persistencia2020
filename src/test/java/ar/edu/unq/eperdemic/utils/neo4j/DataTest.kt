@@ -11,7 +11,7 @@ class DataTest {
 
     @Before
     fun setUp(){
-        //neo4DataDao.crearSetDeDatosIniciales()
+        neo4DataDao.crearSetDeDatosIniciales()
     }
 
     @Test
