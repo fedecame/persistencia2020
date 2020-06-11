@@ -14,7 +14,6 @@ class Neo4jUbicacionDAO :UbicacionDaoNeo4j{
     override fun conectar(ubicacion1: String, ubicacion2: String, tipoCamino: String) {
 //        val session = TransactionNeo4j.currentSession
         val transaction = TransactionNeo4j.currentTransaction
-
         val query = """Match(ubicacionUno:Ubicacion {nombre:"$ubicacion1"})Match(ubicacionDos:Ubicacion{nombre:"$ubicacion2"}) MERGE (ubicacionUno)-[c:Camino {nombre:"$tipoCamino"}]->(ubicacionDos) """
         transaction.run(query)
     }
@@ -28,28 +27,18 @@ class Neo4jUbicacionDAO :UbicacionDaoNeo4j{
         return list
     }
 
-    override fun mover(vector: Vector, nombreUbicacion:String) {
-        var nombreDeUbicacionV=vector.ubicacion?.nombreUbicacion
-        var ubicacionesAledañas= conectados(nombreDeUbicacionV.toString())
-        var ubicacionDestino = Ubicacion()
-        ubicacionDestino.nombreUbicacion=nombreUbicacion
-        var ubicacionAux=ubicacionesAledañas.firstOrNull { u->u.nombreUbicacion==nombreUbicacion }
-        var noPuedeMoverseTanLejos=ubicacionAux==null
-        if( noPuedeMoverseTanLejos && noEsCapazDeMoverPorCamino(vector,ubicacionDestino) ){
-            throw (lanzarExcepcionAlMover(noPuedeMoverseTanLejos,noEsCapazDeMoverPorCamino(vector,ubicacionDestino)))
-        }
-    }
 
-    private fun lanzarExcepcionAlMover(noPuedeMoverseTanLejos: Boolean, noPuedeMoversePorCamino: Boolean): Throwable {
-        var excepcion:Exception
-        if(noPuedeMoverseTanLejos) {
-            excepcion = UbicacionMuyLejana()
-        }
-        else{
-            excepcion= CaminoNoSoportado()
-        }
-        return excepcion
-    }
+
+ override fun esAledaña(nombreDeUbicacion: String, uPosibleAledaña:String) {
+     var transaction = TransactionNeo4j.currentTransaction
+     var query = """ Match(u1:Ubicacion {nombre:"$nombreDeUbicacion"})-[c:Camino]->(u2:Ubicacion {nombre:"$uPosibleAledaña" }) return(c) """
+     var result = transaction.run(query)
+     if(result.list().isEmpty()){
+         throw UbicacionMuyLejana()
+     }
+ }
+
+
 private fun darTipo(camino:String) : TipoCamino? {
     when(camino){
         "Terrestre"-> return TipoCamino.Terrestre
@@ -59,27 +48,16 @@ private fun darTipo(camino:String) : TipoCamino? {
   }
 
 }
-
-
-
-    private fun noEsCapazDeMoverPorCamino(vector: Vector, ubicacionDestino: Ubicacion?):Boolean {
-//        val session = TransactionNeo4j.currentSession
-        val transaction = TransactionNeo4j.currentTransaction
-
-        var  query=""" match(u1:Ubicacion{nombre:"${vector.ubicacion?.nombreUbicacion}"})-[c:Camino]-> (u2:Ubicacion{nombre:"${ubicacionDestino?.nombreUbicacion}"}) return(c.nombre)  """
-
-        var result=   transaction.run(query)
-
-        if(result.list().isEmpty()){
-           return true
-       }
-               else {
-           var camino = result.list().get(0)["(c.nombre)"]
-
-           return vector.tipo.posiblesCaminos().contains(darTipo(camino.toString())).not()
-
-       }
-}}
+    override fun noEsCapazDeMoverPorCamino(vector: Vector, ubicacionDestino: String) {
+         var transaction = TransactionNeo4j.currentTransaction
+         var nombreUbicacionActual = vector.ubicacion?.nombreUbicacion
+         var query = """ match(u1:Ubicacion{nombre:"$nombreUbicacionActual"})-[c:Camino {nombre:"Terrestre"}]-> (u2:Ubicacion{nombre:"$ubicacionDestino"}) return(c.nombre)  """
+         var result = transaction.run(query).list()
+         if (result.isEmpty()) {
+             throw CaminoNoSoportado()
+         }
+     }
+}
 
 
 

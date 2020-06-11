@@ -16,6 +16,7 @@ import ar.edu.unq.eperdemic.utility.random.RandomMasterImpl
 
 class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO) : UbicacionService {
     var vectorService: VectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateUbicacionDAO())
+    var vectorDao=HibernateVectorDAO()
     var randomGenerator: RandomMaster = RandomMasterImpl()
     var neo4jUbicacionDAO=Neo4jUbicacionDAO()
     override fun recuperarUbicacion(nombreUbicacion: String):Ubicacion{
@@ -25,32 +26,30 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO) : UbicacionService {
     }
 
     override fun conectar(ubicacion1: String, ubicacion2: String, tipoCamino: String) {
-        TODO("Not yet implemented")
+        TransactionRunner.addNeo4j().runTrx {
+            neo4jUbicacionDAO.conectar(ubicacion1, ubicacion2, tipoCamino)
+        }
     }
-
     override fun crearUbicacion(nombreUbicacion: String): Ubicacion {
         val ubicacion= Ubicacion()
         ubicacion.nombreUbicacion=nombreUbicacion
         return TransactionRunner.addHibernate().runTrx {
             ubicacionDao.crear(ubicacion)
+
         }
+
     }
+
+
     override fun mover(vectorId: Int, nombreUbicacion: String) {
         TransactionRunner.addHibernate().addNeo4j().runTrx {
-//            vectorService.mover(vectorId, nombreUbicacion)
-//            ubicacionDao.recuperar(nombreUbicacion)
-            var vectorDao = HibernateVectorDAO()
-            var vector= vectorDao.recuperar(vectorId)
-//            var ubicacionOrigen=ubicacionDao.recuperar(vector.ubicacion?.nombreUbicacion!!)
-            vector.ubicacion=ubicacionDao.recuperar(nombreUbicacion)//actualizo Ubicacion de Vector
-            vectorDao.actualizar(vector)
-          
-//            var vectorAMover= vectorService.recuperarVector(vectorId)
-
-//            neo4jUbicacionDAO.mover(vectorAMover, nombreUbicacion)
+            var vector = vectorDao.recuperar(vectorId)
+            neo4jUbicacionDAO.esAledaña(vector.ubicacion?.nombreUbicacion.toString(), nombreUbicacion)
+            neo4jUbicacionDAO.noEsCapazDeMoverPorCamino(vector, nombreUbicacion)
+            vectorService.mover(vectorId, nombreUbicacion)
         }
-
     }
+
 
     override fun expandir(nombreUbicacion: String) {
         val ubicacion = this.recuperarUbicacion(nombreUbicacion)
