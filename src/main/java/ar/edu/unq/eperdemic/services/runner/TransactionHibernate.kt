@@ -15,7 +15,7 @@ object TransactionHibernate: Transaction{
         }
 
     override fun start() {
-        session = SessionFactoryProvider.instance.createSession()
+        session = HibernateSessionFactoryProvider.instance.createSession()
         transaction = session!!.beginTransaction()
     }
 
