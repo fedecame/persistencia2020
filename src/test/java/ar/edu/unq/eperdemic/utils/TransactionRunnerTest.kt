@@ -8,7 +8,6 @@ import org.junit.Before
 import org.junit.Test
 
 class TransactionRunnerTest {
-
 /*    @Test
     fun alEmpezarElTRNoTieneTransaction(){
         Assert.assertEquals(0, TransactionRunner.transactions.size)
@@ -35,7 +34,7 @@ class TransactionRunnerTest {
         val l2 = TransactionRunner.transactions.size
         Assert.assertEquals(l2, l1)
     }
-*//*
+
     @Test
     fun addNeo4jAgregaUnaInstanciaDeTransactionNeo4j(){
         val l0 = TransactionRunner.transactions.size
@@ -57,7 +56,7 @@ class TransactionRunnerTest {
         val l2 = TransactionRunner.transactions.size
         Assert.assertEquals(l2, l1)
     }
-*//*
+
     @Test
     fun AlAgregarMuchasVecesRepetidosTieneSolamente2Elementos(){
         TransactionRunner.clear()
@@ -84,4 +83,3 @@ class TransactionRunnerTest {
         TransactionRunner.clear()
     }*/
 }
-

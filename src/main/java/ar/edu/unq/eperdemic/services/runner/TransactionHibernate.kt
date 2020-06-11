@@ -20,14 +20,14 @@ object TransactionHibernate: Transaction{
     }
 
     override fun commit() {
-        transaction!!.commit()
-        session!!.close()
+        transaction?.commit()
+        session?.close()
         this.nullVar()
     }
 
     override fun rollback() {
-        transaction!!.rollback()
-        session!!.close()
+        transaction?.rollback()
+        session?.close()
         this.nullVar()
     }
 
