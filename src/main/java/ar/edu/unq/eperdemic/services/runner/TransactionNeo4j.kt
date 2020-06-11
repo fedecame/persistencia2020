@@ -1,7 +1,5 @@
 package ar.edu.unq.eperdemic.services.runner
 
-import ar.edu.unq.eperdemic.services.runner.SessionFactoryProvider.Companion.instance
-import org.neo4j.driver.Driver
 import org.neo4j.driver.Session
 
 
@@ -19,7 +17,7 @@ object TransactionNeo4j: Transaction {
 
 
     override fun start() {
-        session=DriverNeo4j().driver.session()
+        session=Neo4jSessionFactoryProvider.instance.createSession()
         transaction= session!!.beginTransaction()
     }
 
