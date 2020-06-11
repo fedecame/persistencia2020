@@ -1,35 +1,47 @@
 package ar.edu.unq.eperdemic.services.runner
 
+object TransactionRunner{
+    var transactions: MutableList<Transaction> = mutableListOf()
 
-import org.hibernate.Session
-
-object TransactionRunner {
-    private var session: Session? = null
-
-    val currentSession: Session
-        get() {
-            if (session == null) {
-                throw RuntimeException("No hay ninguna session en el contexto")
-            }
-            return session!!
+    private fun addIf(transaction: Transaction): TransactionRunner {
+        if (!this.isThere(transaction)) {
+            transactions.add(transaction)
         }
-
-
-    fun <T> runTrx(bloque: ()->T): T {
-        session = SessionFactoryProvider.instance.createSession()
-        session.use {
-            val tx =  session!!.beginTransaction()
-            try {
-                //codigo de negocio
-                val resultado = bloque()
-                tx!!.commit()
-                return resultado
-            } catch (e: RuntimeException) {
-                tx.rollback()
-                throw e
-            }
-        }
-        session = null
+        return this
     }
 
+    private fun isThere(transaction: Transaction): Boolean = transactions.any { it.javaClass.name == transaction.javaClass.name }
+    private fun forAll(bloque: (Transaction) -> Unit) {
+        transactions.forEach(bloque)
+    }
+    private fun start() {
+        forAll { it.start() }
+    }
+    private fun commit() {
+        forAll { it.commit() }
+    }
+    private fun rollback() {
+        forAll { it.rollback() }
+    }
+    fun clear() {
+        transactions = mutableListOf()
+    }
+
+    fun addHibernate(): TransactionRunner = this.addIf(TransactionHibernate)
+
+    fun addNeo4j() : TransactionRunner = this.addIf(TransactionNeo4j)
+
+    fun <T> runTrx(bloque: () -> T): T {
+        try {
+            this.start()
+            val resultado = bloque()
+            this.commit()
+            return resultado
+        } catch (e: RuntimeException) {
+            this.rollback()
+            throw e
+        } finally {
+            this.clear()
+        }
+    }
 }

@@ -1,24 +1,22 @@
 package ar.edu.unq.eperdemic.services.runner
 
-import org.neo4j.driver.Session
+import org.hibernate.Session
 
+object TransactionHibernate: Transaction{
+    private var transaction: org.hibernate.Transaction? = null
 
-object TransactionNeo4j: Transaction {
-    private var transaction : org.neo4j.driver.Transaction? =null
     private var session: Session? = null
-
-    val currentTransaction: org.neo4j.driver.Transaction
+    val currentSession: Session
         get() {
-            if(transaction == null) {
-                throw RuntimeException("No hay ninguna transaction en el contexto")
+            if (session == null) {
+                throw RuntimeException("No hay ninguna session en el contexto")
             }
-            return transaction!!
+            return session!!
         }
 
-
     override fun start() {
-        session=Neo4jSessionFactoryProvider.instance.createSession()
-        transaction= session!!.beginTransaction()
+        session = HibernateSessionFactoryProvider.instance.createSession()
+        transaction = session!!.beginTransaction()
     }
 
     override fun commit() {
@@ -38,5 +36,3 @@ object TransactionNeo4j: Transaction {
         transaction = null
     }
 }
-
-

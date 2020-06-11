@@ -19,25 +19,35 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO) : UbicacionService {
     var randomGenerator: RandomMaster = RandomMasterImpl()
     var neo4jUbicacionDAO=Neo4jUbicacionDAO()
     override fun recuperarUbicacion(nombreUbicacion: String):Ubicacion{
-        return TransactionRunner.runTrx {
+        return TransactionRunner.addHibernate().runTrx {
             ubicacionDao.recuperar(nombreUbicacion)
         }
+    }
+
+    override fun conectar(ubicacion1: String, ubicacion2: String, tipoCamino: String) {
+        TODO("Not yet implemented")
     }
 
     override fun crearUbicacion(nombreUbicacion: String): Ubicacion {
         val ubicacion= Ubicacion()
         ubicacion.nombreUbicacion=nombreUbicacion
-        return TransactionRunner.runTrx {
+        return TransactionRunner.addHibernate().runTrx {
             ubicacionDao.crear(ubicacion)
         }
     }
     override fun mover(vectorId: Int, nombreUbicacion: String) {
-        TransactionRunner.runTrx {
-            vectorService.mover(vectorId, nombreUbicacion)
-            var vectorAMover= vectorService.recuperarVector(vectorId)
+        TransactionRunner.addHibernate().addNeo4j().runTrx {
+//            vectorService.mover(vectorId, nombreUbicacion)
+//            ubicacionDao.recuperar(nombreUbicacion)
+            var vectorDao = HibernateVectorDAO()
+            var vector= vectorDao.recuperar(vectorId)
+//            var ubicacionOrigen=ubicacionDao.recuperar(vector.ubicacion?.nombreUbicacion!!)
+            vector.ubicacion=ubicacionDao.recuperar(nombreUbicacion)//actualizo Ubicacion de Vector
+            vectorDao.actualizar(vector)
+          
+//            var vectorAMover= vectorService.recuperarVector(vectorId)
 
-                neo4jUbicacionDAO.mover(vectorAMover, nombreUbicacion)
-
+//            neo4jUbicacionDAO.mover(vectorAMover, nombreUbicacion)
         }
 
     }
@@ -52,6 +62,11 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO) : UbicacionService {
         val indiceAleatorio = randomGenerator.giveMeARandonNumberBeetween(0.0, vectoresInfectados.size.toDouble()-1).toInt()
         val vectorInfectadoAleatorio = vectoresInfectados.get(indiceAleatorio)
         val vectoresAContagiar = ubicacion.vectores.filter { vector -> vector.id != vectorInfectadoAleatorio.id }
-        vectorService.contagiar(vectorInfectadoAleatorio, vectoresAContagiar)
+//        vectorService.contagiar(vectorInfectadoAleatorio, vectoresAContagiar)
+
+        val vectorDao = HibernateVectorDAO()
+        TransactionRunner.addHibernate().runTrx {
+            vectorDao.contagiar(vectorInfectadoAleatorio, vectoresAContagiar)
+        }
     }
 }

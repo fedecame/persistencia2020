@@ -20,7 +20,6 @@ import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
-import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 import ar.edu.unq.eperdemic.tipo.Animal
 import ar.edu.unq.eperdemic.tipo.Humano
 import ar.edu.unq.eperdemic.tipo.Insecto
@@ -96,7 +95,7 @@ class EstadisticasDAOTest {
     @Test
     fun elEstadisticasDAODevuelve0CuandoNoHayNingunVectorEnEsaUbicacion(){
         var res = 0
-        runTrx {
+        TransactionRunner.addHibernate().runTrx {
             res = estadisticasDAO.vectoresPresentes("Mar del Plata")
         }
         Assert.assertEquals(0, res)
@@ -105,7 +104,7 @@ class EstadisticasDAOTest {
     @Test
     fun elEstadisticasDAODevuelve1CuandoHayUnVectorEnEsaUbicacion(){
         var res = 0
-        runTrx {
+        TransactionRunner.addHibernate().runTrx {
             res = estadisticasDAO.vectoresPresentes("Quilmes")
         }
         Assert.assertEquals(1, res)
@@ -116,7 +115,7 @@ class EstadisticasDAOTest {
         var res = 0
         this.crearNConEstadoEn(1, Infectado(), "Quilmes") //Uno ya habia
         ubicacionService.mover(vector.id!!.toInt(), ubicacion0.nombreUbicacion)
-        runTrx {
+        TransactionRunner.addHibernate().runTrx {
             res = estadisticasDAO.vectoresPresentes("Quilmes")
         }
         Assert.assertEquals(2, res)
@@ -124,7 +123,7 @@ class EstadisticasDAOTest {
     @Test
     fun elEstadisticasDAODevuelve0CuandoNoHayNingunVectorInfectadoEnEsaUbicacion(){
         var res = 0
-        runTrx {
+        TransactionRunner.addHibernate().runTrx {
             res = estadisticasDAO.vectoresInfectados("Mar del Plata")
         }
         Assert.assertEquals(0, res)
@@ -134,7 +133,7 @@ class EstadisticasDAOTest {
     fun elEstadisticasDAODevuelve1CuandoHayUnVectorInfectadoEnEsaUbicacionMDP(){
         var res = 0
         this.crearNConEstadoEn(1, Infectado(),"Mar del Plata")
-        runTrx {
+        TransactionRunner.addHibernate().runTrx {
             res = estadisticasDAO.vectoresInfectados("Mar del Plata")
         }
         Assert.assertEquals(1, res)
@@ -145,7 +144,7 @@ class EstadisticasDAOTest {
         var res = 0
         this.crearNConEstadoEn(1, Infectado(), "Mar del Plata")
         this.crearNConEstadoEn(5, Sano(), "Mar del Plata")
-        runTrx {
+        TransactionRunner.addHibernate().runTrx {
             res = estadisticasDAO.vectoresInfectados("Mar del Plata")
         }
         Assert.assertEquals(1, res)
@@ -155,7 +154,7 @@ class EstadisticasDAOTest {
     fun elEstadisticasDAODevuelve1CuandoHayUnVectorInfectadoEnEsaUbicacion(){
         var res = 0
         this.crearNConEstadoEn(1, Infectado(), "Quilmes")
-        runTrx {
+        TransactionRunner.addHibernate().runTrx {
             res = estadisticasDAO.vectoresInfectados("Quilmes")
         }
         Assert.assertEquals(1, res)
@@ -165,7 +164,7 @@ class EstadisticasDAOTest {
     fun elEstadisticasDAODevuelve2CuandoHayDosVectoresInfectadosEnEsaUbicacion(){
         var res = 0
         this.crearNConEstadoEn(2, Infectado(),"Quilmes")
-        runTrx {
+        TransactionRunner.addHibernate().runTrx {
             res = estadisticasDAO.vectoresInfectados("Quilmes")
         }
         Assert.assertEquals(2, res)
@@ -174,7 +173,7 @@ class EstadisticasDAOTest {
     @Test
     fun  laEspecieMasInfecciosaEsLaUnicaEspecieQueHayEnQuilmesYEsAlgo(){
         var res = ""
-        runTrx {
+        TransactionRunner.addHibernate().runTrx {
             res = estadisticasDAO.especieQueInfectaAMasVectoresEn("Quilmes")
         }
         Assert.assertEquals("Algo", res)
@@ -182,14 +181,14 @@ class EstadisticasDAOTest {
 
     @Test(expected= NoResultException::class)
     fun  elNombreDeLaEspecieMasInfecciosaArrojaUnaExcepcionCuandoNoQueHayNingunaEspecieEnLaUbicacion(){
-        runTrx {
+        TransactionRunner.addHibernate().runTrx {
             estadisticasDAO.especieQueInfectaAMasVectoresEn("Mar del Plata")
         }
     }
 
     @Test(expected= NoResultException::class)
     fun  elEstadisticasDAOArrojaUnaExcepcionCuandoLaUbicacionNoExiste(){
-        runTrx {
+        TransactionRunner.addHibernate().runTrx {
             estadisticasDAO.especieQueInfectaAMasVectoresEn("The twilight zone")
         }
     }
@@ -220,7 +219,7 @@ class EstadisticasDAOTest {
         ubicacionService.mover(vectorAlfa.id!!.toInt(), ubi)
         ubicacionService.mover(vectorBeta.id!!.toInt(),ubi)
         var res = ""
-        runTrx {
+        TransactionRunner.addHibernate().runTrx {
             res = estadisticasDAO.especieQueInfectaAMasVectoresEn("Maeame")
         }
         Assert.assertEquals("Paperas", res)
@@ -229,7 +228,7 @@ class EstadisticasDAOTest {
 
     @After
     fun eliminarTodo(){
-        TransactionRunner.runTrx {
+        TransactionRunner.addHibernate().runTrx {
             HibernateDataDAO().clear()
         }
     }
