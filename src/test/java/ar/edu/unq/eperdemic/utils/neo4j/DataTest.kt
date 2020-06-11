@@ -17,11 +17,11 @@ class DataTest {
 
     @Test
     fun falseMain(){
-        //Assert.assertTrue(true)
+        Assert.assertTrue(true)
     }
 
     @After
     fun eliminarTodo(){
-//        neo4DataDao.eliminarTodo()
+        //neo4DataDao.eliminarTodo()
     }
 }

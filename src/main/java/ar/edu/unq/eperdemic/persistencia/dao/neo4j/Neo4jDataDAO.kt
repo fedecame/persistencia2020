@@ -16,7 +16,7 @@ class Neo4jDataDAO : DataDAO {
 
     fun crear(ubicacionNombre: String) {
         val transaction = TransactionNeo4j.currentTransaction
-        val addQuery = """CREATE (ALIAS:Ubicacion { nombre: ${'$'}ubicacionNombre }) return ALIAS""".trimIndent()
+        val addQuery = """CREATE (ALIAS:Ubicacion { nombre: ${'$'}ubicacionNombre }) return ALIAS"""
         transaction.run(addQuery, Values.parameters("ubicacionNombre", ubicacionNombre))
     }
 
@@ -24,7 +24,7 @@ class Neo4jDataDAO : DataDAO {
         val transaction = TransactionNeo4j.currentTransaction
         val conectQuery = """MATCH (a:Ubicacion),(b:Ubicacion)
         WHERE a.nombre = ${'$'}ubicacionOrigin AND b.nombre = ${'$'}ubicacionFinal
-        CREATE (a)-[:${tipo}]->(b)""".trimIndent()
+        CREATE (a)-[:${tipo}]->(b)"""
         transaction.run(conectQuery, Values.parameters(
             "ubicacionOrigin", ubicacionOrigin,
             "ubicacionFinal", ubicacionFinal,

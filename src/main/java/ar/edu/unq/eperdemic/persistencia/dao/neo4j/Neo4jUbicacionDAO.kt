@@ -6,10 +6,12 @@ import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.exception.CaminoNoSoportado
 import ar.edu.unq.eperdemic.modelo.exception.UbicacionMuyLejana
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.runner.TransactionNeo4j
 
 
 class Neo4jUbicacionDAO : UbicacionDAO {
+      val vectorDao = HibernateVectorDAO()
 //    val session =DriverNeo4j().driver.session()
 
     override fun conectar(ubicacion1: String, ubicacion2: String, tipoCamino: String) {
@@ -37,6 +39,13 @@ class Neo4jUbicacionDAO : UbicacionDAO {
         if( noPuedeMoverseTanLejos && noEsCapazDeMoverPorCamino(vector,ubicacionDestino) ){
             throw (lanzarExcepcionAlMover(noPuedeMoverseTanLejos,noEsCapazDeMoverPorCamino(vector,ubicacionDestino)))
         }
+    }
+
+    override fun capacidadDeExpansion(vectorId: Long, movimientos: Int): Int {
+        val vector = vectorDao.recuperar(vectorId)
+        val ubicacion = vector.ubicacion?.nombreUbicacion
+        val tipo = vector.tipo
+        return 0
     }
 
     private fun lanzarExcepcionAlMover(noPuedeMoverseTanLejos: Boolean, noPuedeMoversePorCamino: Boolean): Throwable {

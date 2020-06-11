@@ -46,6 +46,11 @@ class HibernateUbicacionDAO : HibernateDAO<Ubicacion>(Ubicacion::class.java), Ub
         TODO("Not yet implemented")
     }
 
+    override fun capacidadDeExpansion(vectorId: Long, movimientos: Int): Int {
+        //Esto no deberia ser implementado en Hibernate
+        return 0
+    }
+
 }
 
 
