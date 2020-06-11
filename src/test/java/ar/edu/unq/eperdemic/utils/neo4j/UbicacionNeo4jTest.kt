@@ -35,7 +35,7 @@ class UbicacionNeo4jTest {
         vector.estado = Sano()
         var id = vectorService.crearVector(vector).id
         if (id != null) {
-            ubicacionService.mover(id.toInt(), "Bicholandia")
+            ubicacionService.mover(id.toInt(), "TibetDojo")
         }
 
 

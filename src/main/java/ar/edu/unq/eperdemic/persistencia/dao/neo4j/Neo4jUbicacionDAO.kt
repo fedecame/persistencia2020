@@ -10,12 +10,13 @@ import ar.edu.unq.eperdemic.services.runner.TransactionNeo4j
 
 
 class Neo4jUbicacionDAO :UbicacionDaoNeo4j{
-
+    val session =DriverNeo4j().driver.session()
 
     override fun conectar(ubicacion1: String, ubicacion2: String, tipoCamino: String) {
-        val session =TransactionNeo4j.currentSesion
+
+
         val query = """Match(ubicacionUno:Ubicacion {nombre:"$ubicacion1"})Match(ubicacionDos:Ubicacion{nombre:"$ubicacion2"}) MERGE (ubicacionUno)-[c:Camino {nombre:"$tipoCamino"}]->(ubicacionDos) """
-        session.run(query);
+        session.run(query)
 
     }
 
@@ -64,7 +65,7 @@ private fun darTipo(camino:String) : TipoCamino? {
 
     private fun noEsCapazDeMoverPorCamino(vector: Vector, ubicacionDestino: Ubicacion?):Boolean {
         var  query=""" match(u1:Ubicacion{nombre:"${vector.ubicacion?.nombreUbicacion}"})-[c:Camino]-> (u2:Ubicacion{nombre:"${ubicacionDestino?.nombreUbicacion}"}) return(c.nombre)  """
-        val session =TransactionNeo4j.currentSesion
+
         var result=   session.run(query)
 
         if(result.list().isEmpty()){
