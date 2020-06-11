@@ -1,19 +1,67 @@
 package ar.edu.unq.eperdemic.services.runner
 
 
-import org.hibernate.Session
+object TransactionRunner{
+    var transactions: List<Transaction> = listOf(TransactionHibernate)
 
-object TransactionRunner {
-    private var session: Session? = null
+//    private fun addIf(transaction: Transaction): TransactionRunner {
+//        if (!this.isThere(transaction)) {
+//            transactions.add(transaction)
+//        }
+//        return this
+//    }
 
-    val currentSession: Session
-        get() {
-            if (session == null) {
-                throw RuntimeException("No hay ninguna session en el contexto")
-            }
-            return session!!
+    private fun isThere(transaction: Transaction): Boolean = transactions.any { it.javaClass.name == transaction.javaClass.name }
+    private fun forAll(bloque: (Transaction) -> Unit) {
+        transactions.forEach(bloque)
+    }
+    private fun start() {
+        this.forAll { it.start() }
+    }
+    private fun commit() {
+        this.forAll { it.commit() }
+    }
+    private fun rollback() {
+        this.forAll { it.rollback() }
+    }
+    fun clear() {
+        transactions = listOf()
+    }
+
+//    fun addHibernate(): TransactionRunner = this.addIf(TransactionHibernate())
+
+    //fun addNeo4j() : TransactionRunner = this.addIf(TransactionNeo4j())
+
+    fun <T> runTrx(bloque: () -> T): T {
+        transactions.forEach{it.start()}
+        try {
+            val resultado = bloque()
+            transactions.forEach{it.commit()}
+            return resultado
+        } catch (e: RuntimeException) {
+            print("ACA ESTA EL ERROR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"+  e.cause)
+            print(e.message)
+            transactions.forEach{it.rollback()}
+            throw e
         }
+    }
+}
 
+     /*
+object TransactionRunner {
+    private var transactions:List<Transaction> = listOf(TransactionHibernate())
+
+    fun <T> runTrx(bloque: ()->T): T {
+        try{
+           transactions.forEach { it.start() }
+           val result = bloque()
+           transactions.forEach { it.commit() }
+           return result
+        } catch (exception:Throwable){
+           transactions.forEach { it.rollback() }
+           throw exception
+        }
+    }
 
     fun <T> runTrx(bloque: ()->T): T {
         session = SessionFactoryProvider.instance.createSession()
@@ -31,5 +79,5 @@ object TransactionRunner {
         }
         session = null
     }
+    */
 
-}

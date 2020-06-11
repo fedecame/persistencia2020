@@ -2,6 +2,7 @@ package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.modelo.Mutacion
 import ar.edu.unq.eperdemic.persistencia.dao.MutacionDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
 import ar.edu.unq.eperdemic.services.MutacionService
 import ar.edu.unq.eperdemic.services.PatogenoService
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
@@ -9,11 +10,15 @@ import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 class MutacionServiceImpl(var mutacionDao : MutacionDAO, val patogenoService: PatogenoService) : MutacionService{
     override fun mutar(especieId: Int, mutacionId: Int) {
         runTrx {
+            val especieDAO = HibernateEspecieDAO()
+
             val mutacion = mutacionDao.recuperar(mutacionId)
-            val especie = patogenoService.recuperarEspecie(especieId)
+//            val especie = patogenoService.recuperarEspecie(especieId)
+            val especie = especieDAO.recuperarEspecie(especieId)
 
             especie.mutar(mutacion)
-            patogenoService.actualizarEspecie(especie)
+//            patogenoService.actualizarEspecie(especie)
+            especieDAO.actualizar(especie)
         }
     }
 
