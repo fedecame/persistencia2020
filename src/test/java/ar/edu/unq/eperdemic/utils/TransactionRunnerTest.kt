@@ -8,6 +8,7 @@ import org.junit.Before
 import org.junit.Test
 
 class TransactionRunnerTest {
+    /*
 
     @Test
     fun alEmpezarElTRNoTieneTransaction(){
@@ -82,6 +83,6 @@ class TransactionRunnerTest {
     @After
     fun clear(){
         TransactionRunner.clear()
-    }
+    }*/
 }
 
