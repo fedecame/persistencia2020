@@ -4,6 +4,8 @@ package ar.edu.unq.eperdemic.utils.neo4j
 import ar.edu.unq.eperdemic.estado.Sano
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.modelo.exception.NoExisteUbicacion
+import ar.edu.unq.eperdemic.modelo.exception.UbicacionNoAlcanzable
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jUbicacionDAO
@@ -12,6 +14,7 @@ import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.tipo.Humano
+import ar.edu.unq.eperdemic.tipo.Insecto
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -56,44 +59,50 @@ class UbicacionNeo4jTest {
 
     }
 
-    @Test(expected = Exception::class)
+    @Test(expected = NullPointerException::class)
     fun unVectorNoPersistidoIntentaMoverMasCorto() {
-        throw Exception()
-        /**
-         *  TODO Fede
-         * */
+        val quilmes = ubicacionService.recuperarUbicacion("Quilmes")
+        val vectorsito = Vector()
+        ubicacionService.moverMasCorto(vectorsito.id!!, quilmes.nombreUbicacion)
     }
 
-    @Test(expected = Exception::class)
+    @Test(expected = NoExisteUbicacion::class)
     fun intentaMoverMasCortoAUnaUbicacionNoPersistida() {
-        throw Exception()
-        /**
-         *  TODO Fede
-         * */
+        val fakeLocation = Ubicacion()
+        ubicacionService.moverMasCorto(vector.id!!, fakeLocation.nombreUbicacion)
     }
 
-    @Test(expected = Exception::class)
+    @Test(expected = UbicacionNoAlcanzable::class)
     fun intentaMoverMasCortoPeroNoHayCaminosQueLleguenAEsaUbicacion() {
-        throw Exception()
-        /**
-         *  TODO Fede
-         * */
+        val quilmes = ubicacionService.recuperarUbicacion("Quilmes")
+        val nonePlace = ubicacionService.recuperarUbicacion("NonePlace")
+        vector.ubicacion = quilmes
+        quilmes.vectores.add(vector)
+        HibernateUbicacionDAO().actualizar(quilmes)
+        ubicacionService.moverMasCorto(vector.id!!, nonePlace.nombreUbicacion)
     }
 
-    @Test(expected = Exception::class)
+    @Test(expected = UbicacionNoAlcanzable::class)
     fun unVectorHumanoIntentaMoverMasCortoPeroNoHayCaminosDeSusTiposViables() {
-        throw Exception()
-        /**
-         *  TODO Fede
-         * */
+        val mordor = ubicacionService.recuperarUbicacion("Mordor")
+        val zion = ubicacionService.recuperarUbicacion("Zion")
+        vector.ubicacion = mordor
+        mordor.vectores.add(vector)
+        HibernateUbicacionDAO().actualizar(mordor)
+        ubicacionService.moverMasCorto(vector.id!!, zion.nombreUbicacion)
     }
 
-    @Test(expected = Exception::class)
-    fun unVectorInsenctoIntentaMoverMasCortoPeroNoHayCaminosDeSusTiposViables() {
-        throw Exception()
-        /**
-         *  TODO Fede
-         * */
+    @Test(expected = UbicacionNoAlcanzable::class)
+    fun unVectorInsectoIntentaMoverMasCortoPeroNoHayCaminosDeSusTiposViables() {
+        val zion = ubicacionService.recuperarUbicacion("Zion")
+        val ezpeleta = ubicacionService.recuperarUbicacion("Ezpeleta")
+        val vectorInsecto = Vector()
+        vectorInsecto.tipo = Insecto()
+        vectorInsecto.ubicacion = zion
+        zion.vectores.add(vectorInsecto)
+        vectorService.crearVector(vectorInsecto)
+        HibernateUbicacionDAO().actualizar(zion)
+        ubicacionService.moverMasCorto(vectorInsecto.id!!, ezpeleta.nombreUbicacion)
     }
 
     @Test
