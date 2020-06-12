@@ -24,19 +24,20 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.*
+import java.util.*
 
 class UbicacionServiceTest {
     var vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateUbicacionDAO())
     var ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO())
-     val vector = Vector()
-    val vector1=Vector()
+    val vector = Vector()
+    val vector1 = Vector()
     val tipo = Humano()
     val estado = Sano()
-   lateinit var ubicacionCreada:Ubicacion
-    lateinit var ubicacionCreada1:Ubicacion
+    lateinit var ubicacionCreada: Ubicacion
+    lateinit var ubicacionCreada1: Ubicacion
     lateinit var randomGenerator: RandomMaster
-    lateinit var hibernateData : HibernateDataService
-    lateinit var neo4jData : Neo4jDataService
+    lateinit var hibernateData: HibernateDataService
+    lateinit var neo4jData: Neo4jDataService
 
     @Before
     fun setUp(){
@@ -54,6 +55,19 @@ class UbicacionServiceTest {
         ubicacionService.randomGenerator = randomGenerator
     }
 
+    @Test
+    fun  testVarelaSeConectaConBerazategui(){
+        ubicacionService.conectar("Florencio Varela","Berazategui","Terrestre")
+        var listConectados =ubicacionService.conectados("Florencio Varela")
+        print(  listConectados.toString())
+        Assert.assertTrue(0 == listConectados.size)
+    }
+    @Test
+    fun testVarelaNoSeConectaConNingunNodo(){
+        var listConectados =ubicacionService.conectados("Florencio Varela")
+        print(  listConectados.toString())
+        Assert.assertTrue(0 == listConectados.size)
+    }
 
 
     @Test
