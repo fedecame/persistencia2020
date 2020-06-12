@@ -46,7 +46,10 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO) : UbicacionService {
             var vector = vectorDao.recuperar(vectorId)
             neo4jUbicacionDAO.esAledaña(vector.ubicacion?.nombreUbicacion.toString(), nombreUbicacion)
             neo4jUbicacionDAO.noEsCapazDeMoverPorCamino(vector, nombreUbicacion)
-            vectorService.mover(vectorId, nombreUbicacion)
+//            vectorService.mover(vectorId, nombreUbicacion)
+//            var ubicacionOrigen=ubicacionDao.recuperar(vector.ubicacion?.nombreUbicacion!!)
+            vector.ubicacion=ubicacionDao.recuperar(nombreUbicacion)//actualizo Ubicacion de Vector
+            vectorDao.actualizar(vector)
         }
     }
 
