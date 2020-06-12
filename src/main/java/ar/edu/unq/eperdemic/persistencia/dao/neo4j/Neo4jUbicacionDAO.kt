@@ -97,17 +97,25 @@ class Neo4jUbicacionDAO : UbicacionDAO {
         TODO("Not yet implemented")
     }
 
-    private fun tiposFormateados(tipos : List<String>, movimientos: Int) : String = tipos.toString().toString().replace("[", "[:").replace(",", " |").replace("]", "*${movimientos.toString()}]").trim().trim()
+    private fun tiposFormateados(tipos : List<String>, movimientos: Int) : String = tipos.toString().toString().replace("[", "[:").replace(",", " |").replace("]", "*0..${movimientos.toString()}]").trim().trim()
     //tipos.toString().toString().replace("[", "[:").replace(",", " |").replace("]", "]${movimientos.toString()}")+ "*".trim()
 
     override fun capacidadDeExpansion(vectorId: Long, movimientos: Int): Int {
         val vector = vectorDao.recuperar(vectorId)
-        val nombreUbicacion = vector.ubicacion?.nombreUbicacion
+        val nombreUbicacion = vector.ubicacion!!.nombreUbicacion
         val tipos = vector.tipo.posiblesCaminos.map{it.nombre()}
+
+        if (true) {
+            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ VAMOS LOS PIBES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+            print(this.tiposFormateados(tipos, movimientos))
+        } else {
+            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ASDASDASDASDDASDSD ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        }
+
         val tiposQueryConMovimientos = this.tiposFormateados(tipos, movimientos)
         val transaction = TransactionNeo4j.currentTransaction
         val intQuery =  """
-                        MATCH (n:Ubicacion {nombre:"${nombreUbicacion}"})-${tiposQueryConMovimientos} -> (fof) RETURN COUNT(DISTINCT fof.id) AS result
+                        MATCH (n:Ubicacion {nombre:"${nombreUbicacion}"})-${tiposQueryConMovimientos} -> (fof) WHERE fof.nombre <> n.nombre RETURN COUNT(DISTINCT fof) AS result
                         """
         val result = transaction.run(intQuery, Values.parameters("nombreUbicacion", nombreUbicacion, "tiposQueryConMovimientos", tiposQueryConMovimientos, "movimientos", movimientos))
         return result.single().get("result").asInt()

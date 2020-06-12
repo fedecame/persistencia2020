@@ -25,7 +25,7 @@ class capacidadDeExpancionTest {
     private lateinit var sut : UbicacionService
     private lateinit var dataService : DataService
     private lateinit var vectorService : VectorService
-    private lateinit var ubicacionService : UbicacionService
+    private lateinit var hibernatUbicacionService : UbicacionService
     private lateinit var vectorAnimal : Vector
     private lateinit var vectorHumano : Vector
     private lateinit var vectorInsectoA : Vector
@@ -39,19 +39,32 @@ class capacidadDeExpancionTest {
     @Before
     fun setUp(){
         //Aca elimino lo que haya
-        this.eliminarTodo()
+//        this.eliminarTodo()
+        TransactionRunner.addNeo4j().addHibernate().runTrx {
+            HibernateDataDAO().clear()
+            Neo4jDataDAO().clear()
+        }
+        //
         val ubicacionDao = HibernateUbicacionDAO()
         val vectorDao = HibernateVectorDAO()
         sut = UbicacionServiceImpl(ubicacionDao)
         dataService = Neo4jDataService()
         vectorService = VectorServiceImpl(vectorDao, ubicacionDao)
-        ubicacionService = UbicacionServiceImpl(ubicacionDao)
+        hibernatUbicacionService = UbicacionServiceImpl(ubicacionDao)
 
         //No llega a ningun lado. A el llegan por Aereo
-        narnia = ubicacionService.crearUbicacion( "Narnia")
-        quilmes = ubicacionService.crearUbicacion("Quilmes")
-        mordor = ubicacionService.crearUbicacion("Mordor")
-        elNodoSolitario = ubicacionService.crearUbicacion("elNodoSolitario")
+        narnia = hibernatUbicacionService.crearUbicacion( "Narnia")
+
+        val testNarnia =  hibernatUbicacionService.recuperarUbicacion("Narnia")
+//        if (testNarnia.nombreUbicacion == "Narnia") {
+//            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ VAMOS LOS PIBES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+//        } else {
+//            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ASDASDASDASDDASDSD ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+//        }
+
+        quilmes = hibernatUbicacionService.crearUbicacion("Quilmes")
+        mordor = hibernatUbicacionService.crearUbicacion("Mordor")
+        elNodoSolitario = hibernatUbicacionService.crearUbicacion("elNodoSolitario")
         vectorAnimal = Vector()
         vectorAnimal.tipo = Animal()
         vectorAnimal.ubicacion = quilmes
@@ -73,40 +86,46 @@ class capacidadDeExpancionTest {
 
     @Test
     fun laCapacidadDeExpansionDeElNodoSolitarioEs0(){
-        val capacidad = ubicacionService.capacidadDeExpansion(vectorInsectoB.id!!, 42)
+        val capacidad = hibernatUbicacionService.capacidadDeExpansion(vectorInsectoB.id!!, 42)
         Assert.assertEquals(0, capacidad)
     }
 
     @Test
     fun laCapacidadDeExpansionDeElNodoSolitarioSiempreEs0IndependientementeDelNroDeMovimientos(){
-        val capacidad0 = ubicacionService.capacidadDeExpansion(vectorInsectoB.id!!, 0)
+        val capacidad0 = hibernatUbicacionService.capacidadDeExpansion(vectorInsectoB.id!!, 0)
         Assert.assertEquals(0, capacidad0)
-        val capacidad1 = ubicacionService.capacidadDeExpansion(vectorInsectoB.id!!, 1)
+        val capacidad1 = hibernatUbicacionService.capacidadDeExpansion(vectorInsectoB.id!!, 1)
         Assert.assertEquals(0, capacidad1)
-        val capacidad2 = ubicacionService.capacidadDeExpansion(vectorInsectoB.id!!, 2)
+        val capacidad2 = hibernatUbicacionService.capacidadDeExpansion(vectorInsectoB.id!!, 2)
         Assert.assertEquals(0, capacidad2)
-        val capacidad3 = ubicacionService.capacidadDeExpansion(vectorInsectoB.id!!, 3)
+        val capacidad3 = hibernatUbicacionService.capacidadDeExpansion(vectorInsectoB.id!!, 3)
         Assert.assertEquals(0, capacidad2)
-        val capacidad4 = ubicacionService.capacidadDeExpansion(vectorInsectoB.id!!, 4)
+        val capacidad4 = hibernatUbicacionService.capacidadDeExpansion(vectorInsectoB.id!!, 4)
         Assert.assertEquals(0, capacidad2)
     }
 
     @Test
-    fun desdeQuilmesQueSoloSeConectaPorCaminosMaritimosUnVectorInsectoTieneCapacidadDeExpancion0(){
-        val capacidad0 = ubicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 3)
-        Assert.assertEquals(0, capacidad0)
+    fun desdeMordorQueSoloSeConectaPorCaminosMaritimosUnVectorInsectoTieneCapacidadDeExpancion2(){
+        val capacidad0 = hibernatUbicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 3)
+        Assert.assertEquals(4, capacidad0)
     }
 
     @Test
-    fun desdeQuilmesQueSoloSeConectaPorCaminosMaritimosUnVectorInsectoTieneCapacidadDeExpancion0IndependientementeDeLaCantidadDeMovimientos(){
-        val capacidad0 = ubicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 0)
+    fun desdeQuilmesQueSoloSeConectaPorCaminosAereosUnVectorInsectoTieneCapacidadDeExpancion1IndependientementeDeLaCantidadDeMovimientos(){
+        vectorInsectoA.ubicacion = quilmes
+        quilmes.vectores.add(vectorInsectoA)
+        TransactionRunner.addHibernate().runTrx {
+            HibernateUbicacionDAO().actualizar(quilmes)
+        }
+
+        val capacidad0 = hibernatUbicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 0)
         Assert.assertEquals(0, capacidad0)
-        val capacidad1 = ubicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 1)
-        Assert.assertEquals(0, capacidad0)
-        val capacidad2 = ubicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 2)
-        Assert.assertEquals(0, capacidad0)
-        val capacidad3 = ubicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 3)
-        Assert.assertEquals(0, capacidad0)
+        val capacidad1 = hibernatUbicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 1)
+        Assert.assertEquals(2, capacidad1)
+        val capacidad2 = hibernatUbicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 2)
+        Assert.assertEquals(2, capacidad2)
+        val capacidad3 = hibernatUbicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 3)
+        Assert.assertEquals(2, capacidad3)
     }
 
     @Test
@@ -115,7 +134,7 @@ class capacidadDeExpancionTest {
         otroVectorHumano.tipo = Humano()
         otroVectorHumano.ubicacion = quilmes
         vectorService.crearVector(otroVectorHumano)
-        val capacidad = ubicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 1)
+        val capacidad = hibernatUbicacionService.capacidadDeExpansion(otroVectorHumano.id!!, 1)
         Assert.assertEquals(0, capacidad)
     }
 
@@ -125,7 +144,7 @@ class capacidadDeExpancionTest {
         otroVectorHumano.tipo = Animal()
         otroVectorHumano.ubicacion = quilmes
         vectorService.crearVector(otroVectorHumano)
-        val capacidad = ubicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 1)
+        val capacidad = hibernatUbicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 1)
         Assert.assertEquals(2, capacidad)
     }
 
@@ -135,7 +154,7 @@ class capacidadDeExpancionTest {
         otroVectorInsecto.tipo = Insecto()
         otroVectorInsecto.ubicacion = quilmes
         vectorService.crearVector(otroVectorInsecto)
-        val capacidad = ubicacionService.capacidadDeExpansion(otroVectorInsecto.id!!, 1)
+        val capacidad = hibernatUbicacionService.capacidadDeExpansion(otroVectorInsecto.id!!, 1)
         Assert.assertEquals(2, capacidad)
     }
 
@@ -145,7 +164,7 @@ class capacidadDeExpancionTest {
         otroVectorInsecto.tipo = Insecto()
         otroVectorInsecto.ubicacion = narnia
         vectorService.crearVector(otroVectorInsecto)
-        val capacidad0 = ubicacionService.capacidadDeExpansion(otroVectorInsecto.id!!, 1)
+        val capacidad0 = hibernatUbicacionService.capacidadDeExpansion(otroVectorInsecto.id!!, 1)
         Assert.assertEquals(1, capacidad0)
     }
 
@@ -155,16 +174,24 @@ class capacidadDeExpancionTest {
         otroVectorInsecto.tipo = Insecto()
         otroVectorInsecto.ubicacion = narnia
         vectorService.crearVector(otroVectorInsecto)
-        val capacidad0 = ubicacionService.capacidadDeExpansion(otroVectorInsecto.id!!, 1)
-        Assert.assertEquals(2, capacidad0)
+//
+//        val testVector = vectorService.recuperarVector(otroVectorInsecto.id!!.toInt())
+//        if (testVector.ubicacion!!.nombreUbicacion == "Narnia") {
+//            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ VAMOS LOS PIBES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+//        } else {
+//            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ASDASDASDASDDASDSD ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+//        }
+
+        val capacidad0 = hibernatUbicacionService.capacidadDeExpansion(otroVectorInsecto.id!!, 1)
+        Assert.assertEquals(1, capacidad0)
     }
 
 
     @After
     fun eliminarTodo() {
-        TransactionRunner.addNeo4j().addHibernate().runTrx {
-            HibernateDataDAO().clear()
-            Neo4jDataDAO().clear()
-        }
+//        TransactionRunner.addNeo4j().addHibernate().runTrx {
+//            HibernateDataDAO().clear()
+//            Neo4jDataDAO().clear()
+//        }
     }
 }

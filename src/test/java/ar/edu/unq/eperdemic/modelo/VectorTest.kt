@@ -165,7 +165,7 @@ class VectorTest {
 
         vectorSUT.tipo = Insecto()
         val coso3 = vectorSUT.tipo.posiblesCaminos.toString().toString().replace("[", "[:").replace(",", " |") + "*".trim()
-        Assert.assertEquals(coso3, "[:Aereo]*")
+        Assert.assertEquals(coso3, "[:Aereo | Terrestre]*")
 
         vectorSUT.tipo = Humano()
 
