@@ -93,25 +93,22 @@ class capacidadDeExpancionTest {
     }
 
     @Test
-    fun desdeQuilmesQueSoloSeConectaPorCaminosMaritimosUnVectorHumanoTieneCapacidadDeExpancion0(){
-        val capacidad0 = ubicacionService.capacidadDeExpansion(vectorHumano.id!!, 0)
+    fun desdeQuilmesQueSoloSeConectaPorCaminosMaritimosUnVectorInsectoTieneCapacidadDeExpancion0(){
+        val capacidad0 = ubicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 3)
         Assert.assertEquals(0, capacidad0)
-
     }
 
-/*
     @Test
     fun laCapacidadDeUnVectorQueSePuedeMover(){
         val capacidad = ubicacionService.capacidadDeExpansion(vectorInsectoB.id!!, 42)
         Assert.assertEquals(0, capacidad)
     }
-*/
+
     @After
-    fun eliminarTodo(){
+    fun eliminarTodo() {
         TransactionRunner.addNeo4j().addHibernate().runTrx {
             HibernateDataDAO().clear()
             Neo4jDataDAO().clear()
         }
-
     }
 }

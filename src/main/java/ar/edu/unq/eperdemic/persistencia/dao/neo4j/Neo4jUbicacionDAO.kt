@@ -107,7 +107,7 @@ class Neo4jUbicacionDAO : UbicacionDAO {
         val tiposQueryConMovimientos = this.tiposFormateados(tipos, movimientos)
         val transaction = TransactionNeo4j.currentTransaction
         val intQuery =  """
-                        MATCH (n:Ubicacion {nombre:${nombreUbicacion}})-${tiposQueryConMovimientos} ${movimientos.toString()} -> (fof) RETURN COUNT(DISTINCT fof) AS result
+                        MATCH (n:Ubicacion {nombre:"${nombreUbicacion}"})-${tiposQueryConMovimientos} -> (fof) RETURN COUNT(DISTINCT fof.id) AS result
                         """
         val result = transaction.run(intQuery, Values.parameters("nombreUbicacion", nombreUbicacion, "tiposQueryConMovimientos", tiposQueryConMovimientos, "movimientos", movimientos))
         return result.single().get("result").asInt()
