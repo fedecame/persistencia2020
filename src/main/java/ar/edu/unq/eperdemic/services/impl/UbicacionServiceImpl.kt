@@ -29,13 +29,16 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO) : UbicacionService {
     }
 
     override fun conectados(nombreDeUbicacion: String): List<Ubicacion> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return TransactionRunner.addNeo4j().runTrx {
+            neo4jUbicacionDAO.conectados(nombreDeUbicacion)
+        }
     }
 
     override fun crearUbicacion(nombreUbicacion: String): Ubicacion {
         val ubicacion= Ubicacion()
         ubicacion.nombreUbicacion=nombreUbicacion
         return TransactionRunner.addHibernate().addNeo4j().runTrx {
+            neo4jUbicacionDAO.crear(ubicacion)
             ubicacionDao.crear(ubicacion)
         }
     }

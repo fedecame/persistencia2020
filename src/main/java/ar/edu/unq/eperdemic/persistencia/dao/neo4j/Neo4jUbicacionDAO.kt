@@ -7,6 +7,10 @@ import ar.edu.unq.eperdemic.modelo.exception.CaminoNoSoportado
 import ar.edu.unq.eperdemic.modelo.exception.UbicacionMuyLejana
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.services.runner.TransactionNeo4j
+import net.bytebuddy.dynamic.scaffold.TypeWriter
+import org.neo4j.driver.Record
+import org.neo4j.driver.Value
+import org.neo4j.driver.Values
 
 
 class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
@@ -20,11 +24,18 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
         transaction.run(query)
     }
 
-    override fun conectados(nombreDeUbicacion:String): List<Ubicacion>{
-       val ubicacion= Ubicacion()
-        ubicacion.nombreUbicacion="TibetDojo"
-        val list= listOf(ubicacion)
-        return list
+    override fun conectados(nombreDeUbicacion: String): List<Ubicacion> {
+        val transaction = TransactionNeo4j.currentTransaction
+        val query = """Match(:Ubicacion {nombre:${'$'}nombreDeUbicacion})-[Camino]->(ubicacionConectada:Ubicacion) Return ubicacionConectada """
+        val result = transaction.run(query,Values.parameters("nombreDeUbicacion",nombreDeUbicacion))
+
+        return  result.list { record: Record ->
+            val ubicacion = record.get(0)
+            val _nombre = ubicacion.get("nombre").asString()
+            Ubicacion().nombreUbicacion=_nombre
+        }as List<Ubicacion>
+
+
     }
 
     override fun mover(vector: Vector, nombreUbicacion:String) {
