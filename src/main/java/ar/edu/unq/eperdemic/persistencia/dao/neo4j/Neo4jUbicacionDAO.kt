@@ -8,6 +8,7 @@ import ar.edu.unq.eperdemic.modelo.exception.UbicacionMuyLejana
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.runner.TransactionNeo4j
+import org.neo4j.driver.Values
 
 
 class Neo4jUbicacionDAO : UbicacionDAO {
@@ -43,8 +44,12 @@ class Neo4jUbicacionDAO : UbicacionDAO {
 
     override fun capacidadDeExpansion(vectorId: Long, movimientos: Int): Int {
         val vector = vectorDao.recuperar(vectorId)
-        val ubicacion = vector.ubicacion?.nombreUbicacion
-        val tipo = vector.tipo
+        val ubicacionNombre = vector.ubicacion?.nombreUbicacion
+        val tipos = vector.tipo.posiblesCaminos
+        val transaction = TransactionNeo4j.currentTransaction
+        val intQuery = """CREATE (ALIAS:Ubicacion { nombre: ${'$'}ubicacionNombre }) return ALIAS"""
+
+        transaction.run(intQuery, Values.parameters("ubicacionNombre", ubicacionNombre,"tipos,", tipos  ))
         return 0
     }
 
