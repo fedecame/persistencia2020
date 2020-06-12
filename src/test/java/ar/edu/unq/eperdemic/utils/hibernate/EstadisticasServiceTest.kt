@@ -28,6 +28,7 @@ import ar.edu.unq.eperdemic.tipo.Animal
 import ar.edu.unq.eperdemic.tipo.Humano
 import ar.edu.unq.eperdemic.tipo.Insecto
 import ar.edu.unq.eperdemic.tipo.TipoVector
+import ar.edu.unq.eperdemic.utils.neo4j.UbicacionNeo4jTest
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -59,6 +60,7 @@ class EstadisticasServiceTest {
 
     @Before
     fun setUp(){
+        var ubicacionDaoNeo4j=UbicacionNeo4jTest()
         hibernateData = HibernateDataService()
         estadisticasDAO = HibernateEstadisticasDAO()
         estadisticasService = EstadisticasServiceImpl(estadisticasDAO)
@@ -125,6 +127,7 @@ class EstadisticasServiceTest {
         vectorService.crearVector(vector3)
 
         ubicacionService.mover(vector.id!!.toInt(), ubicacion0.nombreUbicacion)
+
     }
 
     @Test

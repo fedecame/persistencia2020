@@ -4,6 +4,7 @@ package ar.edu.unq.eperdemic.utils.neo4j
 import ar.edu.unq.eperdemic.estado.Sano
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.modelo.exception.CaminoNoSoportado
 import ar.edu.unq.eperdemic.modelo.exception.IDVectorNoEncontradoException
 import ar.edu.unq.eperdemic.modelo.exception.UbicacionMuyLejana
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
@@ -13,10 +14,12 @@ import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.tipo.Humano
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.mock
 import org.springframework.data.jpa.domain.AbstractPersistable_.id
+import kotlin.math.exp
 
 class UbicacionNeo4jTest {
     var ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO())
@@ -40,18 +43,21 @@ class UbicacionNeo4jTest {
 
 
     @Test
-    fun vectorQuiereMoverAUbicacionNoAledaña() {
-
-
-          //  daoNeo4j.conectar("Plantalandia", "TibetDojo", "Terrestre")
-            ubicacionService.mover(id, "TibetDojo")
-
-
+    fun vectorMueveAUbicacionAledaña() {
+        ubicacionService.mover(id, "TibetDojo")
     }
 
     @Test(expected = UbicacionMuyLejana::class)
     fun vectorNoPuedeMoverPorqueUbicacionEsLejana() {
-        
         ubicacionService.mover(id,"")
     }
+    @Test(expected = CaminoNoSoportado::class)
+    fun vectorNoPuedeMoversePorCaminoNoSoportado(){
+        ubicacionService.mover(id,"FlorencioVarela")
+
+    }
+
+
+
+
 }
