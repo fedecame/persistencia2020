@@ -8,7 +8,7 @@ interface UbicacionDaoNeo4j {
     fun conectados(nombreDeUbicacion:String): List<Ubicacion>
     fun esAledaña(nombreDeUbicacion: String, uPosibleAledaña:String)
     fun noEsCapazDeMoverPorCamino(vector: Vector, ubicacionDestino: String)
-
+    fun mover(vector: Vector, nombreUbicacion:String)
 
 
 

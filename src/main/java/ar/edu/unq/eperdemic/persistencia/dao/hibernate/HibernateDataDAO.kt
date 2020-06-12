@@ -2,7 +2,6 @@ package ar.edu.unq.eperdemic.persistencia.dao.hibernate
 
 import ar.edu.unq.eperdemic.persistencia.dao.DataDAO
 import ar.edu.unq.eperdemic.services.runner.TransactionHibernate
-import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 
 open class HibernateDataDAO : DataDAO {
 
