@@ -5,6 +5,7 @@ import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
+import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jDataDAO
 import ar.edu.unq.eperdemic.services.Neo4jDataService
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
@@ -30,7 +31,6 @@ class capacidadDeExpancionTest {
     private lateinit var vectorInsectoA : Vector
     private lateinit var vectorInsectoB : Vector
     private lateinit var vectores : List<Vector>
-
     private lateinit var ubicacion0 : Ubicacion
     private lateinit var ubicacion1 : Ubicacion
     private lateinit var ubicacion2 : Ubicacion
@@ -65,7 +65,6 @@ class capacidadDeExpancionTest {
         vectorInsectoB = Vector()
         vectorInsectoB.tipo = Insecto()
         vectorInsectoB.ubicacion = elNodoSolitario
-
         vectorService.crearVector(vectorAnimal)
         vectorService.crearVector(vectorHumano)
         vectorService.crearVector(vectorInsectoA)
@@ -77,14 +76,19 @@ class capacidadDeExpancionTest {
     fun laCapacidadDeExpansionDeElNodoSolitarioEs0(){
         val capacidad = ubicacionService.capacidadDeExpansion(vectorInsectoB.id!!, 42)
         Assert.assertEquals(0, capacidad)
+    }
 
+    @Test
+    fun laCapacidadDeUnVectorQueSePuedeMover(){
+        val capacidad = ubicacionService.capacidadDeExpansion(vectorInsectoB.id!!, 42)
+        Assert.assertEquals(0, capacidad)
     }
 
     @After
     fun eliminarTodo(){
-        /*TransactionRunner.addNeo4j().addHibernate().runTrx {
+        TransactionRunner.addNeo4j().addHibernate().runTrx {
             HibernateDataDAO().clear()
-            HibernateDataDAO().clear()
-        }*/
+            Neo4jDataDAO().clear()
+        }
     }
 }

@@ -100,11 +100,17 @@ class Neo4jUbicacionDAO : UbicacionDAO {
     override fun capacidadDeExpansion(vectorId: Long, movimientos: Int): Int {
         val vector = vectorDao.recuperar(vectorId)
         val ubicacionNombre = vector.ubicacion?.nombreUbicacion
-        val tipos = vector.tipo.javaClass.simpleName
-
+        val tipo = vector.tipo.javaClass.simpleName
         val transaction = TransactionNeo4j.currentTransaction
-        val intQuery = """CREATE (ALIAS:Ubicacion { nombre: ${'$'}ubicacionNombre }) return ALIAS"""
-        transaction.run(intQuery, Values.parameters("ubicacionNombre", ubicacionNombre,"tipos,", tipos  ))
+        val intQuery = """MATCH (a:Ubicacion),(b:Ubicacion)
+        WHERE a.nombre = ${'$'}ubicacionOrigin AND b.nombre = ${'$'}ubicacionFinal
+        CREATE (a)-[:${tipo}]->(b)"""
+        /*
+        val intQuery = """MATCH (n)- [:${'$'}tipo*${'$'}movimientos]-> (fof)
+                               WHERE n.nombre = ${'$'}ubicacionNombre
+                               RETURN count(*)"""
+        val res = transaction.run(intQuery, Values.parameters("tipo,", tipo, "movimientos", movimientos, "ubicacionNombre", ubicacionNombre))
+         */
         return 0
     }
 
