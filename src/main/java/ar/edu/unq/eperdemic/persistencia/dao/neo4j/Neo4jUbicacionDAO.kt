@@ -97,7 +97,8 @@ class Neo4jUbicacionDAO : UbicacionDAO {
         TODO("Not yet implemented")
     }
 
-    private fun tiposFormateados(tipos : List<String>, movimientos: Int) : String = tipos.toString().toString().replace("[", "[:").replace(",", " |").replace("]", "]${movimientos.toString()}")+ "*".trim()
+    private fun tiposFormateados(tipos : List<String>, movimientos: Int) : String = tipos.toString().toString().replace("[", "[:").replace(",", " |").replace("]", "*${movimientos.toString()}]").trim().trim()
+    //tipos.toString().toString().replace("[", "[:").replace(",", " |").replace("]", "]${movimientos.toString()}")+ "*".trim()
 
     override fun capacidadDeExpansion(vectorId: Long, movimientos: Int): Int {
         val vector = vectorDao.recuperar(vectorId)
@@ -106,10 +107,10 @@ class Neo4jUbicacionDAO : UbicacionDAO {
         val tiposQueryConMovimientos = this.tiposFormateados(tipos, movimientos)
         val transaction = TransactionNeo4j.currentTransaction
         val intQuery =  """
-                        MATCH (n:Ubicacion {nombre:${nombreUbicacion}})-${tiposQueryConMovimientos} ${movimientos.toString()} -> (fof) RETURN COUNT(DISTINCT fof)
+                        MATCH (n:Ubicacion {nombre:${nombreUbicacion}})-${tiposQueryConMovimientos} ${movimientos.toString()} -> (fof) RETURN COUNT(DISTINCT fof) AS result
                         """
         val result = transaction.run(intQuery, Values.parameters("nombreUbicacion", nombreUbicacion, "tiposQueryConMovimientos", tiposQueryConMovimientos, "movimientos", movimientos))
-        return 0
+        return result.single().get("result").asInt()
     }
 }
 

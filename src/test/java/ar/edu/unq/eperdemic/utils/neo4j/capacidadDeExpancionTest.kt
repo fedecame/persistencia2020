@@ -99,11 +99,6 @@ class capacidadDeExpancionTest {
 
     }
 
-    @Test
-    fun testa(){
-        val t = vectorAnimal.tipo.posiblesCaminos
-        print("ACAAAAAAAAAAAAAAAAAAAAAAAAAAAA: " + t)
-    }
 /*
     @Test
     fun laCapacidadDeUnVectorQueSePuedeMover(){
