@@ -35,6 +35,8 @@ class UbicacionServiceTest {
     val estado = Sano()
     lateinit var ubicacionCreada: Ubicacion
     lateinit var ubicacionCreada1: Ubicacion
+    lateinit var ubicacionCreada2: Ubicacion
+    lateinit var ubicacionCreada3: Ubicacion
     lateinit var randomGenerator: RandomMaster
     lateinit var hibernateData: HibernateDataService
     lateinit var neo4jData: Neo4jDataService
@@ -50,9 +52,21 @@ class UbicacionServiceTest {
 
         ubicacionCreada = ubicacionService.crearUbicacion("Florencio Varela")
         ubicacionCreada1 = ubicacionService.crearUbicacion("Berazategui")
-
+        ubicacionCreada2 = ubicacionService.crearUbicacion("Saavedra")
+        ubicacionCreada3 = ubicacionService.crearUbicacion("Don Bosco")
         randomGenerator = Mockito.mock(RandomMaster::class.java)
         ubicacionService.randomGenerator = randomGenerator
+    }
+
+    @Test
+    fun testVarelaEstaConectadoCon3Ubicaciones(){
+        ubicacionService.conectar("Florencio Varela","Berazategui","Terrestre")
+        ubicacionService.conectar("Florencio Varela","Saavedra","Aereo")
+        ubicacionService.conectar("Florencio Varela","Don Bosco","Maritimo")
+
+        var listConectados =ubicacionService.conectados("Florencio Varela")
+        print(  listConectados.toString())
+        Assert.assertEquals(3,listConectados.size)
     }
 
     @Test
