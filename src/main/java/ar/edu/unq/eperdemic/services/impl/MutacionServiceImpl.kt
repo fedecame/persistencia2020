@@ -2,32 +2,29 @@ package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.modelo.Mutacion
 import ar.edu.unq.eperdemic.persistencia.dao.MutacionDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
 import ar.edu.unq.eperdemic.services.MutacionService
 import ar.edu.unq.eperdemic.services.PatogenoService
-import ar.edu.unq.eperdemic.services.runner.TransactionRunner
+import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 
 class MutacionServiceImpl(var mutacionDao : MutacionDAO, val patogenoService: PatogenoService) : MutacionService{
     override fun mutar(especieId: Int, mutacionId: Int) {
-        TransactionRunner.addHibernate().runTrx {
-            val especieDAO = HibernateEspecieDAO()
-
+        runTrx {
             val mutacion = mutacionDao.recuperar(mutacionId)
-            val especie = especieDAO.recuperarEspecie(especieId)
+            val especie = patogenoService.recuperarEspecie(especieId)
 
             especie.mutar(mutacion)
-            especieDAO.actualizar(especie)
+            patogenoService.actualizarEspecie(especie)
         }
     }
 
     override fun crearMutacion(mutacion: Mutacion): Mutacion {
-        return TransactionRunner.addHibernate().runTrx { mutacionDao.crear(mutacion) }
+        return runTrx { mutacionDao.crear(mutacion) }
     }
 
-    override fun recuperarMutacion(mutacionId: Int): Mutacion = TransactionRunner.addHibernate().runTrx { mutacionDao.recuperar(mutacionId) }
+    override fun recuperarMutacion(mutacionId: Int): Mutacion = runTrx { mutacionDao.recuperar(mutacionId) }
 
     override fun actualizarMutacion(mutacion: Mutacion) {
-        TransactionRunner.addHibernate().runTrx {
+        runTrx {
             mutacionDao.actualizar(mutacion)
         }
     }

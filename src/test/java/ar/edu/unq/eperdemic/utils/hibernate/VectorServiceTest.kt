@@ -10,7 +10,6 @@ import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
 import ar.edu.unq.eperdemic.services.HibernateDataService
-import ar.edu.unq.eperdemic.services.Neo4jDataService
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
@@ -38,7 +37,6 @@ class VectorServiceTest {
     lateinit var ubicacion : Ubicacion
     lateinit var patogeno : Patogeno
     lateinit var hibernateData : HibernateDataService
-    var dataNeoj4= Neo4jDataService()
 
     @Before
     fun setUp(){
@@ -69,10 +67,7 @@ class VectorServiceTest {
         vector.ubicacion = ubicacion
         ubicacion.vectores.add(vector)
         vectorService.crearVector(vector)
-        dataNeoj4.datosParaVectorService()
-        ubicacionService.conectar("Quilmes","Quilmes","Terrestre")
         ubicacionService.mover(vector.id!!.toInt(), ubicacion.nombreUbicacion)
-
     }
 
     @Test
@@ -239,8 +234,6 @@ class VectorServiceTest {
     @After
     fun eliminarTodo(){
         hibernateData.eliminarTodo()
-        dataNeoj4.eliminarTodo()
-
     }
 
 }

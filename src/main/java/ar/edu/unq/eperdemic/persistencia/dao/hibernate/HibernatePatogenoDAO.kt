@@ -3,7 +3,6 @@ package ar.edu.unq.eperdemic.persistencia.dao.hibernate
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.exception.PatogenoNotFoundRunTimeException
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
-import ar.edu.unq.eperdemic.services.runner.TransactionHibernate
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 
 class HibernatePatogenoDAO  : HibernateDAO<Patogeno>(Patogeno::class.java), PatogenoDAO {
@@ -14,8 +13,8 @@ class HibernatePatogenoDAO  : HibernateDAO<Patogeno>(Patogeno::class.java), Pato
     }
 
     override fun recuperar(patogenoId: Int): Patogeno{
-        val session = TransactionHibernate.currentSession
-        val res = session!!.get(entityType, patogenoId)
+        val session = TransactionRunner.currentSession
+        val res = session.get(entityType, patogenoId)
         if (res === null){
             throw PatogenoNotFoundRunTimeException(patogenoId)
         }

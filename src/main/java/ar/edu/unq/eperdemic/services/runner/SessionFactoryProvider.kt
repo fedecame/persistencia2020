@@ -4,7 +4,7 @@ import org.hibernate.Session
 import org.hibernate.SessionFactory
 import org.hibernate.cfg.Configuration
 
-class HibernateSessionFactoryProvider private constructor() {
+class SessionFactoryProvider private constructor() {
 
     private val sessionFactory: SessionFactory?
 
@@ -31,12 +31,12 @@ class HibernateSessionFactoryProvider private constructor() {
 
     companion object {
 
-        private var INSTANCE: HibernateSessionFactoryProvider? = null
+        private var INSTANCE: SessionFactoryProvider? = null
 
-        val instance: HibernateSessionFactoryProvider
+        val instance: SessionFactoryProvider
             get() {
                 if (INSTANCE == null) {
-                    INSTANCE = HibernateSessionFactoryProvider()
+                    INSTANCE = SessionFactoryProvider()
                 }
                 return INSTANCE!!
             }
