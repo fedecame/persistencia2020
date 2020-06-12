@@ -9,19 +9,20 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jUbicacionDAO
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
+import ar.edu.unq.eperdemic.services.runner.TransactionHibernate
 import ar.edu.unq.eperdemic.services.runner.TransactionNeo4j
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.utility.random.RandomMaster
 import ar.edu.unq.eperdemic.utility.random.RandomMasterImpl
 
-class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO) : UbicacionService {
+class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionService {
     var vectorDao = HibernateVectorDAO()
 //    var vectorService: VectorService = VectorServiceImpl(vectorDao, HibernateUbicacionDAO())
     var randomGenerator: RandomMaster = RandomMasterImpl()
     var neo4jUbicacionDAO=Neo4jUbicacionDAO()
     override fun recuperarUbicacion(nombreUbicacion: String):Ubicacion{
         return TransactionRunner.addHibernate().runTrx {
-            ubicacionDao.recuperar(nombreUbicacion)
+            HibernateUbicacionDao.recuperar(nombreUbicacion)
         }
     }
 
@@ -32,17 +33,18 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO) : UbicacionService {
     override fun crearUbicacion(nombreUbicacion: String): Ubicacion {
         val ubicacion= Ubicacion()
         ubicacion.nombreUbicacion=nombreUbicacion
-        return TransactionRunner.addHibernate().runTrx {
-            ubicacionDao.crear(ubicacion)
+        return TransactionRunner.addHibernate().addNeo4j().runTrx {
+            neo4jUbicacionDAO.crear(ubicacion)
+            HibernateUbicacionDao.crear(ubicacion)
         }
     }
     override fun mover(vectorId: Int, nombreUbicacion: String) {
         TransactionRunner.addHibernate().addNeo4j().runTrx {
 //            vectorService.mover(vectorId, nombreUbicacion)
-//            ubicacionDao.recuperar(nombreUbicacion)
+//            HibernateUbicacionDao.recuperar(nombreUbicacion)
             var vector= vectorDao.recuperar(vectorId)
-//            var ubicacionOrigen=ubicacionDao.recuperar(vector.ubicacion?.nombreUbicacion!!)
-            vector.ubicacion=ubicacionDao.recuperar(nombreUbicacion)//actualizo Ubicacion de Vector
+//            var ubicacionOrigen=HibernateUbicacionDao.recuperar(vector.ubicacion?.nombreUbicacion!!)
+            vector.ubicacion=HibernateUbicacionDao.recuperar(nombreUbicacion)//actualizo Ubicacion de Vector
             vectorDao.actualizar(vector)
           
 //            var vectorAMover= vectorService.recuperarVector(vectorId)
@@ -72,8 +74,8 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO) : UbicacionService {
     override fun moverMasCorto(vectorId: Long, nombreDeUbicacion: String) {
         TransactionRunner.addNeo4j().addHibernate().runTrx {
             val vector = vectorDao.recuperar(vectorId)
-            val ubicacion = ubicacionDao.recuperar(nombreDeUbicacion)
-            ubicacionDao.moverMasCorto(vector, ubicacion)
+            val ubicacion = HibernateUbicacionDao.recuperar(nombreDeUbicacion)
+            neo4jUbicacionDAO.moverMasCorto(vector, ubicacion)
         }
     }
 }
