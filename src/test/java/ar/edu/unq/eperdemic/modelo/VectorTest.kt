@@ -123,7 +123,7 @@ class VectorTest {
     }
 
     @Test
-    fun elVectorInsectoTiene2TiposDeCaminos() {
+    fun elVectorInsectoTiene1TipoDeCamino() {
         vectorSUT.tipo = Insecto()
         Assert.assertEquals(1, vectorSUT.tipo.posiblesCaminos.size)
     }

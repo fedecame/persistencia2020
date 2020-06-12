@@ -49,9 +49,9 @@ class capacidadDeExpancionTest {
         ubicacion0 = Ubicacion()
 
         //No llega a ningun lado. A el llegan por Aereo
-        ubicacion0 = ubicacionService.crearUbicacion( "Narniagi")
+        ubicacion0 = ubicacionService.crearUbicacion( "Narnia")
         ubicacion1 = ubicacionService.crearUbicacion("Quilmes")
-        ubicacion2 = ubicacionService.crearUbicacion("Remedios de Escalada")
+        ubicacion2 = ubicacionService.crearUbicacion("Mordor")
         elNodoSolitario = ubicacionService.crearUbicacion("elNodoSolitario")
         vectorAnimal = Vector()
         vectorAnimal.tipo = Animal()
@@ -99,6 +99,55 @@ class capacidadDeExpancionTest {
     }
 
     @Test
+    fun desdeQuilmesQueSoloSeConectaPorCaminosMaritimosUnVectorInsectoTieneCapacidadDeExpancion0IndependientementeDeLaCantidadDeMovimientos(){
+        val capacidad0 = ubicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 0)
+        Assert.assertEquals(0, capacidad0)
+        val capacidad1 = ubicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 1)
+        Assert.assertEquals(0, capacidad0)
+        val capacidad2 = ubicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 2)
+        Assert.assertEquals(0, capacidad0)
+        val capacidad3 = ubicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 3)
+        Assert.assertEquals(0, capacidad0)
+    }
+
+    //Hasta aca funcionan bien
+
+    @Test
+    fun desdeQuilmesQueSeComunicaSoloViaAereaUNHumanoNoTieneCapacidadDeExpancion(){
+        val otroVectorHumano = Vector()
+        otroVectorHumano.tipo = Humano()
+        otroVectorHumano.ubicacion = ubicacion1
+        vectorService.crearVector(otroVectorHumano)
+        val capacidad = ubicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 1)
+        Assert.assertEquals(0, capacidad)
+    }
+
+    @Test
+    fun desdeQuilmesQueSeComunicaSoloViaAereaUnAnimalTieneCapacidadDeExpancion2(){
+        val otroVectorHumano = Vector()
+        otroVectorHumano.tipo = Humano()
+        otroVectorHumano.ubicacion = ubicacion1
+        vectorService.crearVector(otroVectorHumano)
+        val capacidad = ubicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 1)
+        Assert.assertEquals(0, capacidad)
+    }
+
+    @Test
+    fun desdeQuilmesQueSeComunicaSoloViaAereaUnInsectoTieneCapacidadDeExpancion2(){
+        val otroVectorInsecto = Vector()
+        otroVectorInsecto.tipo = Humano()
+        otroVectorInsecto.ubicacion = ubicacion1
+        vectorService.crearVector(otroVectorInsecto)
+        val capacidad = ubicacionService.capacidadDeExpansion(otroVectorInsecto.id!!, 1)
+        Assert.assertEquals(2, capacidad)
+    }
+
+
+
+
+
+    // Revisar
+    @Test
     fun desdeNarniaQueSeComunicaPorViaTerrestreyMaritimaUnInsectoTiene4PosiblesLocacionesCon1Movimientos(){
         val capacidad0 = ubicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 2)
         Assert.assertEquals(2, capacidad0)
@@ -110,11 +159,6 @@ class capacidadDeExpancionTest {
         Assert.assertEquals(4, capacidad0)
     }
 
-    @Test
-    fun laCapacidadDeUnVectorQueSePuedeMover(){
-        val capacidad = ubicacionService.capacidadDeExpansion(vectorInsectoB.id!!, 42)
-        Assert.assertEquals(0, capacidad)
-    }
 
     @After
     fun eliminarTodo() {
