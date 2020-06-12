@@ -125,7 +125,7 @@ class VectorTest {
     @Test
     fun elVectorInsectoTiene1TipoDeCamino() {
         vectorSUT.tipo = Insecto()
-        Assert.assertEquals(1, vectorSUT.tipo.posiblesCaminos.size)
+        Assert.assertEquals(2, vectorSUT.tipo.posiblesCaminos.size)
     }
 
     @Test
@@ -133,6 +133,7 @@ class VectorTest {
         vectorSUT.tipo = Insecto()
         val t = vectorSUT.tipo.posiblesCaminos
         Assert.assertTrue(t.contains(TipoCamino.Aereo))
+        Assert.assertTrue(t.contains(TipoCamino.Terrestre))
     }
 
     @Test

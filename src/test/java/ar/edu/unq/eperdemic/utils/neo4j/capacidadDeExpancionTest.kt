@@ -31,9 +31,9 @@ class capacidadDeExpancionTest {
     private lateinit var vectorInsectoA : Vector
     private lateinit var vectorInsectoB : Vector
     private lateinit var vectores : List<Vector>
-    private lateinit var ubicacion0 : Ubicacion
-    private lateinit var ubicacion1 : Ubicacion
-    private lateinit var ubicacion2 : Ubicacion
+    private lateinit var quilmes : Ubicacion
+    private lateinit var mordor : Ubicacion
+    private lateinit var narnia : Ubicacion
     private lateinit var elNodoSolitario : Ubicacion
 
     @Before
@@ -46,22 +46,21 @@ class capacidadDeExpancionTest {
         dataService = Neo4jDataService()
         vectorService = VectorServiceImpl(vectorDao, ubicacionDao)
         ubicacionService = UbicacionServiceImpl(ubicacionDao)
-        ubicacion0 = Ubicacion()
 
         //No llega a ningun lado. A el llegan por Aereo
-        ubicacion0 = ubicacionService.crearUbicacion( "Narnia")
-        ubicacion1 = ubicacionService.crearUbicacion("Quilmes")
-        ubicacion2 = ubicacionService.crearUbicacion("Mordor")
+        narnia = ubicacionService.crearUbicacion( "Narnia")
+        quilmes = ubicacionService.crearUbicacion("Quilmes")
+        mordor = ubicacionService.crearUbicacion("Mordor")
         elNodoSolitario = ubicacionService.crearUbicacion("elNodoSolitario")
         vectorAnimal = Vector()
         vectorAnimal.tipo = Animal()
-        vectorAnimal.ubicacion = ubicacion0
+        vectorAnimal.ubicacion = quilmes
         vectorHumano = Vector()
-        vectorHumano.ubicacion = ubicacion1
+        vectorHumano.ubicacion = narnia
         vectorHumano.tipo = Humano()
         vectorInsectoA = Vector()
         vectorInsectoA.tipo = Insecto()
-        vectorInsectoA.ubicacion = ubicacion2
+        vectorInsectoA.ubicacion = mordor
         vectorInsectoB = Vector()
         vectorInsectoB.tipo = Insecto()
         vectorInsectoB.ubicacion = elNodoSolitario
@@ -110,13 +109,11 @@ class capacidadDeExpancionTest {
         Assert.assertEquals(0, capacidad0)
     }
 
-    //Hasta aca funcionan bien
-
     @Test
-    fun desdeQuilmesQueSeComunicaSoloViaAereaUNHumanoNoTieneCapacidadDeExpancion(){
+    fun desdeQuilmesQueSeComunicaSoloViaAereaUNHumanoTieneCapacidadDeExpancion0(){
         val otroVectorHumano = Vector()
         otroVectorHumano.tipo = Humano()
-        otroVectorHumano.ubicacion = ubicacion1
+        otroVectorHumano.ubicacion = quilmes
         vectorService.crearVector(otroVectorHumano)
         val capacidad = ubicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 1)
         Assert.assertEquals(0, capacidad)
@@ -125,38 +122,41 @@ class capacidadDeExpancionTest {
     @Test
     fun desdeQuilmesQueSeComunicaSoloViaAereaUnAnimalTieneCapacidadDeExpancion2(){
         val otroVectorHumano = Vector()
-        otroVectorHumano.tipo = Humano()
-        otroVectorHumano.ubicacion = ubicacion1
+        otroVectorHumano.tipo = Animal()
+        otroVectorHumano.ubicacion = quilmes
         vectorService.crearVector(otroVectorHumano)
         val capacidad = ubicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 1)
-        Assert.assertEquals(0, capacidad)
+        Assert.assertEquals(2, capacidad)
     }
 
     @Test
     fun desdeQuilmesQueSeComunicaSoloViaAereaUnInsectoTieneCapacidadDeExpancion2(){
         val otroVectorInsecto = Vector()
-        otroVectorInsecto.tipo = Humano()
-        otroVectorInsecto.ubicacion = ubicacion1
+        otroVectorInsecto.tipo = Insecto()
+        otroVectorInsecto.ubicacion = quilmes
         vectorService.crearVector(otroVectorInsecto)
         val capacidad = ubicacionService.capacidadDeExpansion(otroVectorInsecto.id!!, 1)
         Assert.assertEquals(2, capacidad)
     }
 
-
-
-
-
-    // Revisar
     @Test
-    fun desdeNarniaQueSeComunicaPorViaTerrestreyMaritimaUnInsectoTiene4PosiblesLocacionesCon1Movimientos(){
-        val capacidad0 = ubicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 2)
-        Assert.assertEquals(2, capacidad0)
+    fun desdeNarniaQueSeComunicaPorViaTerrestreyMaritimaUnAnimalTiene2PosiblesLocacionesCon1Movimiento(){
+        val otroVectorInsecto = Vector()
+        otroVectorInsecto.tipo = Insecto()
+        otroVectorInsecto.ubicacion = narnia
+        vectorService.crearVector(otroVectorInsecto)
+        val capacidad0 = ubicacionService.capacidadDeExpansion(otroVectorInsecto.id!!, 1)
+        Assert.assertEquals(1, capacidad0)
     }
 
     @Test
-    fun desdeNarniaQueSeComunicaPorViaTerrestreyMaritimaUnInsectoTiene4PosiblesLocacionesCon2Movimientos(){
-        val capacidad0 = ubicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 2)
-        Assert.assertEquals(4, capacidad0)
+    fun desdeNarniaQueSeComunicaPorViaTerrestreyMaritimaUnInsectoTiene2PosiblesLocaciones(){
+        val otroVectorInsecto = Vector()
+        otroVectorInsecto.tipo = Insecto()
+        otroVectorInsecto.ubicacion = narnia
+        vectorService.crearVector(otroVectorInsecto)
+        val capacidad0 = ubicacionService.capacidadDeExpansion(otroVectorInsecto.id!!, 1)
+        Assert.assertEquals(2, capacidad0)
     }
 
 

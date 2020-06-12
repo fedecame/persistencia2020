@@ -73,9 +73,7 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO) : UbicacionService {
     }
 
     override fun capacidadDeExpansion(vectorId: Long, movimientos: Int): Int {
-        var res = 0
-        TransactionRunner.addHibernate().addNeo4j().runTrx {  res = neo4jUbicacionDAO.capacidadDeExpansion(vectorId, movimientos) }
-        return res
+        return TransactionRunner.addHibernate().addNeo4j().runTrx {  neo4jUbicacionDAO.capacidadDeExpansion(vectorId, movimientos) }
     }
 
 }
