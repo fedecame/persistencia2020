@@ -37,6 +37,8 @@ class capacidadDeExpancionTest {
 
     @Before
     fun setUp(){
+        //Aca elimino lo que haya
+        this.eliminarTodo()
         val ubicacionDao = HibernateUbicacionDAO()
         val vectorDao = HibernateVectorDAO()
         sut = UbicacionServiceImpl(ubicacionDao)
@@ -68,22 +70,19 @@ class capacidadDeExpancionTest {
         vectorService.crearVector(vectorInsectoA)
         vectorService.crearVector(vectorInsectoB)
         dataService.crearSetDeDatosIniciales()
-
-
-
     }
 
     @Test
-    fun laCapacidadDeExpansionDeElNodoSolitario(){
+    fun laCapacidadDeExpansionDeElNodoSolitarioEs0(){
+        val capacidad = 0
 
     }
 
     @After
     fun eliminarTodo(){
-        TransactionRunner.addNeo4j().addHibernate().runTrx {
+        /*TransactionRunner.addNeo4j().addHibernate().runTrx {
             HibernateDataDAO().clear()
             HibernateDataDAO().clear()
-        }
-
+        }*/
     }
 }
