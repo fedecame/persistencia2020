@@ -3,6 +3,8 @@ package ar.edu.unq.eperdemic.modelo
 import ar.edu.unq.eperdemic.estado.Infectado
 import ar.edu.unq.eperdemic.estado.Sano
 import ar.edu.unq.eperdemic.tipo.Animal
+import ar.edu.unq.eperdemic.tipo.Humano
+import ar.edu.unq.eperdemic.tipo.Insecto
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -106,4 +108,43 @@ class VectorTest {
         Assert.assertEquals("Rusia",vectorSUT.ubicacion!!.nombreUbicacion)
     }
 
+    @Test
+    fun elVectorAnimalTiene3TiposDeCaminos() {
+        Assert.assertEquals(3, vectorSUT.tipo.posiblesCaminos.size)
+    }
+
+    @Test
+    fun elVectorAnimalTieneLos3TiposDeCaminos(){
+        val t = vectorSUT.tipo.posiblesCaminos
+        Assert.assertTrue(t.contains(TipoCamino.Aereo))
+        Assert.assertTrue(t.contains(TipoCamino.Maritimo))
+        Assert.assertTrue(t.contains(TipoCamino.Terrestre))
+    }
+
+    @Test
+    fun elVectorInsectoTiene2TiposDeCaminos() {
+        vectorSUT.tipo = Insecto()
+        Assert.assertEquals(1, vectorSUT.tipo.posiblesCaminos.size)
+    }
+
+    @Test
+    fun elVectorInsectoTieneTipoDeCaminoAereo(){
+        vectorSUT.tipo = Insecto()
+        val t = vectorSUT.tipo.posiblesCaminos
+        Assert.assertTrue(t.contains(TipoCamino.Aereo))
+    }
+
+    @Test
+    fun elVectorHumanoTiene2TiposDeCaminos() {
+        vectorSUT.tipo = Humano()
+        Assert.assertEquals(2, vectorSUT.tipo.posiblesCaminos.size)
+    }
+
+    @Test
+    fun elVectorHumanoTieneTiposDeCaminosMaritimoYTerrestre() {
+        vectorSUT.tipo = Humano()
+        val t = vectorSUT.tipo.posiblesCaminos
+        Assert.assertTrue(t.contains(TipoCamino.Terrestre))
+        Assert.assertTrue(t.contains(TipoCamino.Maritimo))
+    }
 }
