@@ -50,7 +50,7 @@ class capacidadDeExpancionTest {
 
         //No llega a ningun lado. A el llegan por Aereo
         ubicacion0 = ubicacionService.crearUbicacion( "WonderLand")
-        ubicacion1 = ubicacionService.crearUbicacion("Mordor")
+        ubicacion1 = ubicacionService.crearUbicacion("Quilmes")
         ubicacion2 = ubicacionService.crearUbicacion("Remedios de Escalada")
         elNodoSolitario = ubicacionService.crearUbicacion("elNodoSolitario")
         vectorAnimal = Vector()
@@ -79,18 +79,38 @@ class capacidadDeExpancionTest {
     }
 
     @Test
+    fun laCapacidadDeExpansionDeElNodoSolitarioSiempreEs0IndependientementeDelNroDeMovimientos(){
+        val capacidad0 = ubicacionService.capacidadDeExpansion(vectorInsectoB.id!!, 0)
+        Assert.assertEquals(0, capacidad0)
+        val capacidad1 = ubicacionService.capacidadDeExpansion(vectorInsectoB.id!!, 1)
+        Assert.assertEquals(0, capacidad1)
+        val capacidad2 = ubicacionService.capacidadDeExpansion(vectorInsectoB.id!!, 2)
+        Assert.assertEquals(0, capacidad2)
+        val capacidad3 = ubicacionService.capacidadDeExpansion(vectorInsectoB.id!!, 3)
+        Assert.assertEquals(0, capacidad2)
+        val capacidad4 = ubicacionService.capacidadDeExpansion(vectorInsectoB.id!!, 4)
+        Assert.assertEquals(0, capacidad2)
+    }
+
+    @Test
+    fun desdeQuilmesQueSoloSeConectaPorCaminosMaritimosUnVectorHumanoTieneCapacidadDeExpancion0(){
+        val capacidad0 = ubicacionService.capacidadDeExpansion(vectorHumano.id!!, 0)
+        Assert.assertEquals(0, capacidad0)
+
+    }
+/*
+    @Test
     fun laCapacidadDeUnVectorQueSePuedeMover(){
         val capacidad = ubicacionService.capacidadDeExpansion(vectorInsectoB.id!!, 42)
         Assert.assertEquals(0, capacidad)
     }
-
+*/
     @After
     fun eliminarTodo(){
-        /*
         TransactionRunner.addNeo4j().addHibernate().runTrx {
             HibernateDataDAO().clear()
             Neo4jDataDAO().clear()
         }
-        */
+
     }
 }
