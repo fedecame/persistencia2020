@@ -9,6 +9,7 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jUbicacionDAO
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
+import ar.edu.unq.eperdemic.services.runner.Transaction
 import ar.edu.unq.eperdemic.services.runner.TransactionNeo4j
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.utility.random.RandomMaster
@@ -18,6 +19,7 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO) : UbicacionService {
     var vectorService: VectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateUbicacionDAO())
     var randomGenerator: RandomMaster = RandomMasterImpl()
     var neo4jUbicacionDAO=Neo4jUbicacionDAO()
+
     override fun recuperarUbicacion(nombreUbicacion: String):Ubicacion{
         return TransactionRunner.addHibernate().runTrx {
             ubicacionDao.recuperar(nombreUbicacion)
@@ -69,4 +71,11 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO) : UbicacionService {
             vectorDao.contagiar(vectorInfectadoAleatorio, vectoresAContagiar)
         }
     }
+
+    override fun capacidadDeExpansion(vectorId: Long, movimientos: Int): Int {
+        var res = 0
+        TransactionRunner.addHibernate().addNeo4j().runTrx {  res = neo4jUbicacionDAO.capacidadDeExpansion(vectorId, movimientos) }
+        return res
+    }
+
 }
