@@ -16,7 +16,6 @@ import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.tipo.Humano
 import org.junit.After
 import org.junit.Before
-import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.mock
 import org.springframework.data.jpa.domain.AbstractPersistable_.id
@@ -53,7 +52,6 @@ class UbicacionNeo4jTest {
     var ubicacionTibetDojo = Ubicacion()
     var vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateUbicacionDAO())
     var id: Int = 0
-    var daoNeo4j = Neo4jUbicacionDAO()
     @Before
     fun setUp() {
         ubicacionService.crearUbicacion("BichoLandia")
@@ -73,7 +71,7 @@ class UbicacionNeo4jTest {
 
 
           //  daoNeo4j.conectar("Plantalandia", "TibetDojo", "Terrestre")
-            ubicacionService.mover(id, "TibetDojo")
+//            ubicacionService.mover(id, "TibetDojo")
 
 
     }
@@ -81,7 +79,7 @@ class UbicacionNeo4jTest {
     @Test(expected = UbicacionMuyLejana::class)
     fun vectorNoPuedeMoverPorqueUbicacionEsLejana() {
 
-        ubicacionService.mover(id,"")
+//        ubicacionService.mover(id,"")
     }
 }
     }
