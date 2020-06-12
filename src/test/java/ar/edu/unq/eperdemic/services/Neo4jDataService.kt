@@ -1,13 +1,12 @@
 package ar.edu.unq.eperdemic.services
 
 import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jDataDAO
-import ar.edu.unq.eperdemic.services.runner.TransactionNeo4j
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.utils.DataService
 
 class Neo4jDataService : DataService{
     //NonePlace es un nodo huerfano
-    private val ubicaciones = listOf("Quilmes", "Remedios de Escalada", "Ezpeleta", "Narnia", "Babilonia", "Zion", "Mordor", "WonderLand", "NonePlace")
+    private val ubicaciones = listOf("Quilmes", "Remedios de Escalada", "Ezpeleta", "Narnia", "Babilonia", "Zion", "Mordor", "WonderLand", "elNodoSolitario")
     val neo4jDataDAO = Neo4jDataDAO()
 
     //Esto genera un grafo como el de la imagen
@@ -34,6 +33,7 @@ class Neo4jDataService : DataService{
         neo4jDataDAO.conectBi("Babilonia", "Ezpeleta", "Maritimo")
         neo4jDataDAO.conectBi("Narnia", "Ezpeleta", "Maritimo")
     }
+
     override fun eliminarTodo() {
         TransactionRunner.addNeo4j().runTrx { neo4jDataDAO.clear() }
     }

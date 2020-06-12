@@ -10,6 +10,7 @@ import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jUbicacionDAO
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.runner.TransactionHibernate
+import ar.edu.unq.eperdemic.services.runner.Transaction
 import ar.edu.unq.eperdemic.services.runner.TransactionNeo4j
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.utility.random.RandomMaster
@@ -20,6 +21,7 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
 //    var vectorService: VectorService = VectorServiceImpl(vectorDao, HibernateUbicacionDAO())
     var randomGenerator: RandomMaster = RandomMasterImpl()
     var neo4jUbicacionDAO=Neo4jUbicacionDAO()
+
     override fun recuperarUbicacion(nombreUbicacion: String):Ubicacion{
         return TransactionRunner.addHibernate().runTrx {
             HibernateUbicacionDao.recuperar(nombreUbicacion)
@@ -74,6 +76,7 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
         val vectoresAContagiar = ubicacion.vectores.filter { vector -> vector.id != vectorInfectadoAleatorio.id }
 //        vectorService.contagiar(vectorInfectadoAleatorio, vectoresAContagiar)
 
+        val vectorDao = HibernateVectorDAO()
         TransactionRunner.addHibernate().runTrx {
             vectorDao.contagiar(vectorInfectadoAleatorio, vectoresAContagiar)
         }
@@ -86,4 +89,9 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
             neo4jUbicacionDAO.moverMasCorto(vector, ubicacion)
         }
     }
+
+    override fun capacidadDeExpansion(vectorId: Long, movimientos: Int): Int {
+        return TransactionRunner.addHibernate().addNeo4j().runTrx {  neo4jUbicacionDAO.capacidadDeExpansion(vectorId, movimientos) }
+    }
+
 }
