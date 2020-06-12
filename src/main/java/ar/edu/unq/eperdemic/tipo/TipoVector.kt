@@ -1,17 +1,11 @@
 package ar.edu.unq.eperdemic.tipo
 
 import ar.edu.unq.eperdemic.modelo.Especie
-import ar.edu.unq.eperdemic.modelo.TipoCamino
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.utility.random.RandomMaster
 
 abstract class TipoVector(){
     lateinit var randomGenerator : RandomMaster
-     abstract  var posiblesCaminos :List<TipoCamino>
-
-    fun posiblesCaminos():List<TipoCamino>{
-        return posiblesCaminos
-    }
 
     fun contagiamePor(vectorAContagiar: Vector, tipoDelContagiador: TipoVector, especiesContagiador: List<Especie>){
         if(this.puedeSerContagiadoPor(tipoDelContagiador)) {
@@ -40,6 +34,4 @@ abstract class TipoVector(){
     abstract fun puedeSerContagiadoPor(tipo : TipoVector): Boolean
 
     open fun agregarInfectado(especie : Especie){}
-
-    fun puedeAtravesar(tipoCamino: TipoCamino) = tipoCamino.puedeSerAtravesadoPor(this)
 }

@@ -21,7 +21,7 @@ import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
-import ar.edu.unq.eperdemic.services.runner.TransactionRunner
+import ar.edu.unq.eperdemic.services.runner.TransactionRunner.runTrx
 import ar.edu.unq.eperdemic.tipo.Animal
 import ar.edu.unq.eperdemic.tipo.Humano
 import ar.edu.unq.eperdemic.tipo.Insecto
@@ -116,7 +116,7 @@ class PatogenoServiceTest {
         val patogenoRecuperado1 = patogenoService.recuperarPatogeno(patogeno.id!!.toInt())
         Assert.assertEquals("Nisman", patogenoRecuperado1.tipo)
         patogenoRecuperado1.tipo = "Maradona"
-        TransactionRunner.addHibernate().runTrx {
+        runTrx {
             patogenoDAO.actualizar(patogenoRecuperado1)
         }
         val patogenoRecuperado2 = patogenoService.recuperarPatogeno(patogeno.id!!.toInt())
@@ -158,7 +158,7 @@ class PatogenoServiceTest {
         Assert.assertEquals("Mi casa", especieRecuperada1.paisDeOrigen)
         especieRecuperada1.nombre = "Sarasa"
         especieRecuperada1.paisDeOrigen = "Springfield"
-        TransactionRunner.addHibernate().runTrx {
+        runTrx {
             especieDAO.actualizar(especieRecuperada1)
         }
         val especieRecuperada2 = patogenoService.recuperarEspecie(especie.id!!.toInt())
@@ -248,7 +248,7 @@ class PatogenoServiceTest {
 
     @Test
     fun noEsPandemiaPorqueNoExistenUbicaciones() {
-        TransactionRunner.addHibernate().runTrx {
+        runTrx {
             HibernateDataDAO().clear()
         }
         patogeno = Patogeno()
