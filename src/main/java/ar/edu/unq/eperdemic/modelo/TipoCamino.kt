@@ -17,5 +17,6 @@ enum class TipoCamino {
             override fun puedeSerAtravesadoPor(tipoVector : TipoVector) =  tipoVector is Insecto || tipoVector is Animal
         };
     abstract fun puedeSerAtravesadoPor(tipoVector : TipoVector) : Boolean
+    fun nombre() = this.name
 }
 

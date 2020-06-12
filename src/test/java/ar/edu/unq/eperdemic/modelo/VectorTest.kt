@@ -8,6 +8,7 @@ import ar.edu.unq.eperdemic.tipo.Insecto
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import org.neo4j.driver.Values
 
 class VectorTest {
     private lateinit var vectorSUT : Vector
@@ -147,4 +148,37 @@ class VectorTest {
         Assert.assertTrue(t.contains(TipoCamino.Terrestre))
         Assert.assertTrue(t.contains(TipoCamino.Maritimo))
     }
+
+    @Test
+    fun losNombresDeLosTiposDelCaminoDelVectorSonCorrectos(){
+        val t = vectorSUT.tipo.posiblesCaminos
+        val esperado = listOf("Aereo", "Terrestre", "Maritimo")
+        Assert.assertTrue(t.map{it.nombre()}.all{esperado.contains(it)})
+    }
+
+    @Test
+    fun seImprimenCorrectamenteLosTiposDeCamino() {
+        val coso = vectorSUT.tipo.posiblesCaminos.toString()
+        val coso2 = coso.toString().replace("[", "[:").replace(",", " |") + "*".trim()
+        Assert.assertEquals(coso2, "[:Terrestre | Maritimo | Aereo]*")
+
+        vectorSUT.tipo = Insecto()
+        val coso3 = vectorSUT.tipo.posiblesCaminos.toString().toString().replace("[", "[:").replace(",", " |") + "*".trim()
+        Assert.assertEquals(coso3, "[:Aereo]*")
+
+        vectorSUT.tipo = Humano()
+
+        //Este es el que quiero!
+        val movimientos0 = 2
+        val coso4 = vectorSUT.tipo.posiblesCaminos.toString().toString().replace("[", "[:").replace(",", " |").replace("]", "*${movimientos0.toString()}]").trim().trim()
+
+        Assert.assertEquals(coso4, "[:Terrestre | Maritimo*2]")
+        val query2 = this.coso2("lejano", coso4)
+        //Esta query funciona y es la que quiero ocn la fora que quiero
+        Assert.assertEquals("MATCH (n:Ubicacion {nombre:lejano})-[:Terrestre | Maritimo*2]  -> (fof) RETURN COUNT(DISTINCT fof)", query2)
+    }
+
+    private fun coso2(nombreUbicacion : String, tiposQueryConMov : String) : String =
+        "MATCH (n:Ubicacion {nombre:${nombreUbicacion}})-${tiposQueryConMov}  -> (fof) RETURN COUNT(DISTINCT fof)"
+
 }
