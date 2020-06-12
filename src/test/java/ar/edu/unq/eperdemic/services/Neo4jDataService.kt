@@ -51,6 +51,7 @@ class Neo4jDataService : DataService{
             neo4jDataDAO.crear2("Quilmes")
             neo4jDataDAO.crear2("Mar Del Plata")
             neo4jDataDAO.crear2("Mar del Plata")
+            neo4jDataDAO.crear2("Florencio Varela")
             neo4jDataDAO.crear2("Maeame")
 
         }

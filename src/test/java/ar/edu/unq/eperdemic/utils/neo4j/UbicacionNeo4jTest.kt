@@ -66,7 +66,7 @@ var id=0
 
     @Test(expected = CaminoNoSoportado::class)
     fun vectorNoPuedeMoversePorCaminoNoSoportado() {
-
+        ubicacionService.conectar("Mar Del Plata","Florencio Varela", "Maritimo")
         ubicacionService.mover(1, "Florencio Varela")
     }
     @After
