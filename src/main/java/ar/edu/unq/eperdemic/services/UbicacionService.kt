@@ -12,6 +12,6 @@ interface UbicacionService {
 
     fun recuperarUbicacion(nombreUbicacion: String):Ubicacion
     fun conectar(ubicacion1:String, ubicacion2:String, tipoCamino:String)
-
+    fun conectados(nombreDeUbicacion: String): List<Ubicacion>
     fun moverMasCorto(vectorId:Long, nombreDeUbicacion:String)
 }

@@ -10,6 +10,7 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.HibernateDataService
+import ar.edu.unq.eperdemic.services.Neo4jDataService
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
@@ -23,21 +24,26 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.*
+import java.util.*
 
 class UbicacionServiceTest {
     var vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateUbicacionDAO())
     var ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO())
-     val vector = Vector()
-    val vector1=Vector()
+    val vector = Vector()
+    val vector1 = Vector()
     val tipo = Humano()
     val estado = Sano()
-   lateinit var ubicacionCreada:Ubicacion
-    lateinit var ubicacionCreada1:Ubicacion
+    lateinit var ubicacionCreada: Ubicacion
+    lateinit var ubicacionCreada1: Ubicacion
+    lateinit var ubicacionCreada2: Ubicacion
+    lateinit var ubicacionCreada3: Ubicacion
     lateinit var randomGenerator: RandomMaster
-    lateinit var hibernateData : HibernateDataService
+    lateinit var hibernateData: HibernateDataService
+    lateinit var neo4jData: Neo4jDataService
 
     @Before
     fun setUp(){
+        neo4jData = Neo4jDataService()
         hibernateData = HibernateDataService()
         vector.tipo=tipo
         vector.estado=estado
@@ -46,10 +52,41 @@ class UbicacionServiceTest {
 
         ubicacionCreada = ubicacionService.crearUbicacion("Florencio Varela")
         ubicacionCreada1 = ubicacionService.crearUbicacion("Berazategui")
-
+        ubicacionCreada2 = ubicacionService.crearUbicacion("Saavedra")
+        ubicacionCreada3 = ubicacionService.crearUbicacion("Don Bosco")
         randomGenerator = Mockito.mock(RandomMaster::class.java)
         ubicacionService.randomGenerator = randomGenerator
     }
+
+    @Test
+    fun testVarelaEstaConectadoCon3Ubicaciones(){
+        ubicacionService.conectar("Florencio Varela","Berazategui","Terrestre")
+        ubicacionService.conectar("Florencio Varela","Saavedra","Aereo")
+        ubicacionService.conectar("Florencio Varela","Don Bosco","Maritimo")
+
+        var listConectados =ubicacionService.conectados("Florencio Varela")
+        Assert.assertEquals(3,listConectados.size)
+    }
+
+    @Test
+    fun testBerazateguiEsElConectadoConVarela(){
+        ubicacionService.conectar("Florencio Varela","Berazategui","Terrestre")
+        var listConectados =ubicacionService.conectados("Florencio Varela")
+        Assert.assertEquals("Berazategui",listConectados.get(0).nombreUbicacion)
+    }
+
+    @Test
+    fun  testVarelaSeConectaConBerazategui(){
+        ubicacionService.conectar("Florencio Varela","Berazategui","Terrestre")
+        var listConectados =ubicacionService.conectados("Florencio Varela")
+        Assert.assertEquals(1, listConectados.size)
+    }
+    @Test
+    fun testVarelaNoSeConectaConNingunNodo(){
+        var listConectados =ubicacionService.conectados("Florencio Varela")
+        Assert.assertTrue(0 == listConectados.size)
+    }
+
 
     @Test
     fun creacionDeUbicacion() {
@@ -171,5 +208,6 @@ fun alMoverAMismaUbicacionDondeEstaSeQuedaEnLaMismaUbicacion(){
     @After
     fun eliminarTodo(){
         hibernateData.eliminarTodo()
+        neo4jData.eliminarTodo()
     }
 }

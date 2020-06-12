@@ -27,7 +27,15 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
     }
 
     override fun conectar(ubicacion1: String, ubicacion2: String, tipoCamino: String) {
-        TODO("Not yet implemented")
+        TransactionRunner.addNeo4j().runTrx {
+            neo4jUbicacionDAO.conectar(ubicacion1,ubicacion2,tipoCamino)
+        }
+    }
+
+    override fun conectados(nombreDeUbicacion: String): List<Ubicacion> {
+        return TransactionRunner.addNeo4j().runTrx {
+            neo4jUbicacionDAO.conectados(nombreDeUbicacion)
+        }
     }
 
     override fun crearUbicacion(nombreUbicacion: String): Ubicacion {

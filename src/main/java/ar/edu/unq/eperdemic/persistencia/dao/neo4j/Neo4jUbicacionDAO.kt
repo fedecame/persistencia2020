@@ -8,9 +8,13 @@ import ar.edu.unq.eperdemic.modelo.exception.UbicacionMuyLejana
 import ar.edu.unq.eperdemic.modelo.exception.UbicacionNoAlcanzable
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.services.runner.TransactionNeo4j
+import net.bytebuddy.dynamic.scaffold.TypeWriter
+import org.neo4j.driver.Record
+import org.neo4j.driver.Value
+import org.neo4j.driver.Values
 
 
-class Neo4jUbicacionDAO : UbicacionDAO {
+class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
 //    val session =DriverNeo4j().driver.session()
 
     override fun conectar(ubicacion1: String, ubicacion2: String, tipoCamino: String) {
@@ -21,11 +25,24 @@ class Neo4jUbicacionDAO : UbicacionDAO {
         transaction.run(query)
     }
 
-    override fun conectados(nombreDeUbicacion:String): List<Ubicacion>{
-       val ubicacion= Ubicacion()
-        ubicacion.nombreUbicacion="TibetDojo"
-        val list= listOf(ubicacion)
-        return list
+    override fun conectados(nombreDeUbicacion: String): List<Ubicacion> {
+        val transaction = TransactionNeo4j.currentTransaction
+        val query = """Match(:Ubicacion {nombre:${'$'}nombreDeUbicacion})-[Camino]->(ubicacionConectada:Ubicacion) Return ubicacionConectada """
+        val result = transaction.run(query,Values.parameters("nombreDeUbicacion",nombreDeUbicacion))
+
+        val tempListNombres = result.list { record: Record ->
+            val ubicacion = record.get(0)
+            val _nombre = ubicacion.get("nombre").asString()
+            _nombre
+        }
+
+        var listaRet  = mutableListOf<Ubicacion>()
+        tempListNombres.forEachIndexed { index, nombre ->
+            listaRet.add(Ubicacion())
+            listaRet.get(index).nombreUbicacion = nombre
+        }
+
+        return listaRet
     }
 
     override fun mover(vector: Vector, nombreUbicacion:String) {
@@ -80,7 +97,8 @@ class Neo4jUbicacionDAO : UbicacionDAO {
     }
 
     override fun crear(ubicacion: Ubicacion): Ubicacion {
-        TODO("Not yet implemented")
+        super.crear(ubicacion.nombreUbicacion)
+        return ubicacion
     }
 
     override fun recuperar(nombre: String): Ubicacion {
