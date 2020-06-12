@@ -28,12 +28,19 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
         val transaction = TransactionNeo4j.currentTransaction
         val query = """Match(:Ubicacion {nombre:${'$'}nombreDeUbicacion})-[Camino]->(ubicacionConectada:Ubicacion) Return ubicacionConectada """
         val result = transaction.run(query,Values.parameters("nombreDeUbicacion",nombreDeUbicacion))
-
-        return  result.list { record: Record ->
-            val ubicacion = record.get(0)
-            val _nombre = ubicacion.get("nombre").asString()
-            Ubicacion().nombreUbicacion=_nombre
-        }as List<Ubicacion>
+        var listaDeKeys = result.keys()
+        var listaDeUbicaciones = mutableListOf<Ubicacion>()
+        for (item in listaDeKeys){
+            var unaUbicacion = Ubicacion()
+            unaUbicacion.nombreUbicacion=item
+            listaDeUbicaciones.add(unaUbicacion)
+        }
+        return listaDeUbicaciones
+//        return  result.list { record: Record ->
+//            val ubicacion = record.get(0)
+//            val _nombre = ubicacion.get("nombre").asString()
+//            Ubicacion().nombreUbicacion=_nombre
+//        }.
 
 
     }
