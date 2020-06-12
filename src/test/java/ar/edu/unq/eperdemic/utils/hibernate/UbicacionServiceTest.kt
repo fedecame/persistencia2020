@@ -56,6 +56,14 @@ class UbicacionServiceTest {
     }
 
     @Test
+    fun testBerazateguiEsElConectadoConVarela(){
+        ubicacionService.conectar("Florencio Varela","Berazategui","Terrestre")
+        var listConectados =ubicacionService.conectados("Florencio Varela")
+        print(  listConectados.toString())
+        Assert.assertEquals("Berazategui",listConectados.get(0).nombreUbicacion)
+    }
+
+    @Test
     fun  testVarelaSeConectaConBerazategui(){
         ubicacionService.conectar("Florencio Varela","Berazategui","Terrestre")
         var listConectados =ubicacionService.conectados("Florencio Varela")
