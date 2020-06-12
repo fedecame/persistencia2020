@@ -19,6 +19,11 @@ class Neo4jDataDAO : DataDAO {
         val addQuery = """CREATE (ALIAS:Ubicacion { nombre: ${'$'}ubicacionNombre }) return ALIAS""".trimIndent()
         transaction.run(addQuery, Values.parameters("ubicacionNombre", ubicacionNombre))
     }
+    fun crear2(ubicacionNombre:String){
+        val transaction = TransactionNeo4j.currentTransaction
+        val addQuery =""" Create(u:Ubicacion {nombre:"$ubicacionNombre"})return(u) """
+        transaction.run(addQuery)
+    }
 
     fun conectUni(ubicacionOrigin: String, ubicacionFinal: String, tipo : String) {
         val transaction = TransactionNeo4j.currentTransaction

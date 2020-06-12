@@ -15,6 +15,7 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEstadisticasDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
+import ar.edu.unq.eperdemic.services.Neo4jDataService
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
@@ -45,7 +46,7 @@ class EstadisticasDAOTest {
     lateinit var ubicacion1 : Ubicacion
     lateinit var ubicacion2 : Ubicacion
     lateinit var patogeno : Patogeno
-
+var dataDaoNeo4j=Neo4jDataService()
     @Before
     fun setUp(){
         estadisticasDAO = HibernateEstadisticasDAO()
@@ -76,7 +77,16 @@ class EstadisticasDAOTest {
         ubicacion1 = ubicacionService.crearUbicacion("Mar del Plata")
         vector.ubicacion = ubicacion0
         vectorService.crearVector(vector)
+        dataDaoNeo4j.datosParaEstadisticaService()
+        ubicacionService.conectar(ubicacion1.nombreUbicacion.toString(),ubicacion0.nombreUbicacion.toString(),"Terrestre")
+        ubicacionService.conectar("Quilmes","Quilmes","Terrestre")
+        ubicacionService.conectar("Mar del Plata","Mar del Plata","Terrestre")
+        ubicacionService.conectar("Maeame","Maeame","Terrestre")
         ubicacionService.mover(vector.id!!.toInt(), ubicacion0.nombreUbicacion)
+
+        ubicacionService.mover(vector.id!!.toInt(), ubicacion0.nombreUbicacion)
+
+
 
     }
 
@@ -119,14 +129,6 @@ class EstadisticasDAOTest {
             res = estadisticasDAO.vectoresPresentes("Quilmes")
         }
         Assert.assertEquals(2, res)
-    }
-    @Test
-    fun elEstadisticasDAODevuelve0CuandoNoHayNingunVectorInfectadoEnEsaUbicacion(){
-        var res = 0
-        TransactionRunner.addHibernate().runTrx {
-            res = estadisticasDAO.vectoresInfectados("Mar del Plata")
-        }
-        Assert.assertEquals(0, res)
     }
 
     @Test
@@ -230,6 +232,7 @@ class EstadisticasDAOTest {
     fun eliminarTodo(){
         TransactionRunner.addHibernate().runTrx {
             HibernateDataDAO().clear()
+            dataDaoNeo4j.eliminarTodo()
         }
     }
 }

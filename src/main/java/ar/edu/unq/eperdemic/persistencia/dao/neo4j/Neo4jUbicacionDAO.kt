@@ -15,7 +15,7 @@ class Neo4jUbicacionDAO : UbicacionDAO {
     override fun conectar(ubicacion1: String, ubicacion2: String, tipoCamino: String) {
 //        val session = TransactionNeo4j.currentSession
         val transaction = TransactionNeo4j.currentTransaction
-        val query = """Match(ubicacionUno:Ubicacion {nombre:"$ubicacion1"})Match(ubicacionDos:Ubicacion{nombre:"$ubicacion2"}) MERGE (ubicacionUno)-[c:Camino {nombre:"$tipoCamino"}]->(ubicacionDos) """
+        val query = """Match(ubicacionUno:Ubicacion {nombre:"$ubicacion1"}),(ubicacionDos:Ubicacion{nombre:"$ubicacion2"}) MERGE (ubicacionUno)-[c:Camino {nombre:"$tipoCamino"}]->(ubicacionDos) """
         transaction.run(query)
     }
 
@@ -44,7 +44,7 @@ class Neo4jUbicacionDAO : UbicacionDAO {
         var query = """ Match(u1:Ubicacion {nombre:"$nombreDeUbicacion"})-[c:Camino]->(u2:Ubicacion {nombre:"$uPosibleAledaña" }) return(c) """
         var result = transaction.run(query)
         if (result.list().isEmpty()) {
-            throw UbicacionMuyLejana()
+            throw UbicacionMuyLejana(nombreDeUbicacion,uPosibleAledaña)
         }
     }
 
@@ -61,7 +61,7 @@ class Neo4jUbicacionDAO : UbicacionDAO {
     private fun lanzarExcepcionAlMover(noPuedeMoverseTanLejos: Boolean, noPuedeMoversePorCamino: Boolean): Throwable {
         var excepcion: Exception
         if (noPuedeMoverseTanLejos) {
-            excepcion = UbicacionMuyLejana()
+            excepcion = UbicacionMuyLejana("ne","")
         } else {
             excepcion = CaminoNoSoportado()
         }

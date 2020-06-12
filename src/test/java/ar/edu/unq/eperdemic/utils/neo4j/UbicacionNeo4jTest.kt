@@ -15,41 +15,18 @@ import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.tipo.Humano
-
-import org.junit.Assert
-
 import org.junit.After
-
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+
+
 import org.mockito.Mockito.mock
 import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import kotlin.math.exp
 
 class UbicacionNeo4jTest {
-    lateinit var neo4jData: Neo4jDataService
 
-
-    var ubicacionService=UbicacionServiceImpl(HibernateUbicacionDAO())
-    var mockUbicacionService = mock(UbicacionServiceImpl(HibernateUbicacionDAO()).javaClass)
-    var mockVectorService=mock(VectorServiceImpl(HibernateVectorDAO(),HibernateUbicacionDAO()).javaClass)
-    var vector= Vector()
-    var ubicacionPlantalandia= Ubicacion()
-    var ubicacionBichoLandia=Ubicacion()
-    var ubicacionTibetDojo=Ubicacion()
-    var vectorService=VectorServiceImpl(HibernateVectorDAO(),HibernateUbicacionDAO())
-
-    @Before
-    fun setUp() {
-        neo4jData = Neo4jDataService()
-    }
-
-    @Test
-    fun vectorQuiereMoverAUbicacionNoAledaña() {
-        var daoNeo4j = Neo4jUbicacionDAO()
-        TransactionRunner.addNeo4j().runTrx {
-            daoNeo4j.conectar("Plantalandia", "TibetDojo", "Terrestre")
-        }
     var ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO())
 
        var vector = Vector()
@@ -57,43 +34,46 @@ class UbicacionNeo4jTest {
     var ubicacionBichoLandia = Ubicacion()
     var ubicacionTibetDojo = Ubicacion()
     var vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateUbicacionDAO())
-
+    var neo4jData=Neo4jDataService()
+var id=0
     @Before
     fun setUp() {
         ubicacionService.crearUbicacion("BichoLandia")
         ubicacionTibetDojo = ubicacionService.crearUbicacion("TibetDojo")
-        vector.ubicacion = ubicacionService.crearUbicacion("Plantalandia")
+        vector.ubicacion = ubicacionService.crearUbicacion("Mar Del Plata")
+         ubicacionService.crearUbicacion("Quilmes")
+
         vector.tipo = Humano()
         vector.estado = Sano()
-        var id = vectorService.crearVector(vector).id
-        if (id != null) {
-            ubicacionService.mover(id.toInt(), "TibetDojo")
-        }
+        neo4jData.datosParaEstadisticaService()
+         id = vectorService.crearVector(vector)?.id?.toInt()!!
 
+    }
     @Test
 
     fun vectorMueveAUbicacionAledaña() {
-        ubicacionService.mover(id, "TibetDojo")
+
+        ubicacionService.conectar("Mar Del Plata","Quilmes","Terrestre")
+       ubicacionService.mover(id,"Quilmes")
     }
 
     @Test(expected = UbicacionMuyLejana::class)
     fun vectorNoPuedeMoverPorqueUbicacionEsLejana() {
-        ubicacionService.mover(id,"")
+        ubicacionService.mover(1,"")
 
-//        ubicacionService.mover(id,"")
-    }
-}
     }
 
+
+    @Test(expected = CaminoNoSoportado::class)
+    fun vectorNoPuedeMoversePorCaminoNoSoportado() {
+
+        ubicacionService.mover(1, "Florencio Varela")
+    }
     @After
     fun eliminarTodo() {
         neo4jData.eliminarTodo()
     }
-    @Test(expected = CaminoNoSoportado::class)
-    fun vectorNoPuedeMoversePorCaminoNoSoportado(){
-        ubicacionService.mover(id,"FlorencioVarela")
 
-    }
 
 
 
