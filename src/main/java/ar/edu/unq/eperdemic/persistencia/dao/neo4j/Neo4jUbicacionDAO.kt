@@ -98,7 +98,7 @@ class Neo4jUbicacionDAO : UbicacionDAO {
     override fun moverMasCorto(vector: Vector, ubicacion: Ubicacion) {
         val transaction = TransactionNeo4j.currentTransaction
         val tiposDeCaminosPosibles = vector.tipo.posiblesCaminos.map { it.name }
-        val stringDeTiposParaQuery = tiposDeCaminosPosibles.toString().replace(",", "|").trim()
+        val stringDeTiposParaQuery = tiposDeCaminosPosibles.toString().replace(",", "|").trim().drop(1).dropLast(1)
 
         val query = """
             MATCH p=shortestPath(
