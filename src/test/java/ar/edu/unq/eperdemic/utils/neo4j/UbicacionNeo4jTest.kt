@@ -14,6 +14,7 @@ import ar.edu.unq.eperdemic.services.Neo4jDataService
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
+import ar.edu.unq.eperdemic.tipo.Animal
 import ar.edu.unq.eperdemic.tipo.Humano
 import org.junit.After
 import org.junit.Assert
@@ -30,6 +31,7 @@ class UbicacionNeo4jTest {
     var ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO())
 
        var vector = Vector()
+    var vectorAnimal=Vector()
     var ubicacionPlantalandia = Ubicacion()
     var ubicacionBichoLandia = Ubicacion()
     var ubicacionTibetDojo = Ubicacion()
@@ -39,23 +41,30 @@ var id=0
     @Before
     fun setUp() {
         ubicacionService.crearUbicacion("BichoLandia")
+        ubicacionService.crearUbicacion("Florencio Varela")
+
         ubicacionTibetDojo = ubicacionService.crearUbicacion("TibetDojo")
         vector.ubicacion = ubicacionService.crearUbicacion("Mar Del Plata")
          ubicacionService.crearUbicacion("Quilmes")
-
+        vectorAnimal.ubicacion=vector.ubicacion
         vector.tipo = Humano()
+        vectorAnimal.tipo= Animal()
         vector.estado = Sano()
+        vectorAnimal.estado=Sano()
         neo4jData.datosParaEstadisticaService()
          id = vectorService.crearVector(vector)?.id?.toInt()!!
+        vectorService.crearVector(vectorAnimal)
 
     }
     @Test
 
     fun vectorMueveAUbicacionAledaña() {
-
         ubicacionService.conectar("Mar Del Plata","Quilmes","Terrestre")
-       ubicacionService.mover(id,"Quilmes")
+       ubicacionService.mover(vector.id?.toInt()!!,"Quilmes")
+
+        Assert.assertEquals(vectorService.recuperarVector(vector.id?.toInt()!!).ubicacion?.nombreUbicacion,"Quilmes")
     }
+
 
     @Test(expected = UbicacionMuyLejana::class)
     fun vectorNoPuedeMoverPorqueUbicacionEsLejana() {
@@ -69,6 +78,15 @@ var id=0
         ubicacionService.conectar("Mar Del Plata","Florencio Varela", "Maritimo")
         ubicacionService.mover(1, "Florencio Varela")
     }
+    @Test
+    fun vectorAnimalMuevePorCaminoMaritimo(){
+        ubicacionService.conectar("Mar Del Plata", "Florencio Varela","Maritimo")
+        ubicacionService.mover(2,"Florencio Varela")
+        Assert.assertEquals(vectorAnimal.ubicacion?.nombreUbicacion,"Florencio Varela")
+    }
+
+
+
     @After
     fun eliminarTodo() {
         neo4jData.eliminarTodo()

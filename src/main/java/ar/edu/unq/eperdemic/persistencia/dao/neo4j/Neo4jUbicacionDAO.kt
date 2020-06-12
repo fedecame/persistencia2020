@@ -51,9 +51,9 @@ class Neo4jUbicacionDAO : UbicacionDAO {
     fun noEsCapazDeMoverPorCamino(vector: Vector, ubicacionDestino: String) {
         var transaction = TransactionNeo4j.currentTransaction
         var nombreUbicacionActual = vector.ubicacion?.nombreUbicacion
-        var query = """ match(u1:Ubicacion{nombre:"$nombreUbicacionActual"})-[c:Camino {nombre:"Terrestre"}]-> (u2:Ubicacion{nombre:"$ubicacionDestino"}) return(c.nombre)  """
+        var query = """ match(u1:Ubicacion{nombre:"$nombreUbicacionActual"})-[c:Camino ]-> (u2:Ubicacion{nombre:"$ubicacionDestino"}) return(c.nombre)  """
         var result = transaction.run(query).list()
-        if (result.isEmpty()) {
+        if ((result.map { i-> vector.tipo.posiblesCaminos.contains(darTipo(i.get("nombre").toString()))}).contains(true) ){
             throw CaminoNoSoportado()
         }
     }
