@@ -28,20 +28,38 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
         val transaction = TransactionNeo4j.currentTransaction
         val query = """Match(:Ubicacion {nombre:${'$'}nombreDeUbicacion})-[Camino]->(ubicacionConectada:Ubicacion) Return ubicacionConectada """
         val result = transaction.run(query,Values.parameters("nombreDeUbicacion",nombreDeUbicacion))
-        var listaDeKeys = result.keys()
-        var listaDeUbicaciones = mutableListOf<Ubicacion>()
-        for (item in listaDeKeys){
-            var unaUbicacion = Ubicacion()
-            unaUbicacion.nombreUbicacion=item
-            listaDeUbicaciones.add(unaUbicacion)
-        }
-        return listaDeUbicaciones
-//        return  result.list { record: Record ->
-//            val ubicacion = record.get(0)
-//            val _nombre = ubicacion.get("nombre").asString()
-//            Ubicacion().nombreUbicacion=_nombre
-//        }.
+//        var listaDeKeys = result.keys()
+//        var listaDeUbicaciones = mutableListOf<Ubicacion>()
+//        for (item in listaDeKeys){
+//            var unaUbicacion = Ubicacion()
+//            unaUbicacion.nombreUbicacion=item
+//            listaDeUbicaciones.add(unaUbicacion)
+//        }
+//        return listaDeUbicaciones
 
+//        val tempListUbicaciones = result.list { record: Record ->
+////            val ubicacion = record.get(0)
+////            val _nombre = ubicacion.get("nombre").asString()
+////            mapOf(Pair("ubicacion", Ubicacion()), Pair("nombre", _nombre))
+//            Ubicacion()
+//        }
+
+        val tempListNombres = result.list { record: Record ->
+            val ubicacion = record.get(0)
+            val _nombre = ubicacion.get("nombre").asString()
+//            mapOf(Pair("ubicacion", Ubicacion()), Pair("nombre", _nombre))
+            _nombre
+        }
+
+        var listaRet  = mutableListOf<Ubicacion>()
+        tempListNombres.forEachIndexed { index, nombre ->
+            listaRet.add(Ubicacion())
+            listaRet.get(index).nombreUbicacion = nombre
+        }
+
+        return listaRet
+
+//        result.single().get("ubicacionConectada").asString()
 
     }
 

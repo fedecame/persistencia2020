@@ -65,7 +65,6 @@ class UbicacionServiceTest {
         ubicacionService.conectar("Florencio Varela","Don Bosco","Maritimo")
 
         var listConectados =ubicacionService.conectados("Florencio Varela")
-        print(  listConectados.toString())
         Assert.assertEquals(3,listConectados.size)
     }
 
@@ -73,7 +72,6 @@ class UbicacionServiceTest {
     fun testBerazateguiEsElConectadoConVarela(){
         ubicacionService.conectar("Florencio Varela","Berazategui","Terrestre")
         var listConectados =ubicacionService.conectados("Florencio Varela")
-        print(  listConectados.toString())
         Assert.assertEquals("Berazategui",listConectados.get(0).nombreUbicacion)
     }
 
@@ -81,13 +79,11 @@ class UbicacionServiceTest {
     fun  testVarelaSeConectaConBerazategui(){
         ubicacionService.conectar("Florencio Varela","Berazategui","Terrestre")
         var listConectados =ubicacionService.conectados("Florencio Varela")
-        print(  listConectados.toString())
-        Assert.assertTrue(0 == listConectados.size)
+        Assert.assertEquals(1, listConectados.size)
     }
     @Test
     fun testVarelaNoSeConectaConNingunNodo(){
         var listConectados =ubicacionService.conectados("Florencio Varela")
-        print(  listConectados.toString())
         Assert.assertTrue(0 == listConectados.size)
     }
 
