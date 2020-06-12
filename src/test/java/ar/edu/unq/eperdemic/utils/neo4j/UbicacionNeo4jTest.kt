@@ -8,11 +8,14 @@ import ar.edu.unq.eperdemic.modelo.exception.NoExisteUbicacion
 import ar.edu.unq.eperdemic.modelo.exception.UbicacionNoAlcanzable
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
+import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jUbicacionDAO
 import ar.edu.unq.eperdemic.services.Neo4jDataService
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
+import ar.edu.unq.eperdemic.services.runner.TransactionNeo4j
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
+import ar.edu.unq.eperdemic.tipo.Animal
 import ar.edu.unq.eperdemic.tipo.Humano
 import ar.edu.unq.eperdemic.tipo.Insecto
 import org.junit.After
@@ -110,6 +113,16 @@ class UbicacionNeo4jTest {
         /**
          *  TODO Fede
          * */
+        val zion = ubicacionService.recuperarUbicacion("Zion")
+        val mordor = ubicacionService.recuperarUbicacion("Mordor")
+        vector.ubicacion = zion
+        zion.vectores.add(vector)
+        HibernateUbicacionDAO().actualizar(zion)
+        ubicacionService.moverMasCorto(vector.id!!, mordor.nombreUbicacion)
+        //crear un spy de lo que sepa que se movio el vector a la nueva ubicacion
+
+        //de zion a mordor
+        //la combinacion mas corta es: zion>babilonia>ezpeleta>mordor
     }
 
     @Test
@@ -117,6 +130,20 @@ class UbicacionNeo4jTest {
         /**
          *  TODO Fede
          * */
+        val narnia = ubicacionService.recuperarUbicacion("Narnia")
+        val babilonia = ubicacionService.recuperarUbicacion("Babilonia")
+        val vectorInsecto = Vector()
+        vectorInsecto.tipo = Insecto()
+        vectorInsecto.ubicacion = narnia
+        narnia.vectores.add(vectorInsecto)
+        HibernateUbicacionDAO().actualizar(narnia)
+        val neo4jDataDao = Neo4jDataDAO()
+        neo4jDataDao.conectUni("Narnia", "Quilmes", "Aereo")
+        ubicacionService.moverMasCorto(vectorInsecto.id!!, babilonia.nombreUbicacion)
+        //crear un spy de lo que sepa que se movio el vector a la nueva ubicacion
+
+        //de narnia a babilonia
+        //el camino mas corto seria: narnia>quilmes>babilonia
     }
 
     @Test
@@ -124,6 +151,18 @@ class UbicacionNeo4jTest {
         /**
          *  TODO Fede
          * */
+        val mordor = ubicacionService.recuperarUbicacion("Mordor")
+        val babilonia = ubicacionService.recuperarUbicacion("Babilonia")
+        val vectorAnimal = Vector()
+        vectorAnimal.tipo = Animal()
+        vectorAnimal.ubicacion = mordor
+        mordor.vectores.add(vectorAnimal)
+        HibernateUbicacionDAO().actualizar(mordor)
+        ubicacionService.moverMasCorto(vectorAnimal.id!!, babilonia.nombreUbicacion)
+        //crear un spy de lo que sepa que se movio el vector a la nueva ubicacion
+
+        //de mordor a babilonia
+        //tiene que hacer: mordor>zion>babilonia
     }
 
     @After
