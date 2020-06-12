@@ -13,5 +13,6 @@ interface UbicacionService {
 
     fun recuperarUbicacion(nombreUbicacion: String): Ubicacion
     fun conectar(ubicacion1: String, ubicacion2: String, tipoCamino: String)
+    fun capacidadDeExpansion(vectorId : Long, movimientos : Int) : Int
 
 }

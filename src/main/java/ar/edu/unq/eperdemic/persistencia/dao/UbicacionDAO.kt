@@ -14,4 +14,5 @@ interface UbicacionDAO {
     fun conectar(ubicacion1: String, ubicacion2: String, tipoCamino: String)
     fun conectados(nombreDeUbicacion:String): List<Ubicacion>
     fun mover(vector: Vector, nombreUbicacion:String)
+    fun capacidadDeExpansion(vectorId: Long, movimientos: Int) : Int
 }

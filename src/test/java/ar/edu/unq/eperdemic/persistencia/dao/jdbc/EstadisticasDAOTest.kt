@@ -77,7 +77,7 @@ var dataDaoNeo4j=Neo4jDataService()
         ubicacion1 = ubicacionService.crearUbicacion("Mar del Plata")
         vector.ubicacion = ubicacion0
         vectorService.crearVector(vector)
-        dataDaoNeo4j.datosParaEstadisticaService()
+        //dataDaoNeo4j.datosParaEstadisticaService()
         ubicacionService.conectar(ubicacion1.nombreUbicacion.toString(),ubicacion0.nombreUbicacion.toString(),"Terrestre")
         ubicacionService.conectar("Quilmes","Quilmes","Terrestre")
         ubicacionService.conectar("Mar del Plata","Mar del Plata","Terrestre")

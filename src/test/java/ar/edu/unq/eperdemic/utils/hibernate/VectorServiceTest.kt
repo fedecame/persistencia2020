@@ -69,7 +69,6 @@ class VectorServiceTest {
         vector.ubicacion = ubicacion
         ubicacion.vectores.add(vector)
         vectorService.crearVector(vector)
-        dataNeoj4.datosParaVectorService()
         ubicacionService.conectar("Quilmes","Quilmes","Terrestre")
         ubicacionService.mover(vector.id!!.toInt(), ubicacion.nombreUbicacion)
 

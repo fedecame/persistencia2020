@@ -51,8 +51,7 @@ var id=0
         vectorAnimal.tipo= Animal()
         vector.estado = Sano()
         vectorAnimal.estado=Sano()
-        neo4jData.datosParaEstadisticaService()
-         id = vectorService.crearVector(vector)?.id?.toInt()!!
+        id = vectorService.crearVector(vector)?.id?.toInt()!!
         vectorService.crearVector(vectorAnimal)
 
     }

@@ -2,14 +2,12 @@ package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.estado.Infectado
 import ar.edu.unq.eperdemic.modelo.Ubicacion
-import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jUbicacionDAO
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
-import ar.edu.unq.eperdemic.services.runner.TransactionNeo4j
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.utility.random.RandomMaster
 import ar.edu.unq.eperdemic.utility.random.RandomMasterImpl
@@ -19,6 +17,7 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO) : UbicacionService {
     var vectorDao=HibernateVectorDAO()
     var randomGenerator: RandomMaster = RandomMasterImpl()
     var neo4jUbicacionDAO=Neo4jUbicacionDAO()
+
     override fun recuperarUbicacion(nombreUbicacion: String):Ubicacion{
         return TransactionRunner.addHibernate().runTrx {
             ubicacionDao.recuperar(nombreUbicacion)
@@ -30,12 +29,15 @@ class UbicacionServiceImpl(var ubicacionDao: UbicacionDAO) : UbicacionService {
             neo4jUbicacionDAO.conectar(ubicacion1, ubicacion2, tipoCamino)
         }
     }
+
+    override fun capacidadDeExpansion(vectorId: Long, movimientos : Int): Int = TransactionRunner.addNeo4j().addHibernate().runTrx {  neo4jUbicacionDAO.capacidadDeExpansion(vectorId, movimientos)}
+
     override fun crearUbicacion(nombreUbicacion: String): Ubicacion {
         val ubicacion= Ubicacion()
         ubicacion.nombreUbicacion=nombreUbicacion
         return TransactionRunner.addHibernate().runTrx {
+            neo4jUbicacionDAO.crear(ubicacion)
             ubicacionDao.crear(ubicacion)
-
         }
 
     }

@@ -41,37 +41,7 @@ class Neo4jDataService : DataService{
         neo4jDataDAO.conectBi("Narnia", "Ezpeleta", "Maritimo")
     }
 
-
     override fun eliminarTodo() {
         TransactionRunner.addNeo4j().runTrx { neo4jDataDAO.clear() }
-    }
-
-    fun datosParaEstadisticaService(){
-        TransactionRunner.addNeo4j().runTrx {
-            neo4jDataDAO.crear2("Quilmes")
-            neo4jDataDAO.crear2("Mar Del Plata")
-            neo4jDataDAO.crear2("Mar del Plata")
-            neo4jDataDAO.crear2("Florencio Varela")
-            neo4jDataDAO.crear2("Maeame")
-
-        }
-        }
-    fun datosParaUbicacionService(){
-        TransactionRunner.addNeo4j().runTrx {
-            neo4jDataDAO.crear2("Quilmes")
-            neo4jDataDAO.crear2("Florencio Varela")
-            neo4jDataDAO.crear2("Berazategui")
-            neo4jDataDAO.crear2("Sarandi")
-
-        }
-    }
-    fun datosParaVectorService(){
-        TransactionRunner.addNeo4j().runTrx {
-            neo4jDataDAO.crear2("Alemania")
-            neo4jDataDAO.crear2("Florencio Varela")
-            neo4jDataDAO.crear2("Berazategui")
-            neo4jDataDAO.crear2("Quilmes")
-
-        }
     }
 }

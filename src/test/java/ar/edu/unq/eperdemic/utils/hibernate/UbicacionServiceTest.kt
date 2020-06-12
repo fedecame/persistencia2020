@@ -51,7 +51,6 @@ class UbicacionServiceTest {
 
         randomGenerator = Mockito.mock(RandomMaster::class.java)
         ubicacionService.randomGenerator = randomGenerator
-        dataNeo4j.datosParaUbicacionService()
         ubicacionService.conectar("Florencio Varela","Quilmes","Terrestre")
         ubicacionService.conectar("Florencio Varela","Berazategui","Terrestre")
         ubicacionService.conectar("Quilmes","Berazategui","Terrestre")
