@@ -49,7 +49,7 @@ class capacidadDeExpancionTest {
         ubicacion0 = Ubicacion()
 
         //No llega a ningun lado. A el llegan por Aereo
-        ubicacion0 = ubicacionService.crearUbicacion( "WonderLand")
+        ubicacion0 = ubicacionService.crearUbicacion( "Narniagi")
         ubicacion1 = ubicacionService.crearUbicacion("Quilmes")
         ubicacion2 = ubicacionService.crearUbicacion("Remedios de Escalada")
         elNodoSolitario = ubicacionService.crearUbicacion("elNodoSolitario")
@@ -96,6 +96,18 @@ class capacidadDeExpancionTest {
     fun desdeQuilmesQueSoloSeConectaPorCaminosMaritimosUnVectorInsectoTieneCapacidadDeExpancion0(){
         val capacidad0 = ubicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 3)
         Assert.assertEquals(0, capacidad0)
+    }
+
+    @Test
+    fun desdeNarniaQueSeComunicaPorViaTerrestreyMaritimaUnInsectoTiene4PosiblesLocacionesCon1Movimientos(){
+        val capacidad0 = ubicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 2)
+        Assert.assertEquals(2, capacidad0)
+    }
+
+    @Test
+    fun desdeNarniaQueSeComunicaPorViaTerrestreyMaritimaUnInsectoTiene4PosiblesLocacionesCon2Movimientos(){
+        val capacidad0 = ubicacionService.capacidadDeExpansion(vectorInsectoA.id!!, 2)
+        Assert.assertEquals(4, capacidad0)
     }
 
     @Test
