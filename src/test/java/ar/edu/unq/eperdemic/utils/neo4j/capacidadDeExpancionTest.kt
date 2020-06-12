@@ -16,6 +16,7 @@ import ar.edu.unq.eperdemic.tipo.Humano
 import ar.edu.unq.eperdemic.tipo.Insecto
 import ar.edu.unq.eperdemic.utils.DataService
 import org.junit.After
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
@@ -74,7 +75,8 @@ class capacidadDeExpancionTest {
 
     @Test
     fun laCapacidadDeExpansionDeElNodoSolitarioEs0(){
-        val capacidad = 0
+        val capacidad = ubicacionService.capacidadDeExpansion(vectorInsectoB.id!!, 42)
+        Assert.assertEquals(0, capacidad)
 
     }
 

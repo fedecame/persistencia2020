@@ -42,17 +42,6 @@ class Neo4jUbicacionDAO : UbicacionDAO {
         }
     }
 
-    override fun capacidadDeExpansion(vectorId: Long, movimientos: Int): Int {
-        val vector = vectorDao.recuperar(vectorId)
-        val ubicacionNombre = vector.ubicacion?.nombreUbicacion
-        val tipos = vector.tipo.posiblesCaminos
-        val transaction = TransactionNeo4j.currentTransaction
-        val intQuery = """CREATE (ALIAS:Ubicacion { nombre: ${'$'}ubicacionNombre }) return ALIAS"""
-
-        transaction.run(intQuery, Values.parameters("ubicacionNombre", ubicacionNombre,"tipos,", tipos  ))
-        return 0
-    }
-
     private fun lanzarExcepcionAlMover(noPuedeMoverseTanLejos: Boolean, noPuedeMoversePorCamino: Boolean): Throwable {
         var excepcion:Exception
         if(noPuedeMoverseTanLejos) {
@@ -107,6 +96,19 @@ class Neo4jUbicacionDAO : UbicacionDAO {
     override fun agregarVector(vector: Vector, ubicacion: Ubicacion) {
         TODO("Not yet implemented")
     }
+
+    override fun capacidadDeExpansion(vectorId: Long, movimientos: Int): Int {
+        val vector = vectorDao.recuperar(vectorId)
+        val ubicacionNombre = vector.ubicacion?.nombreUbicacion
+        val tipos = vector.tipo.javaClass.simpleName
+
+        val transaction = TransactionNeo4j.currentTransaction
+        val intQuery = """CREATE (ALIAS:Ubicacion { nombre: ${'$'}ubicacionNombre }) return ALIAS"""
+        transaction.run(intQuery, Values.parameters("ubicacionNombre", ubicacionNombre,"tipos,", tipos  ))
+        return 0
+    }
+
+
 }
 
 
