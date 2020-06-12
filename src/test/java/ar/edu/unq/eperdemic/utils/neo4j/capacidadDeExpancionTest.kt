@@ -23,9 +23,12 @@ class capacidadDeExpancionTest {
     private lateinit var sut : UbicacionService
     private lateinit var dataService : DataService
     private lateinit var vectorService : VectorService
+    private lateinit var ubicacionService : UbicacionService
     private lateinit var vectorAnimal : Vector
     private lateinit var vectorHumano : Vector
-    private lateinit var vectorInsecto : Vector
+    private lateinit var vectorInsectoA : Vector
+    private lateinit var vectorInsectoB : Vector
+    private lateinit var vectores : List<Vector>
 
     private lateinit var ubicacion0 : Ubicacion
     private lateinit var ubicacion1 : Ubicacion
@@ -39,23 +42,32 @@ class capacidadDeExpancionTest {
         sut = UbicacionServiceImpl(ubicacionDao)
         dataService = Neo4jDataService()
         vectorService = VectorServiceImpl(vectorDao, ubicacionDao)
+        ubicacionService = UbicacionServiceImpl(ubicacionDao)
         ubicacion0 = Ubicacion()
-        //No llega a ningun lado. A el llegan por Aereo
-        ubicacion0.nombreUbicacion = "WonderLand"
-        ubicacion1 = Ubicacion()
-        ubicacion1.nombreUbicacion = ""
-        ubicacion2 = Ubicacion()
-        ubicacion2.nombreUbicacion = ""
 
-        //No llega a nadie ni pueden llegar a el
-        elNodoSolitario.nombreUbicacion = "elNodoSolitario"
+        //No llega a ningun lado. A el llegan por Aereo
+        ubicacion0 = ubicacionService.crearUbicacion( "WonderLand")
+        ubicacion1 = ubicacionService.crearUbicacion("Mordor")
+        ubicacion2 = ubicacionService.crearUbicacion("Remedios de Escalada")
+        elNodoSolitario = ubicacionService.crearUbicacion("elNodoSolitario")
         vectorAnimal = Vector()
         vectorAnimal.tipo = Animal()
+        vectorAnimal.ubicacion = ubicacion0
         vectorHumano = Vector()
+        vectorHumano.ubicacion = ubicacion1
         vectorHumano.tipo = Humano()
-        vectorInsecto = Vector()
-        vectorInsecto.tipo = Insecto()
+        vectorInsectoA = Vector()
+        vectorInsectoA.tipo = Insecto()
+        vectorInsectoA.ubicacion = ubicacion2
+        vectorInsectoB = Vector()
+        vectorInsectoB.tipo = Insecto()
+        vectorInsectoB.ubicacion = elNodoSolitario
 
+        vectorService.crearVector(vectorAnimal)
+        vectorService.crearVector(vectorHumano)
+        vectorService.crearVector(vectorInsectoA)
+        vectorService.crearVector(vectorInsectoB)
+        dataService.crearSetDeDatosIniciales()
 
 
 
@@ -68,11 +80,10 @@ class capacidadDeExpancionTest {
 
     @After
     fun eliminarTodo(){
-        TransactionRunner.addHibernate().runTrx {
-                HibernateDataDAO().clear()
-        }
-        TransactionRunner.addNeo4j().runTrx {
+        TransactionRunner.addNeo4j().addHibernate().runTrx {
+            HibernateDataDAO().clear()
             HibernateDataDAO().clear()
         }
+
     }
 }
