@@ -9,7 +9,7 @@ import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.services.runner.TransactionNeo4j
 
 
-class Neo4jUbicacionDAO : UbicacionDAO {
+class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
 //    val session =DriverNeo4j().driver.session()
 
     override fun conectar(ubicacion1: String, ubicacion2: String, tipoCamino: String) {
@@ -79,7 +79,8 @@ class Neo4jUbicacionDAO : UbicacionDAO {
 }
 
     override fun crear(ubicacion: Ubicacion): Ubicacion {
-        TODO("Not yet implemented")
+        super.crear(ubicacion.nombreUbicacion)
+        return ubicacion
     }
 
     override fun recuperar(nombre: String): Ubicacion {
