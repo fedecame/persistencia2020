@@ -16,10 +16,7 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEstadisticasDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
-import ar.edu.unq.eperdemic.services.EstadisticasService
-import ar.edu.unq.eperdemic.services.HibernateDataService
-import ar.edu.unq.eperdemic.services.UbicacionService
-import ar.edu.unq.eperdemic.services.VectorService
+import ar.edu.unq.eperdemic.services.*
 import ar.edu.unq.eperdemic.services.impl.EstadisticasServiceImpl
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
@@ -28,6 +25,7 @@ import ar.edu.unq.eperdemic.tipo.Animal
 import ar.edu.unq.eperdemic.tipo.Humano
 import ar.edu.unq.eperdemic.tipo.Insecto
 import ar.edu.unq.eperdemic.tipo.TipoVector
+import ar.edu.unq.eperdemic.utils.neo4j.UbicacionNeo4jTest
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -56,9 +54,11 @@ class EstadisticasServiceTest {
     lateinit var ubicacion2 : Ubicacion
     lateinit var patogeno : Patogeno
     lateinit var hibernateData : HibernateDataService
+    var dataDaoNeo4j=Neo4jDataService()
 
     @Before
     fun setUp(){
+        var ubicacionDaoNeo4j=UbicacionNeo4jTest()
         hibernateData = HibernateDataService()
         estadisticasDAO = HibernateEstadisticasDAO()
         estadisticasService = EstadisticasServiceImpl(estadisticasDAO)
@@ -110,7 +110,7 @@ class EstadisticasServiceTest {
 
         ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO())
         ubicacion0 = ubicacionService.crearUbicacion("Quilmes")
-        ubicacion1 = ubicacionService.crearUbicacion("Mar del Plata")
+        ubicacion1 = ubicacionService.crearUbicacion("Mar Del Plata")
         ubicacion2 = ubicacionService.crearUbicacion("Berazategui")
         vector.ubicacion = ubicacion1
         vector2.ubicacion = ubicacion1
@@ -123,14 +123,25 @@ class EstadisticasServiceTest {
         vectorService.crearVector(vector)
         vectorService.crearVector(vector2)
         vectorService.crearVector(vector3)
-
+        dataDaoNeo4j.datosParaEstadisticaService()
+        ubicacionService.conectar(ubicacion1.nombreUbicacion.toString(),ubicacion0.nombreUbicacion.toString(),"Terrestre")
         ubicacionService.mover(vector.id!!.toInt(), ubicacion0.nombreUbicacion)
+        ubicacionService.conectar("Quilmes","Quilmes","Terrestre")
+        ubicacionService.conectar("Mar del Plata","Mar del Plata","Terrestre")
+        ubicacionService.conectar("Maeame","Maeame","Terrestre")
+
+
     }
 
     @Test
     fun elEstadisticasServiceDevuelveUnReporteCon0VectoresPresentes0CuandoNoHayNingunVectorEnEsaUbicacion(){
+
+
+
+
         val reporte = estadisticasService.reporteDeContagios("Berazategui")
         Assert.assertEquals(0, reporte.vectoresPresentes)
+
     }
 
     @Test
@@ -370,5 +381,6 @@ class EstadisticasServiceTest {
     @After
     fun eliminarTodo(){
         hibernateData.eliminarTodo()
+        dataDaoNeo4j.eliminarTodo()
     }
 }

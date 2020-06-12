@@ -10,6 +10,7 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.HibernateDataService
+import ar.edu.unq.eperdemic.services.Neo4jDataService
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
@@ -35,6 +36,7 @@ class UbicacionServiceTest {
     lateinit var ubicacionCreada1:Ubicacion
     lateinit var randomGenerator: RandomMaster
     lateinit var hibernateData : HibernateDataService
+    var dataNeo4j=Neo4jDataService()
 
     @Before
     fun setUp(){
@@ -49,6 +51,15 @@ class UbicacionServiceTest {
 
         randomGenerator = Mockito.mock(RandomMaster::class.java)
         ubicacionService.randomGenerator = randomGenerator
+        dataNeo4j.datosParaUbicacionService()
+        ubicacionService.conectar("Florencio Varela","Quilmes","Terrestre")
+        ubicacionService.conectar("Florencio Varela","Berazategui","Terrestre")
+        ubicacionService.conectar("Quilmes","Berazategui","Terrestre")
+        ubicacionService.conectar("Florencio Varela","Sarandi","Terrestre")
+        ubicacionService.conectar("Florencio Varela","Florencio Varela","Terrestre")
+        ubicacionService.conectar("Berazategui","Florencio Varela","Terrestre")
+        ubicacionService.conectar("Berazategui","Berazategui","Terrestre")
+
     }
 
     @Test
