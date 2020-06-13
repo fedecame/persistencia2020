@@ -14,9 +14,8 @@ import org.neo4j.driver.Values
 class Neo4jUbicacionDAO : UbicacionDAO {
 
     override fun conectar(ubicacion1: String, ubicacion2: String, tipoCamino: String) {
-        val session = TransactionNeo4j.currentTransaction
         val transaction = TransactionNeo4j.currentTransaction
-        val query = """Match(ubicacionUno:Ubicacion {nombre:"$ubicacion1"}),(ubicacionDos:Ubicacion{nombre:"$ubicacion2"}) MERGE (ubicacionUno)-[c:Camino {nombre:"$tipoCamino"}]->(ubicacionDos) """
+        val query = """Match(ubicacionUno:Ubicacion {nombre:"$ubicacion1"}),(ubicacionDos:Ubicacion{nombre:"$ubicacion2"}) MERGE (ubicacionUno)-[c:$tipoCamino]->(ubicacionDos)"""
         transaction.run(query)
     }
 
@@ -56,7 +55,10 @@ class Neo4jUbicacionDAO : UbicacionDAO {
 
     fun esAledaña(nombreDeUbicacion: String, uPosibleAledaña: String) {
         var transaction = TransactionNeo4j.currentTransaction
-        var query = """ Match(u1:Ubicacion {nombre:"$nombreDeUbicacion"})-[c:Camino]->(u2:Ubicacion {nombre:"$uPosibleAledaña" }) return(c) """
+        var query = """ Match(u1:Ubicacion {nombre:"$nombreDeUbicacion"})-[c]->(u2:Ubicacion {nombre:"$uPosibleAledaña" }) return(c) """
+
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~ VAMOS LOS PIBES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~ Query: ~~~~~~~~~~~~~~~~~~~~~~~ \n   $query")
         var result = transaction.run(query)
         if (result.list().isEmpty()) {
             throw UbicacionMuyLejana(nombreDeUbicacion,uPosibleAledaña)
