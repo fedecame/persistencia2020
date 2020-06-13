@@ -15,6 +15,7 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEstadisticasDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
+import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jDataDAO
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
@@ -227,8 +228,9 @@ class EstadisticasDAOTest {
 
     @After
     fun eliminarTodo(){
-        TransactionRunner.addHibernate().runTrx {
+        TransactionRunner.addHibernate().addNeo4j().runTrx {
             HibernateDataDAO().clear()
+            Neo4jDataDAO().clear()
         }
     }
 }

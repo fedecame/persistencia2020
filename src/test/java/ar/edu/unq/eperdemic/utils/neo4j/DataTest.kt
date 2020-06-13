@@ -22,6 +22,6 @@ class DataTest {
 
     @After
     fun eliminarTodo(){
-        //neo4DataDao.eliminarTodo()
+//        neo4DataDao.eliminarTodo()
     }
 }

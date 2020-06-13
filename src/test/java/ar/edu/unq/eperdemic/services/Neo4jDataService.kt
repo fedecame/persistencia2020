@@ -1,6 +1,8 @@
 package ar.edu.unq.eperdemic.services
 
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jDataDAO
+import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.utils.DataService
 
@@ -8,11 +10,12 @@ class Neo4jDataService : DataService{
     //NonePlace es un nodo huerfano
     private val ubicaciones = listOf("Quilmes", "Remedios de Escalada", "Ezpeleta", "Narnia", "Babilonia", "Zion", "Mordor", "WonderLand", "elNodoSolitario")
     val neo4jDataDAO = Neo4jDataDAO()
+    val ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO())
 
     //Esto genera un grafo como el de la imagen
     override fun crearSetDeDatosIniciales() {
+        ubicaciones.forEach {ubicacionService.crearUbicacion(it)}
         TransactionRunner.addNeo4j().runTrx {
-            ubicaciones.forEach {neo4jDataDAO.crear(it)}
             this.conectarUnidireccionales()
             this.conectarBidireccionales()
         }

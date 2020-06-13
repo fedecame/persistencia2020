@@ -44,27 +44,23 @@ class capacidadDeExpancionTest {
             HibernateDataDAO().clear()
             Neo4jDataDAO().clear()
         }
-        //
+
+        dataService = Neo4jDataService()
+        dataService.crearSetDeDatosIniciales()
         val ubicacionDao = HibernateUbicacionDAO()
         val vectorDao = HibernateVectorDAO()
         sut = UbicacionServiceImpl(ubicacionDao)
-        dataService = Neo4jDataService()
         vectorService = VectorServiceImpl(vectorDao, ubicacionDao)
         hibernatUbicacionService = UbicacionServiceImpl(ubicacionDao)
 
+//        narnia = hibernatUbicacionService.crearUbicacion( "Narnia")
+
         //No llega a ningun lado. A el llegan por Aereo
-        narnia = hibernatUbicacionService.crearUbicacion( "Narnia")
+        narnia = hibernatUbicacionService.recuperarUbicacion("Narnia")
 
-        val testNarnia =  hibernatUbicacionService.recuperarUbicacion("Narnia")
-//        if (testNarnia.nombreUbicacion == "Narnia") {
-//            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ VAMOS LOS PIBES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-//        } else {
-//            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ASDASDASDASDDASDSD ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-//        }
-
-        quilmes = hibernatUbicacionService.crearUbicacion("Quilmes")
-        mordor = hibernatUbicacionService.crearUbicacion("Mordor")
-        elNodoSolitario = hibernatUbicacionService.crearUbicacion("elNodoSolitario")
+        quilmes = hibernatUbicacionService.recuperarUbicacion("Quilmes")
+        mordor = hibernatUbicacionService.recuperarUbicacion("Mordor")
+        elNodoSolitario = hibernatUbicacionService.recuperarUbicacion("elNodoSolitario")
         vectorAnimal = Vector()
         vectorAnimal.tipo = Animal()
         vectorAnimal.ubicacion = quilmes
@@ -81,7 +77,6 @@ class capacidadDeExpancionTest {
         vectorService.crearVector(vectorHumano)
         vectorService.crearVector(vectorInsectoA)
         vectorService.crearVector(vectorInsectoB)
-        dataService.crearSetDeDatosIniciales()
     }
 
     @Test
@@ -174,13 +169,6 @@ class capacidadDeExpancionTest {
         otroVectorInsecto.tipo = Insecto()
         otroVectorInsecto.ubicacion = narnia
         vectorService.crearVector(otroVectorInsecto)
-//
-//        val testVector = vectorService.recuperarVector(otroVectorInsecto.id!!.toInt())
-//        if (testVector.ubicacion!!.nombreUbicacion == "Narnia") {
-//            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ VAMOS LOS PIBES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-//        } else {
-//            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ASDASDASDASDDASDSD ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-//        }
 
         val capacidad0 = hibernatUbicacionService.capacidadDeExpansion(otroVectorInsecto.id!!, 1)
         Assert.assertEquals(1, capacidad0)

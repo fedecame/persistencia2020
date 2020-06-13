@@ -10,6 +10,7 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jUbicacionDAO
+import ar.edu.unq.eperdemic.services.HibernateDataService
 import ar.edu.unq.eperdemic.services.Neo4jDataService
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
@@ -25,7 +26,7 @@ import org.mockito.Mockito.mock
 
 class UbicacionNeo4jTest {
     lateinit var neo4jData: Neo4jDataService
-
+    lateinit var hibernateDataService: HibernateDataService
 
     var ubicacionService=UbicacionServiceImpl(HibernateUbicacionDAO())
     var mockUbicacionService = mock(UbicacionServiceImpl(HibernateUbicacionDAO()).javaClass)
@@ -39,6 +40,9 @@ class UbicacionNeo4jTest {
     @Before
     fun setUp() {
         neo4jData = Neo4jDataService()
+        hibernateDataService = HibernateDataService()
+        neo4jData.eliminarTodo()
+        hibernateDataService.eliminarTodo()
         neo4jData.crearSetDeDatosIniciales()
     }
 
@@ -81,7 +85,9 @@ class UbicacionNeo4jTest {
         val nonePlace = ubicacionService.recuperarUbicacion("NonePlace")
         vector.ubicacion = quilmes
         quilmes.vectores.add(vector)
-        HibernateUbicacionDAO().actualizar(quilmes)
+        TransactionRunner.addHibernate().runTrx {
+            HibernateUbicacionDAO().actualizar(quilmes)
+        }
         ubicacionService.moverMasCorto(vector.id!!, nonePlace.nombreUbicacion)
     }
 
@@ -91,7 +97,9 @@ class UbicacionNeo4jTest {
         val zion = ubicacionService.recuperarUbicacion("Zion")
         vector.ubicacion = mordor
         mordor.vectores.add(vector)
-        HibernateUbicacionDAO().actualizar(mordor)
+        TransactionRunner.addHibernate().runTrx {
+            HibernateUbicacionDAO().actualizar(mordor)
+        }
         ubicacionService.moverMasCorto(vector.id!!, zion.nombreUbicacion)
     }
 
@@ -104,7 +112,9 @@ class UbicacionNeo4jTest {
         vectorInsecto.ubicacion = zion
         zion.vectores.add(vectorInsecto)
         vectorService.crearVector(vectorInsecto)
-        HibernateUbicacionDAO().actualizar(zion)
+        TransactionRunner.addHibernate().runTrx {
+            HibernateUbicacionDAO().actualizar(zion)
+        }
         ubicacionService.moverMasCorto(vectorInsecto.id!!, ezpeleta.nombreUbicacion)
     }
 
@@ -117,7 +127,9 @@ class UbicacionNeo4jTest {
         val mordor = ubicacionService.recuperarUbicacion("Mordor")
         vector.ubicacion = zion
         zion.vectores.add(vector)
-        HibernateUbicacionDAO().actualizar(zion)
+        TransactionRunner.addHibernate().runTrx {
+            HibernateUbicacionDAO().actualizar(zion)
+        }
         ubicacionService.moverMasCorto(vector.id!!, mordor.nombreUbicacion)
         //crear un spy de lo que sepa que se movio el vector a la nueva ubicacion
 
@@ -136,7 +148,9 @@ class UbicacionNeo4jTest {
         vectorInsecto.tipo = Insecto()
         vectorInsecto.ubicacion = narnia
         narnia.vectores.add(vectorInsecto)
-        HibernateUbicacionDAO().actualizar(narnia)
+        TransactionRunner.addHibernate().runTrx {
+            HibernateUbicacionDAO().actualizar(narnia)
+        }
         val neo4jDataDao = Neo4jDataDAO()
         neo4jDataDao.conectUni("Narnia", "Quilmes", "Aereo")
         ubicacionService.moverMasCorto(vectorInsecto.id!!, babilonia.nombreUbicacion)
@@ -157,7 +171,9 @@ class UbicacionNeo4jTest {
         vectorAnimal.tipo = Animal()
         vectorAnimal.ubicacion = mordor
         mordor.vectores.add(vectorAnimal)
-        HibernateUbicacionDAO().actualizar(mordor)
+        TransactionRunner.addHibernate().runTrx {
+            HibernateUbicacionDAO().actualizar(mordor)
+        }
         ubicacionService.moverMasCorto(vectorAnimal.id!!, babilonia.nombreUbicacion)
         //crear un spy de lo que sepa que se movio el vector a la nueva ubicacion
 
@@ -168,5 +184,6 @@ class UbicacionNeo4jTest {
     @After
     fun eliminarTodo() {
         neo4jData.eliminarTodo()
+        hibernateDataService.eliminarTodo()
     }
 }

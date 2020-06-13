@@ -83,19 +83,19 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
 //        val session = TransactionNeo4j.currentSession
         val transaction = TransactionNeo4j.currentTransaction
 
-        var  query=""" match(u1:Ubicacion{nombre:"${vector.ubicacion?.nombreUbicacion}"})-[c:Camino]-> (u2:Ubicacion{nombre:"${ubicacionDestino?.nombreUbicacion}"}) return(c.nombre)  """
+        var query=""" match(u1:Ubicacion{nombre:"${vector.ubicacion?.nombreUbicacion}"})-[c:Camino]-> (u2:Ubicacion{nombre:"${ubicacionDestino?.nombreUbicacion}"}) return(c.nombre)  """
 
         var result=   transaction.run(query)
 
         if(result.list().isEmpty()){
            return true
-       }
-               else {
-           var camino = result.list().get(0)["(c.nombre)"]
+        }
+        else {
+            var camino = result.list().get(0)["(c.nombre)"]
 
-           return vector.tipo.posiblesCaminos().contains(darTipo(camino.toString())).not()
+            return vector.tipo.posiblesCaminos().contains(darTipo(camino.toString())).not()
 
-       }
+        }
     }
 
     override fun crear(ubicacion: Ubicacion): Ubicacion {
@@ -123,13 +123,6 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
         val nombreUbicacion = vector.ubicacion!!.nombreUbicacion
         val tipos = vector.tipo.posiblesCaminos.map{it.nombre()}
 
-        if (true) {
-            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ VAMOS LOS PIBES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-            print(this.tiposFormateados(tipos, movimientos))
-        } else {
-            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ASDASDASDASDDASDSD ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-        }
-
         val tiposQueryConMovimientos = this.tiposFormateados(tipos, movimientos)
         val transaction = TransactionNeo4j.currentTransaction
         val intQuery =  """
@@ -142,16 +135,20 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
     override fun moverMasCorto(vector: Vector, ubicacion: Ubicacion) {
         val transaction = TransactionNeo4j.currentTransaction
         val tiposDeCaminosPosibles = vector.tipo.posiblesCaminos.map { it.name }
-        val stringDeTiposParaQuery = tiposDeCaminosPosibles.toString().replace(",", "|").trim().drop(1).dropLast(1)
+        val tiposDeLaRelacion = tiposDeCaminosPosibles.toString().replace(",", "|").trim().drop(1).dropLast(1).toString()
 
         val query = """
             MATCH p=shortestPath(
-            (salida:Ubicacion {nombre:${vector.ubicacion!!.nombreUbicacion}})-[:${stringDeTiposParaQuery}*]->(llegada:Ubicacion {nombre:${ubicacion.nombreUbicacion}})
+            (salida:Ubicacion {nombre:${'$'}nombreSalida})-[:${tiposDeLaRelacion}*]->(llegada:Ubicacion {nombre:${'$'}nombreLlegada})
             )
             RETURN p
         """.trimIndent()
 
-        val caminoMasCorto = transaction.run(query).list()
+        val caminoMasCorto = transaction.run(query, Values.parameters(
+                "nombreSalida", vector.ubicacion!!.nombreUbicacion,
+                "tiposDeLaRelacion", tiposDeLaRelacion,
+                "nombreLlegada", ubicacion.nombreUbicacion
+        )).list()
         if (caminoMasCorto.isEmpty()) {
             throw UbicacionNoAlcanzable()
         }
@@ -164,5 +161,3 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
         nombresDeUbicaciones.forEach { this.mover(vector, it) }
     }
 }
-
-
