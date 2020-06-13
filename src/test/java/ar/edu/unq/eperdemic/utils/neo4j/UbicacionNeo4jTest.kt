@@ -39,6 +39,7 @@ class UbicacionNeo4jTest {
 
     @Before
     fun setUp() {
+        vector.tipo = Humano()
         neo4jData = Neo4jDataService()
         hibernateDataService = HibernateDataService()
         neo4jData.eliminarTodo()
@@ -76,13 +77,17 @@ class UbicacionNeo4jTest {
     @Test(expected = NoExisteUbicacion::class)
     fun intentaMoverMasCortoAUnaUbicacionNoPersistida() {
         val fakeLocation = Ubicacion()
+        fakeLocation.nombreUbicacion="CalleFalsa123"
+        val narnia = ubicacionService.recuperarUbicacion("Narnia")
+        vector.ubicacion = narnia
+        vectorService.crearVector(vector)
         ubicacionService.moverMasCorto(vector.id!!, fakeLocation.nombreUbicacion)
     }
 
     @Test(expected = UbicacionNoAlcanzable::class)
     fun intentaMoverMasCortoPeroNoHayCaminosQueLleguenAEsaUbicacion() {
         val quilmes = ubicacionService.recuperarUbicacion("Quilmes")
-        val nonePlace = ubicacionService.recuperarUbicacion("NonePlace")
+        val nonePlace = ubicacionService.recuperarUbicacion("elNodoSolitario")
         vector.ubicacion = quilmes
         quilmes.vectores.add(vector)
         TransactionRunner.addHibernate().runTrx {
@@ -148,11 +153,11 @@ class UbicacionNeo4jTest {
         vectorInsecto.tipo = Insecto()
         vectorInsecto.ubicacion = narnia
         narnia.vectores.add(vectorInsecto)
-        TransactionRunner.addHibernate().runTrx {
-            HibernateUbicacionDAO().actualizar(narnia)
-        }
         val neo4jDataDao = Neo4jDataDAO()
-        neo4jDataDao.conectUni("Narnia", "Quilmes", "Aereo")
+        TransactionRunner.addHibernate().addNeo4j().runTrx {
+            HibernateUbicacionDAO().actualizar(narnia)
+            neo4jDataDao.conectUni("Narnia", "Quilmes", "Aereo")
+        }
         ubicacionService.moverMasCorto(vectorInsecto.id!!, babilonia.nombreUbicacion)
         //crear un spy de lo que sepa que se movio el vector a la nueva ubicacion
 
