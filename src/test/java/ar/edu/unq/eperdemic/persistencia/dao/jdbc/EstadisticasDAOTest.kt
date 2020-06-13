@@ -15,6 +15,7 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEstadisticasDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
+import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jDataDAO
 import ar.edu.unq.eperdemic.services.Neo4jDataService
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
@@ -130,6 +131,14 @@ var dataDaoNeo4j=Neo4jDataService()
         }
         Assert.assertEquals(2, res)
     }
+    @Test
+    fun elEstadisticasDAODevuelve0CuandoNoHayNingunVectorInfectadoEnEsaUbicacion(){
+        var res = 0
+        TransactionRunner.addHibernate().runTrx {
+            res = estadisticasDAO.vectoresInfectados("Mar del Plata")
+        }
+        Assert.assertEquals(0, res)
+    }
 
     @Test
     fun elEstadisticasDAODevuelve1CuandoHayUnVectorInfectadoEnEsaUbicacionMDP(){
@@ -230,9 +239,9 @@ var dataDaoNeo4j=Neo4jDataService()
 
     @After
     fun eliminarTodo(){
-        TransactionRunner.addHibernate().runTrx {
+        TransactionRunner.addHibernate().addNeo4j().runTrx {
             HibernateDataDAO().clear()
-            dataDaoNeo4j.eliminarTodo()
+            Neo4jDataDAO().clear()
         }
     }
 }

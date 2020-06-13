@@ -5,13 +5,19 @@ import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.exception.CaminoNoSoportado
 import ar.edu.unq.eperdemic.modelo.exception.UbicacionMuyLejana
+import ar.edu.unq.eperdemic.modelo.exception.UbicacionNoAlcanzable
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.runner.TransactionNeo4j
 import org.neo4j.driver.Values
+import net.bytebuddy.dynamic.scaffold.TypeWriter
+import org.neo4j.driver.Record
+import org.neo4j.driver.Value
 
 
-class Neo4jUbicacionDAO : UbicacionDAO {
+class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
+      val vectorDao = HibernateVectorDAO()
+//    val session =DriverNeo4j().driver.session()
 
     override fun conectar(ubicacion1: String, ubicacion2: String, tipoCamino: String) {
         val transaction = TransactionNeo4j.currentTransaction
@@ -20,10 +26,23 @@ class Neo4jUbicacionDAO : UbicacionDAO {
     }
 
     override fun conectados(nombreDeUbicacion: String): List<Ubicacion> {
-        val ubicacion = Ubicacion()
-        ubicacion.nombreUbicacion = "TibetDojo"
-        val list = listOf(ubicacion)
-        return list
+        val transaction = TransactionNeo4j.currentTransaction
+        val query = """Match(:Ubicacion {nombre:${'$'}nombreDeUbicacion})-[Camino]->(ubicacionConectada:Ubicacion) Return ubicacionConectada """
+        val result = transaction.run(query,Values.parameters("nombreDeUbicacion",nombreDeUbicacion))
+
+        val tempListNombres = result.list { record: Record ->
+            val ubicacion = record.get(0)
+            val _nombre = ubicacion.get("nombre").asString()
+            _nombre
+        }
+
+        var listaRet  = mutableListOf<Ubicacion>()
+        tempListNombres.forEachIndexed { index, nombre ->
+            listaRet.add(Ubicacion())
+            listaRet.get(index).nombreUbicacion = nombre
+        }
+
+        return listaRet
     }
 
     override fun mover(vector: Vector, nombreUbicacion: String) {
@@ -113,11 +132,12 @@ class Neo4jUbicacionDAO : UbicacionDAO {
     }
 
     override fun crear(ubicacion: Ubicacion): Ubicacion {
-        return Ubicacion()
+        super.crear(ubicacion.nombreUbicacion)
+        return ubicacion
     }
 
     override fun recuperar(nombre: String): Ubicacion {
-        return Ubicacion()
+        TODO("Not yet implemented")
     }
 
     override fun actualizar(ubicacion: Ubicacion) {
@@ -127,7 +147,50 @@ class Neo4jUbicacionDAO : UbicacionDAO {
     override fun agregarVector(vector: Vector, ubicacion: Ubicacion) {
         TODO("Not yet implemented")
     }
+
+    private fun tiposFormateados(tipos : List<String>, movimientos: Int) : String = tipos.toString().toString().replace("[", "[:").replace(",", " |").replace("]", "*0..${movimientos.toString()}]").trim().trim()
+    //tipos.toString().toString().replace("[", "[:").replace(",", " |").replace("]", "]${movimientos.toString()}")+ "*".trim()
+
+    override fun capacidadDeExpansion(vectorId: Long, movimientos: Int): Int {
+        val vector = vectorDao.recuperar(vectorId)
+        val nombreUbicacion = vector.ubicacion!!.nombreUbicacion
+        val tipos = vector.tipo.posiblesCaminos.map{it.nombre()}
+
+        val tiposQueryConMovimientos = this.tiposFormateados(tipos, movimientos)
+        val transaction = TransactionNeo4j.currentTransaction
+        val intQuery =  """
+                        MATCH (n:Ubicacion {nombre:"${nombreUbicacion}"})-${tiposQueryConMovimientos} -> (fof) WHERE fof.nombre <> n.nombre RETURN COUNT(DISTINCT fof) AS result
+                        """
+        val result = transaction.run(intQuery, Values.parameters("nombreUbicacion", nombreUbicacion, "tiposQueryConMovimientos", tiposQueryConMovimientos, "movimientos", movimientos))
+        return result.single().get("result").asInt()
+    }
+
+    override fun moverMasCorto(vector: Vector, ubicacion: Ubicacion) {
+        val transaction = TransactionNeo4j.currentTransaction
+        val tiposDeCaminosPosibles = vector.tipo.posiblesCaminos.map { it.name }
+        val tiposDeLaRelacion = tiposDeCaminosPosibles.toString().replace(",", "|").trim().drop(1).dropLast(1).toString()
+
+        val query = """
+            MATCH p=shortestPath(
+            (salida:Ubicacion {nombre:${'$'}nombreSalida})-[:${tiposDeLaRelacion}*]->(llegada:Ubicacion {nombre:${'$'}nombreLlegada})
+            )
+            RETURN p
+        """.trimIndent()
+
+        val caminoMasCorto = transaction.run(query, Values.parameters(
+                "nombreSalida", vector.ubicacion!!.nombreUbicacion,
+                "tiposDeLaRelacion", tiposDeLaRelacion,
+                "nombreLlegada", ubicacion.nombreUbicacion
+        )).list()
+        if (caminoMasCorto.isEmpty()) {
+            throw UbicacionNoAlcanzable()
+        }
+
+        this.moverPorUbicaciones(vector, caminoMasCorto.toSet().filter { it.size() > 0 }.toList().map{it.get("nombre").toString()})
+
+    }
+
+    private fun moverPorUbicaciones(vector: Vector, nombresDeUbicaciones: List<String>) {
+        nombresDeUbicaciones.forEach { this.mover(vector, it) }
+    }
 }
-
-
-

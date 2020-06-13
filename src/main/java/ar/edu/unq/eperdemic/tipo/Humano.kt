@@ -14,6 +14,4 @@ class Humano() : TipoVector() {
     override fun agregarInfectado(especie: Especie) {
         especie.agregarInfectadoParaADN()
     }
-
-
 }

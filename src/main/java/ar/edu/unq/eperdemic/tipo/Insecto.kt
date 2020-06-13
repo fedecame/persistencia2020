@@ -4,7 +4,7 @@ import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.TipoCamino
 
 class Insecto() : TipoVector() {
-     override var posiblesCaminos=listOf<TipoCamino>(TipoCamino.Aereo)
+    override var posiblesCaminos=listOf<TipoCamino>(TipoCamino.Aereo, TipoCamino.Terrestre)
 
     override fun puedeSerContagiadoPor(tipo : TipoVector): Boolean =  tipo.esHumano() || tipo.esAnimal()
 

@@ -17,7 +17,7 @@ class DataTest {
 
     @Test
     fun falseMain(){
-        //Assert.assertTrue(true)
+        Assert.assertTrue(true)
     }
 
     @After
