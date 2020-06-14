@@ -43,7 +43,7 @@ class Vector {
 
     fun infectarse(especie: Especie){
         if (especies.find { it.id == especie.id } == null) {
-            this.cambiarEstado(Infectado())
+//            this.cambiarEstado(Infectado())
             this.agregarEspecie(especie)
             tipo.agregarInfectado(especie)
         }
@@ -55,6 +55,7 @@ class Vector {
 
     fun agregarEspecie(unaEspecie: Especie){
         especies.add(unaEspecie)
+        this.cambiarEstado(Infectado())
     }
 
     fun contagiarsePor(vectorQueContagia: Vector) {

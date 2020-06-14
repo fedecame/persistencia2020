@@ -35,24 +35,34 @@ class HibernateUbicacionDAO : HibernateDAO<Ubicacion>(Ubicacion::class.java), Ub
     }
 
     override fun conectar(ubicacion1: String, ubicacion2: String, tipoCamino: String) {
-        TODO("Not yet implemented")
+//        TODO("Should not be implemented")
     }
 
     override fun conectados(nombreDeUbicacion: String): List<Ubicacion> {
-        TODO("Not yet implemented")
+//        TODO("Should not be implemented")
+        return listOf()
     }
 
     override fun mover(vector: Vector, nombreUbicacion: String) {
-        TODO("Not yet implemented")
+        val ubicacionNueva = this.recuperar(nombreUbicacion) // recupero la ubicacion nueva
+        var ubicacionOrigen = this.recuperar(vector.ubicacion?.nombreUbicacion!!) // recupero la ubicacion original
+        if (ubicacionOrigen != null) { // si el vector no tenia ubicacion, no rompo nada
+            // remuevo el vector que se mueve de la ubicacion de origen
+            ubicacionOrigen.vectores.removeIf { it.id != null && it.id == vector.id }
+            this.actualizar(ubicacionOrigen)
+        }
+        HibernateVectorDAO().contagiar(vector, ubicacionNueva.vectores.toList()) // contagio a todos los vectores de la ubicacion nueva
+        vector.ubicacion = ubicacionNueva // asigno Ubicacion de Vector
+        ubicacionNueva.vectores.add(vector) // agrego el vector a la nueva ubicacion
+        this.actualizar(ubicacionNueva)
     }
 
     override fun moverMasCorto(vector: Vector, ubicacion: Ubicacion) {
-        TODO("Not yet implemented")
+//        TODO("Should not be implemented")
     }
 
     override fun capacidadDeExpansion(vectorId: Long, movimientos: Int): Int {
-        //Esto no deberia ser implementado en Hibernate
-
+//        TODO("Should not be implemented")
         return 0
     }
 

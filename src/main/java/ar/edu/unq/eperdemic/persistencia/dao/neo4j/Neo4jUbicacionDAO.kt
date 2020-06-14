@@ -57,27 +57,27 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
         }
     }
 
-    override fun capacidadDeExpansion(vectorId: Long, movimientos: Int): Int {
-        val vector = HibernateVectorDAO().recuperar(vectorId)
-        val nombreUbicacion = vector.ubicacion!!.nombreUbicacion
-        val tipos = vector.tipo.posiblesCaminos.map{it.nombre()}
-        val tiposQueryConMovimientos = this.tiposFormateados(tipos, movimientos)
-        val transaction = TransactionNeo4j.currentTransaction
-        val intQuery =  """
-                        MATCH (n:Ubicacion {nombre:"${nombreUbicacion}"})-${tiposQueryConMovimientos} -> (fof) WHERE fof.nombre <> n.nombre RETURN COUNT(DISTINCT fof) AS result
-                        """
-        val result = transaction.run(intQuery, Values.parameters("nombreUbicacion", nombreUbicacion, "tiposQueryConMovimientos", tiposQueryConMovimientos, "movimientos", movimientos))
-        return result.single().get("result").asInt()
-        }
+//    override fun capacidadDeExpansion(vectorId: Long, movimientos: Int): Int {
+//        val vector = HibernateVectorDAO().recuperar(vectorId)
+//        val nombreUbicacion = vector.ubicacion!!.nombreUbicacion
+//        val tipos = vector.tipo.posiblesCaminos.map{it.nombre()}
+//        val tiposQueryConMovimientos = this.tiposFormateados(tipos, movimientos)
+//        val transaction = TransactionNeo4j.currentTransaction
+//        val intQuery =  """
+//                        MATCH (n:Ubicacion {nombre:"${nombreUbicacion}"})-${tiposQueryConMovimientos} -> (fof) WHERE fof.nombre <> n.nombre RETURN COUNT(DISTINCT fof) AS result
+//                        """
+//        val result = transaction.run(intQuery, Values.parameters("nombreUbicacion", nombreUbicacion, "tiposQueryConMovimientos", tiposQueryConMovimientos, "movimientos", movimientos))
+//        return result.single().get("result").asInt()
+//        }
 
-    private fun tiposFormateados(tipos : List<String>, movimientos: Int) : String = tipos.toString().toString().replace("[", "[:").replace(",", " |").replace("]", "*0..${movimientos.toString()}]").trim().trim()
+//    private fun tiposFormateados(tipos : List<String>, movimientos: Int) : String = tipos.toString().toString().replace("[", "[:").replace(",", " |").replace("]", "*0..${movimientos.toString()}]").trim().trim()
 
     fun esAledaña(nombreDeUbicacion: String, uPosibleAledaña: String) {
         var transaction = TransactionNeo4j.currentTransaction
         var query = """ Match(u1:Ubicacion {nombre:"$nombreDeUbicacion"})-[c]->(u2:Ubicacion {nombre:"$uPosibleAledaña" }) return(c) """
 
-        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~ VAMOS LOS PIBES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~ Query: ~~~~~~~~~~~~~~~~~~~~~~~ \n   $query")
+//        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~ VAMOS LOS PIBES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+//        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~ Query: ~~~~~~~~~~~~~~~~~~~~~~~ \n   $query")
         var result = transaction.run(query)
         if (result.list().isEmpty()) {
             throw UbicacionMuyLejana(nombreDeUbicacion,uPosibleAledaña)
@@ -87,9 +87,12 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
     fun noEsCapazDeMoverPorCamino(vector: Vector, ubicacionDestino: String) {
         var transaction = TransactionNeo4j.currentTransaction
         var nombreUbicacionActual = vector.ubicacion?.nombreUbicacion
-        var query = """ match(u1:Ubicacion{nombre:"$nombreUbicacionActual"})-[c:Camino ]-> (u2:Ubicacion{nombre:"$ubicacionDestino"}) return(c.nombre)  """
+        val tiposDeCaminosPosibles = vector.tipo.posiblesCaminos.map { it.name }
+        val tiposDeLaRelacion = tiposDeCaminosPosibles.toString().replace(",", "|").trim().drop(1).dropLast(1).toString()
+
+        var query = """ match(u1:Ubicacion{nombre:"$nombreUbicacionActual"})-[c:${tiposDeLaRelacion}]-> (u2:Ubicacion{nombre:"$ubicacionDestino"}) return(c)  """
         var result = transaction.run(query).list()
-        if ((result.map { i-> vector.tipo.posiblesCaminos.contains(darTipo(i.get("nombre").toString()))}).contains(true) ){
+        if (result.isEmpty()){
             throw CaminoNoSoportado()
         }
     }

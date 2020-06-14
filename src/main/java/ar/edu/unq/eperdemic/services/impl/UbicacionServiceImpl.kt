@@ -52,11 +52,14 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
     override fun mover(vectorId: Int, nombreUbicacion: String) {
         TransactionRunner.addHibernate().addNeo4j().runTrx {
             var vector = vectorDao.recuperar(vectorId)
-            neo4jUbicacionDAO.esAledaña(vector.ubicacion?.nombreUbicacion.toString(), nombreUbicacion)
-            neo4jUbicacionDAO.noEsCapazDeMoverPorCamino(vector, nombreUbicacion)
-            vectorService.mover(vectorId,nombreUbicacion)
-            vector.ubicacion=ubicacionDao.recuperar(nombreUbicacion)//actualizo Ubicacion de Vector
-            vectorDao.actualizar(vector)
+            neo4jUbicacionDAO.esAledaña(vector.ubicacion?.nombreUbicacion.toString(), nombreUbicacion) // Cambiar el nombre del mensaje
+            neo4jUbicacionDAO.noEsCapazDeMoverPorCamino(vector, nombreUbicacion) // Cambiar el nombre del mensaje
+            HibernateUbicacionDao.mover(vector, nombreUbicacion)
+
+
+//            vectorService.mover(vectorId,nombreUbicacion)
+//            vector.ubicacion=ubicacionDao.recuperar(nombreUbicacion)//actualizo Ubicacion de Vector
+//            vectorDao.actualizar(vector)
         }
     }
 

@@ -17,13 +17,13 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
     override fun infectar(vector: Vector, especie: Especie) {
         TransactionRunner.addHibernate().runTrx { vectorDao.infectar(vector,especie) }    }
 
-    override fun mover(vectorId: Int, nombreUbicacion: String) {
-
-            var vector= vectorDao.recuperar(vectorId)
-            var ubicacionOrigen=ubicacionDao.recuperar(vector.ubicacion?.nombreUbicacion!!)
-            vector.ubicacion=ubicacionDao.recuperar(nombreUbicacion)//actualizo Ubicacion de Vector
-            vectorDao.actualizar(vector)
-        }
+//    override fun mover(vectorId: Int, nombreUbicacion: String) {
+//
+//            var vector= vectorDao.recuperar(vectorId)
+//            var ubicacionOrigen=ubicacionDao.recuperar(vector.ubicacion?.nombreUbicacion!!)
+//            vector.ubicacion=ubicacionDao.recuperar(nombreUbicacion)//actualizo Ubicacion de Vector
+//            vectorDao.actualizar(vector)
+//        }
 
     override fun enfermedades(vectorId: Int): List<Especie> = TransactionRunner.addHibernate().runTrx { vectorDao.enfermedades(vectorId) }
 
