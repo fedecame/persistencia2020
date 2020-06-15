@@ -6,7 +6,7 @@ import org.junit.Test
 import kotlin.random.Random
 
 class RandomMasterTest {
-    val randomMaster = RandomMasterImpl()
+    val randomMaster = RandomMasterImpl
 
     @Test
     fun giveMeARandomNumberDaUnDouble(){

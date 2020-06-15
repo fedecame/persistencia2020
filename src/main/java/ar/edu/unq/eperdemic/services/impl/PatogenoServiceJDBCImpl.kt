@@ -26,22 +26,26 @@ class PatogenoServiceJDBCImpl(var patogenoDAO: PatogenoDAO) : PatogenoService {
     }
 
     override fun cantidadDeInfectados(especieId: Int): Int {
-        TODO("Not yet implemented")
+//        TODO("Not yet implemented")
+        return 0
     }
 
     override fun esPandemia(especieId: Int): Boolean {
-        TODO("Not yet implemented")
+//        TODO("Not yet implemented")
+        return false
     }
 
     override fun recuperarEspecie(id: Int): Especie {
-        TODO("Not yet implemented")
+//        TODO("Not yet implemented")
+        return Especie()
     }
 
     override fun crearEspecie(especie: Especie): Int {
-        TODO("Not yet implemented")
+//        TODO("Not yet implemented")
+        return 0
     }
 
     override fun actualizarEspecie(especie: Especie) {
-        TODO("Not yet implemented")
+//        TODO("Not yet implemented")
     }
 }

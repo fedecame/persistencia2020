@@ -4,9 +4,10 @@ import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.TipoCamino
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.utility.random.RandomMaster
+import ar.edu.unq.eperdemic.utility.random.RandomMasterImpl
 
 abstract class TipoVector(){
-    lateinit var randomGenerator : RandomMaster
+    var randomGenerator : RandomMaster = RandomMasterImpl
     abstract  var posiblesCaminos :List<TipoCamino>
 
     fun posiblesCaminos():List<TipoCamino>{

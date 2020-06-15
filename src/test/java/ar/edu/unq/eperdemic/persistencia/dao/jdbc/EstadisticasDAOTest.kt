@@ -47,7 +47,6 @@ class EstadisticasDAOTest {
     lateinit var ubicacion1 : Ubicacion
     lateinit var ubicacion2 : Ubicacion
     lateinit var patogeno : Patogeno
-var dataDaoNeo4j=Neo4jDataService()
     @Before
     fun setUp(){
         estadisticasDAO = HibernateEstadisticasDAO()

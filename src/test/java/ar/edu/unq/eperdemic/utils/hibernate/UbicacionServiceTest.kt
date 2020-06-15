@@ -120,25 +120,25 @@ class UbicacionServiceTest {
         ubicacionService.crearUbicacion("Quilmes")
         ubicacionService.mover(1,"Quilmes")
         var vectorActualizado=vectorService.recuperarVector(1)
-    Assert.assertEquals(vectorActualizado.ubicacion?.nombreUbicacion,"Quilmes")
+        Assert.assertEquals(vectorActualizado.ubicacion?.nombreUbicacion,"Quilmes")
     }
 
-@Test (expected = NoExisteUbicacion::class)
- fun seMueveAUbicacionQueNoExiste(){
-    vector.ubicacion=ubicacionCreada
-    vectorService.crearVector(vector)
-    ubicacionService.mover(1,"Sarandi")
-}
+    @Test (expected = NoExisteUbicacion::class)
+    fun seMueveAUbicacionQueNoExiste(){
+        vector.ubicacion=ubicacionCreada
+        vectorService.crearVector(vector)
+        ubicacionService.mover(1,"Sarandi")
+    }
 
-@Test
-fun alMoverAMismaUbicacionDondeEstaSeQuedaEnLaMismaUbicacion(){
-    vector.ubicacion=ubicacionCreada
-    vectorService.crearVector(vector)
+    @Test
+    fun alMoverAMismaUbicacionDondeEstaSeQuedaEnLaMismaUbicacion(){
+        vector.ubicacion=ubicacionCreada
+        vectorService.crearVector(vector)
 
-    ubicacionService.mover(1,"Florencio Varela")
-  var vectorActualizado= vectorService.recuperarVector(1)
-          Assert.assertEquals(vectorActualizado.ubicacion?.nombreUbicacion,"Florencio Varela")
-}
+        ubicacionService.mover(1,"Florencio Varela")
+        var vectorActualizado= vectorService.recuperarVector(1)
+        Assert.assertEquals(vectorActualizado.ubicacion?.nombreUbicacion,"Florencio Varela")
+    }
 
     @Test(expected = IDVectorNoEncontradoException::class )
     fun moverUnVectorQueNoExiste(){
@@ -164,7 +164,7 @@ fun alMoverAMismaUbicacionDondeEstaSeQuedaEnLaMismaUbicacion(){
     fun  alMoverVectorAlojadoEnUnaPosicionLaUbicacionTieneUnVectorMenosAlojado(){
         vector.ubicacion=ubicacionCreada
         vectorService.crearVector(vector)
-      var  ubicacionCreadaActualizada=ubicacionService.recuperarUbicacion("Florencio Varela")
+        var  ubicacionCreadaActualizada=ubicacionService.recuperarUbicacion("Florencio Varela")
         ubicacionCreada1 = ubicacionService.crearUbicacion("Quilmes")
         Assert.assertEquals(ubicacionCreadaActualizada.vectores.size,1)
         ubicacionService.mover(1,"Quilmes")
@@ -176,7 +176,7 @@ fun alMoverAMismaUbicacionDondeEstaSeQuedaEnLaMismaUbicacion(){
         var ubicacion= ubicacionService.recuperarUbicacion("Florencio Varela")
         Assert.assertEquals(ubicacion.nombreUbicacion,"Florencio Varela")
     }
-    
+
     @Test(expected =  NoExisteUbicacion::class)
     fun recuperarUbicacionQueNoExiste(){
         ubicacionService.recuperarUbicacion("Avellaneda")

@@ -45,7 +45,8 @@ class HibernateUbicacionDAO : HibernateDAO<Ubicacion>(Ubicacion::class.java), Ub
 
     override fun mover(vector: Vector, nombreUbicacion: String) {
         val ubicacionNueva = this.recuperar(nombreUbicacion) // recupero la ubicacion nueva
-        var ubicacionOrigen = this.recuperar(vector.ubicacion?.nombreUbicacion!!) // recupero la ubicacion original
+        val nombreUbicacionOrigen = vector.ubicacion!!.nombreUbicacion
+        val ubicacionOrigen = this.recuperar(nombreUbicacionOrigen) // recupero la ubicacion original
         if (ubicacionOrigen != null) { // si el vector no tenia ubicacion, no rompo nada
             // remuevo el vector que se mueve de la ubicacion de origen
             ubicacionOrigen.vectores.removeIf { it.id != null && it.id == vector.id }

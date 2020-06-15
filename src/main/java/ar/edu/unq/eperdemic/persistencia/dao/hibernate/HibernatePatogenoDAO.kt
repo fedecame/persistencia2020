@@ -23,11 +23,12 @@ class HibernatePatogenoDAO  : HibernateDAO<Patogeno>(Patogeno::class.java), Pato
     }
 
     override fun recuperarATodos(): List<Patogeno> {
-        TODO("Not yet implemented")
+//        TODO("Not yet implemented")
+        return listOf()
     }
 
     override fun eliminarTodos() {
-        TODO("Not yet implemented")
+//        TODO("Not yet implemented")
     }
 
 }

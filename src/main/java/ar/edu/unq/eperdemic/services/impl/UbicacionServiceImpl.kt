@@ -3,6 +3,7 @@ package ar.edu.unq.eperdemic.services.impl
 import ar.edu.unq.eperdemic.estado.Infectado
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.modelo.exception.MoverMismaUbicacion
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
@@ -19,7 +20,7 @@ import ar.edu.unq.eperdemic.utility.random.RandomMasterImpl
 class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionService {
     var vectorDao = HibernateVectorDAO()
 //    var vectorService: VectorService = VectorServiceImpl(vectorDao, HibernateUbicacionDAO())
-    var randomGenerator: RandomMaster = RandomMasterImpl()
+    var randomGenerator: RandomMaster = RandomMasterImpl
     var neo4jUbicacionDAO=Neo4jUbicacionDAO()
 
     override fun recuperarUbicacion(nombreUbicacion: String):Ubicacion{
@@ -51,15 +52,15 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
 
     override fun mover(vectorId: Int, nombreUbicacion: String) {
         TransactionRunner.addHibernate().addNeo4j().runTrx {
-            var vector = vectorDao.recuperar(vectorId)
-            neo4jUbicacionDAO.esAledaña(vector.ubicacion?.nombreUbicacion.toString(), nombreUbicacion) // Cambiar el nombre del mensaje
+            HibernateUbicacionDao.recuperar(nombreUbicacion) // Valida que exista la ubicacion en la base de datos
+            val vector = vectorDao.recuperar(vectorId)
+            val ubicacionInicial = vector.ubicacion!!.nombreUbicacion
+            if (ubicacionInicial == nombreUbicacion) {
+                throw MoverMismaUbicacion()
+            }
+            neo4jUbicacionDAO.esAledaña(ubicacionInicial, nombreUbicacion) // Cambiar el nombre del mensaje
             neo4jUbicacionDAO.noEsCapazDeMoverPorCamino(vector, nombreUbicacion) // Cambiar el nombre del mensaje
             HibernateUbicacionDao.mover(vector, nombreUbicacion)
-
-
-//            vectorService.mover(vectorId,nombreUbicacion)
-//            vector.ubicacion=ubicacionDao.recuperar(nombreUbicacion)//actualizo Ubicacion de Vector
-//            vectorDao.actualizar(vector)
         }
     }
 
