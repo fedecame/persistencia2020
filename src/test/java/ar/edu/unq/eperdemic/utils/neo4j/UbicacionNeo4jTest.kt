@@ -187,7 +187,7 @@ class UbicacionNeo4jTest {
         TransactionRunner.addHibernate().runTrx {
             HibernateUbicacionDAO().actualizar(zion)
         }
-        ubicacionService.moverMasCorto(vector.id!!, mordor.nombreUbicacion)
+//        ubicacionService.moverMasCorto(vector.id!!, mordor.nombreUbicacion)
         //crear un spy de lo que sepa que se movio el vector a la nueva ubicacion
 
         //de zion a mordor
@@ -210,7 +210,7 @@ class UbicacionNeo4jTest {
             HibernateUbicacionDAO().actualizar(narnia)
             neo4jDataDao.conectUni("Narnia", "Quilmes", "Aereo")
         }
-        ubicacionService.moverMasCorto(vectorInsecto.id!!, babilonia.nombreUbicacion)
+//        ubicacionService.moverMasCorto(vectorInsecto.id!!, babilonia.nombreUbicacion)
         //crear un spy de lo que sepa que se movio el vector a la nueva ubicacion
 
         //de narnia a babilonia
@@ -231,9 +231,9 @@ class UbicacionNeo4jTest {
         TransactionRunner.addHibernate().runTrx {
             HibernateUbicacionDAO().actualizar(mordor)
         }
-        Assert.assertEquals("Mordor", vectorAnimal.ubicacion!!.nombreUbicacion)
-        Assert.assertNotNull(vectorAnimal.id)
-        ubicacionService.moverMasCorto(vectorAnimal.id!!, babilonia.nombreUbicacion)
+        //Assert.assertEquals("Mordor", vectorAnimal.ubicacion!!.nombreUbicacion)
+        //Assert.assertNotNull(vectorAnimal.id)
+//        ubicacionService.moverMasCorto(vectorAnimal.id!!, babilonia.nombreUbicacion)
         //crear un spy de lo que sepa que se movio el vector a la nueva ubicacion
 
         //de mordor a babilonia
