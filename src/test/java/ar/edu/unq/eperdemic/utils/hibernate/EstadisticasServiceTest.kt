@@ -152,48 +152,73 @@ class EstadisticasServiceTest {
     }
 
     @Test
-    fun elEstadisticasServiceDevuelveUnReporteConDosVectoresPresentes2CuandoHayDosVectoresEnEsaUbicacion(){
+    fun elEstadisticasServiceDevuelveUnReporteConDosVectoresPresentesCuandoHayDosVectoresEnEsaUbicacion(){
+        val jamaica = ubicacionService.crearUbicacion("Jamaica")
         val vector2 = Vector()
         vector2.tipo = Insecto()
-        vector2.estado = Infectado()
-        vector2.estado = estado
-        vector2.ubicacion = ubicacion0
+        vector2.estado = Sano()
+        vector2.ubicacion = jamaica
         vectorService.crearVector(vector2)
-        ubicacionService.mover(vector.id!!.toInt(), ubicacion0.nombreUbicacion)
-        val reporte = estadisticasService.reporteDeContagios("Quilmes")
+        vector.ubicacion = jamaica
+        jamaica.vectores.add(vector)
+        TransactionRunner.addNeo4j().addHibernate().runTrx {
+            ubicacionDAO.actualizar(jamaica)
+        }
+        val reporte = estadisticasService.reporteDeContagios("Jamaica")
         Assert.assertEquals(2, reporte.vectoresPresentes)
     }
 
     private fun crearNConEstadoEn(cant : Int, estado : EstadoVector, ubicacion : String){
+        val ubicacionModelo = ubicacionService.recuperarUbicacion(ubicacion)
         repeat(cant){
-            var vectorInfectado = Vector()
-            vectorInfectado.tipo = tipo
-            vectorInfectado.estado = estado
-            vectorInfectado.ubicacion = ubicacionService.recuperarUbicacion(ubicacion)
-            vectorInfectado.agregarEspecie(especie)
-            vectorService.crearVector(vectorInfectado)
-            ubicacionService.mover(vectorInfectado.id!!.toInt(), ubicacion)
+            var vectorHumano = Vector()
+            vectorHumano.tipo = tipo
+            vectorHumano.ubicacion = ubicacionModelo
+            val nuevaEspecie = Especie()
+            nuevaEspecie.nombre = "HibernateEsBasura"
+            nuevaEspecie.cantidadInfectadosParaADN = 50
+            nuevaEspecie.paisDeOrigen = "Jamaica"
+            if (estado is Infectado) {
+                vectorHumano.agregarEspecie(nuevaEspecie)
+            }
+            vectorService.crearVector(vectorHumano)
+            ubicacionModelo.vectores.add(vectorHumano)
+            TransactionRunner.addHibernate().addNeo4j().runTrx {
+                ubicacionDAO.actualizar(ubicacionModelo)
+            }
         }
     }
 
     @Test
     fun elEstadisticasServiceDevuelveUnReporteCon0VectoresInfectadosCuandoNoHayNingunVectorInfectadoEnEsaUbicacion(){
-        val reporte = estadisticasService.reporteDeContagios("Mar del Plata")
+        val ubicacionVacia = ubicacionService.crearUbicacion("NoTieneVectoresInfectados")
+        val vectorSano = Vector()
+        vectorSano.estado = Sano()
+        vectorSano.tipo = Humano()
+        vectorSano.ubicacion = ubicacionVacia
+        vectorService.crearVector(vectorSano)
+        TransactionRunner.addHibernate().addNeo4j().runTrx {
+            ubicacionDAO.actualizar(ubicacionVacia)
+        }
+        val reporte = estadisticasService.reporteDeContagios("NoTieneVectoresInfectados")
         Assert.assertEquals(0, reporte.vectoresInfecatods)
     }
 
     @Test
-    fun elEstadisticaServiceDevuelveUnReporteCon1VectorInfectadoCuandoHayUnVectorInfectadoEnEsaUbicacionMDP(){
-        this.crearNConEstadoEn(1, Infectado(),"Mar del Plata")
-        val reporte = estadisticasService.reporteDeContagios("Mar del Plata")
+    fun elEstadisticaServiceDevuelveUnReporteCon1VectorInfectadoCuandoHayUnVectorInfectadoEnEsaUbicacionJamaica(){
+        ubicacionService.crearUbicacion("Jamaica")
+        this.crearNConEstadoEn(1, Infectado(),"Jamaica")
+        val reporte = estadisticasService.reporteDeContagios("Jamaica")
         Assert.assertEquals(1, reporte.vectoresInfecatods)
     }
 
     @Test
-    fun elEstadisticasServiceDevuelveUnReporteCon1VectorInfectadoCuandoHayUnVectorInfectadoEnMarDelPlataCuandoHayOtrosVectoresSanos(){
-        this.crearNConEstadoEn(1, Infectado(), "Mar del Plata")
-        this.crearNConEstadoEn(5, Sano(), "Mar del Plata")
-        val reporte = estadisticasService.reporteDeContagios("Mar del Plata")
+    fun elEstadisticasServiceDevuelveUnReporteCon1VectorInfectadoCuandoHayUnVectorInfectadoEnJamaicaCuandoHayOtrosVectoresSanos(){
+        ubicacionService.crearUbicacion("Jamaica")
+
+        this.crearNConEstadoEn(1, Infectado(), "Jamaica")
+        this.crearNConEstadoEn(5, Sano(), "Jamaica")
+        val reporte = estadisticasService.reporteDeContagios("Jamaica")
         Assert.assertEquals(1, reporte.vectoresInfecatods)
     }
 
@@ -298,29 +323,29 @@ class EstadisticasServiceTest {
 
     @Test
     fun enUnaUbicacionConMasDeUnaEspecieElNombreDeLaEspecieMasInfecciosaEsLaQueInfectaAMasVectores(){
-        val paperas = Especie()
         val ubicacionFinal = ubicacionService.crearUbicacion("Maeame")
+        val paperas = Especie()
+        val unaGripe = Especie()
+        unaGripe.paisDeOrigen = "Jamaica"
+        unaGripe.nombre = "GripeJ"
         paperas.paisDeOrigen = "Rusia"
         paperas.nombre = "Paperas"
-        val ubi = "Maeame"
         val vectorRandom = Vector()
         val vectorAlfa = Vector()
         val vectorBeta = Vector()
         vectorRandom.tipo = Humano()
         vectorAlfa.tipo = Insecto()
         vectorBeta.tipo = Animal()
-        vectorRandom.ubicacion = ubicacionFinal
         vectorRandom.infectarse(paperas)
         vectorAlfa.infectarse(paperas)
         vectorBeta.infectarse(paperas)
+        vectorBeta.infectarse(unaGripe)
+        vectorRandom.ubicacion = ubicacionFinal
         vectorAlfa.ubicacion = ubicacionFinal
         vectorBeta.ubicacion= ubicacionFinal
+        vectorService.crearVector(vectorRandom)
         vectorService.crearVector(vectorAlfa)
         vectorService.crearVector(vectorBeta)
-        vectorService.crearVector(vectorRandom)
-        ubicacionService.mover(vectorRandom.id!!.toInt(),ubi)
-        ubicacionService.mover(vectorAlfa.id!!.toInt(), ubi)
-        ubicacionService.mover(vectorBeta.id!!.toInt(),ubi)
         val reporte = estadisticasService.reporteDeContagios("Maeame")
         Assert.assertEquals("Paperas", reporte.nombreDeEspecieMasInfecciosa)
     }
