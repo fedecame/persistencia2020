@@ -11,11 +11,6 @@ class ExpText {
     val sut = Exp(mutableListOf(a))
 
     @Test
-    fun falla(){
-        Assert.assertEquals(1,2)
-    }
-
-    @Test
     fun foo1(){
         val name = a.javaClass.simpleName.toUpperCase()
         print("TEST: $name")
