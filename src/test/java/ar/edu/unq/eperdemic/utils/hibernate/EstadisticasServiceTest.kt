@@ -231,9 +231,9 @@ class EstadisticasServiceTest {
     }
 
     @Test
-    fun  laEspecieMasInfecciosaEsLaUnicaEspecieQueHayEnQuilmesYEsAlgo3(){
+    fun  laEspecieMasInfecciosaEsLaUnicaEspecieQueHayEnQuilmesYEsAlgo(){
         val reporte = estadisticasService.reporteDeContagios("Quilmes")
-        Assert.assertEquals("Algo3", reporte.nombreDeEspecieMasInfecciosa)
+        Assert.assertEquals("Algo", reporte.nombreDeEspecieMasInfecciosa)
     }
 
     @Test
@@ -294,7 +294,7 @@ class EstadisticasServiceTest {
         vectorService.crearVector(vectorGama)
 
         val especiesLideres=estadisticasService.lideres()
-        Assert.assertEquals(1, especiesLideres.first().id!!)
+        Assert.assertEquals(2, especiesLideres.first().id!!)
     }
 
     @Test
@@ -457,7 +457,7 @@ class EstadisticasServiceTest {
 
     @After
     fun eliminarTodo(){
-     //   hibernateData.eliminarTodo()
+        hibernateData.eliminarTodo()
         dataDaoNeo4j.eliminarTodo()
     }
 }
