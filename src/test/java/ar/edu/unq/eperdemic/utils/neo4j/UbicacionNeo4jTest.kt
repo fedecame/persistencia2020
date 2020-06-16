@@ -240,6 +240,104 @@ class UbicacionNeo4jTest {
         //tiene que hacer: mordor>zion>babilonia
     }
 
+    @Test (expected = CaminoNoSoportado::class)
+    fun vectorHumanoQuiereMoverPorCaminoAereo(){
+        var vectorHumano= Vector()
+        vectorHumano.tipo=Humano()
+        vectorHumano.estado=Sano()
+        vectorHumano.ubicacion=ubicacionService.recuperarUbicacion("Quilmes")
+        vectorHumano= vectorService.crearVector(vectorHumano)
+        ubicacionService.mover(vectorHumano.id?.toInt()!!,"Babilonia")
+    }
+
+    @Test
+    fun vectorInsectoMuevePorCaminoAereo(){
+        var vectorInsecto= Vector()
+        vectorInsecto.tipo=Insecto()
+        vectorInsecto.estado=Sano()
+        vectorInsecto.ubicacion=ubicacionService.recuperarUbicacion("Quilmes")
+        vectorInsecto= vectorService.crearVector(vectorInsecto)
+        ubicacionService.mover(vectorInsecto.id?.toInt()!!,"Babilonia")
+        Assert.assertEquals(vectorService.recuperarVector(vectorInsecto.id?.toInt()!!).ubicacion?.nombreUbicacion,"Babilonia")
+    }
+
+    @Test
+    fun vectorAnimalMuevePorCaminoAereo(){
+        var vectorAnimal= Vector()
+        vectorAnimal.tipo=Insecto()
+        vectorAnimal.estado=Sano()
+        vectorAnimal.ubicacion=ubicacionService.recuperarUbicacion("Quilmes")
+        vectorAnimal= vectorService.crearVector(vectorAnimal)
+        ubicacionService.mover(vectorAnimal.id?.toInt()!!,"Babilonia")
+        Assert.assertEquals(vectorService.recuperarVector(vectorAnimal.id?.toInt()!!).ubicacion?.nombreUbicacion,"Babilonia")
+
+    }
+    @Test
+    fun vectorAnimalMuevePorCaminoAereoYDespuesPorTerrestre(){
+        var vectorAnimal= Vector()
+        vectorAnimal.tipo=Insecto()
+        vectorAnimal.estado=Sano()
+        vectorAnimal.ubicacion=ubicacionService.recuperarUbicacion("Zion")
+        vectorAnimal= vectorService.crearVector(vectorAnimal)
+        ubicacionService.mover(vectorAnimal.id?.toInt()!!,"Mordor")
+        Assert.assertEquals(vectorService.recuperarVector(vectorAnimal.id?.toInt()!!).ubicacion?.nombreUbicacion,"Mordor")
+        ubicacionService.mover(vectorAnimal.id?.toInt()!!,"Narnia")
+        Assert.assertEquals(vectorService.recuperarVector(vectorAnimal.id?.toInt()!!).ubicacion?.nombreUbicacion,"Narnia")
+    }
+    @Test
+    fun ubicacionMerloConectaAUbicacionLaMatanzaPorCaminoTerrestre(){
+        var ubicacion=ubicacionService.crearUbicacion("Merlo")
+        var ubicacion1=ubicacionService.crearUbicacion("La Matanza")
+        ubicacionService.conectar(ubicacion.nombreUbicacion,ubicacion1.nombreUbicacion,"Terrestre")
+        Assert.assertEquals(ubicacionService.conectados("Merlo")[0].nombreUbicacion,"La Matanza")
+    }
+    @Test
+    fun ubicacionMerloConectaAUbicacionLaMatanzaPorCaminoMaritimo(){
+        var ubicacion=ubicacionService.crearUbicacion("Merlo")
+        var ubicacion1=ubicacionService.crearUbicacion("La Matanza")
+        ubicacionService.conectar(ubicacion.nombreUbicacion,ubicacion1.nombreUbicacion,"Maritimo")
+        Assert.assertEquals(ubicacionService.conectados("Merlo")[0].nombreUbicacion,"La Matanza")
+    }
+    @Test(expected = CaminoNoSoportado::class)
+    fun ubicacionMerloConectaAUbicacionLaMatanzaPorCaminoAereoVectorTrataDeMoverPeroNoPuedePorNoSerCaminoNoSoportado(){
+        var ubicacion=ubicacionService.crearUbicacion("Merlo")
+        var ubicacion1=ubicacionService.crearUbicacion("La Matanza")
+        ubicacionService.conectar(ubicacion.nombreUbicacion,ubicacion1.nombreUbicacion,"Aereo")
+        Assert.assertEquals(ubicacionService.conectados("Merlo")[0].nombreUbicacion,"La Matanza")
+        var vectorHumano= Vector()
+        vectorHumano.tipo=Humano()
+        vectorHumano.estado=Sano()
+        vectorHumano.ubicacion=ubicacionService.recuperarUbicacion("Merlo")
+        vectorHumano= vectorService.crearVector(vectorHumano)
+        ubicacionService.mover(vectorHumano.id?.toInt()!!,"La Matanza")
+    }
+    @Test(expected = CaminoNoSoportado::class)
+    fun ubicacionMerloConectaAUbicacionLaMatanzaPorCaminoMaritimoVectorTrataDeMoverPeroNoPuedePorNoSerCaminoNoSoportado(){
+        var ubicacion=ubicacionService.crearUbicacion("Merlo")
+        var ubicacion1=ubicacionService.crearUbicacion("La Matanza")
+        ubicacionService.conectar(ubicacion.nombreUbicacion,ubicacion1.nombreUbicacion,"Maritimo")
+        Assert.assertEquals(ubicacionService.conectados("Merlo")[0].nombreUbicacion,"La Matanza")
+        var vectorInsecto= Vector()
+        vectorInsecto.tipo=Insecto()
+        vectorInsecto.estado=Sano()
+        vectorInsecto.ubicacion=ubicacionService.recuperarUbicacion("Merlo")
+        vectorInsecto= vectorService.crearVector(vectorInsecto)
+        ubicacionService.mover(vectorInsecto.id?.toInt()!!,"La Matanza")
+    }
+    @Test
+    fun ubicacionMerloConectaAUbicacionLaMatanzaPorCaminoMaritimoYALacrozePorAereo() {
+        var ubicacion = ubicacionService.crearUbicacion("Merlo")
+        var ubicacion1 = ubicacionService.crearUbicacion("La Matanza")
+        var ubicacion2 = ubicacionService.crearUbicacion("Lacroze")
+
+        ubicacionService.conectar(ubicacion.nombreUbicacion, ubicacion1.nombreUbicacion, "Maritimo")
+        ubicacionService.conectar(ubicacion.nombreUbicacion, ubicacion2.nombreUbicacion, "Aereo")
+
+        Assert.assertEquals(ubicacionService.conectados("Merlo")[1].nombreUbicacion, "La Matanza")
+        Assert.assertEquals(ubicacionService.conectados("Merlo")[0].nombreUbicacion, "Lacroze")
+
+    }
+
     @After
     fun eliminarTodo() {
         neo4jData.eliminarTodo()
