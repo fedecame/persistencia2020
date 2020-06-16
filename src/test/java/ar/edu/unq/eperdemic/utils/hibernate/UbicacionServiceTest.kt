@@ -5,6 +5,7 @@ import ar.edu.unq.eperdemic.estado.Sano
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.exception.IDVectorNoEncontradoException
+import ar.edu.unq.eperdemic.modelo.exception.MoverMismaUbicacion
 import ar.edu.unq.eperdemic.modelo.exception.NoExisteUbicacion
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
@@ -60,17 +61,19 @@ class UbicacionServiceTest {
         ubicacionService.conectar("Florencio Varela","Berazategui","Terrestre")
         ubicacionService.conectar("Quilmes","Berazategui","Terrestre")
         ubicacionService.conectar("Florencio Varela","Sarandi","Terrestre")
-        ubicacionService.conectar("Florencio Varela","Florencio Varela","Terrestre")
+//        ubicacionService.conectar("Florencio Varela","Florencio Varela","Terrestre")
         ubicacionService.conectar("Berazategui","Florencio Varela","Terrestre")
-        ubicacionService.conectar("Berazategui","Berazategui","Terrestre")
+//        ubicacionService.conectar("Berazategui","Berazategui","Terrestre")
 
     }
 
     @Test
     fun testVarelaEstaConectadoCon3Ubicaciones(){
-        ubicacionService.conectar("Florencio Varela","Berazategui","Terrestre")
-        ubicacionService.conectar("Florencio Varela","Saavedra","Aereo")
-        ubicacionService.conectar("Florencio Varela","Don Bosco","Maritimo")
+//        neo4jData.eliminarTodo()
+
+//        ubicacionService.conectar("Florencio Varela","Berazategui","Terrestre")
+//        ubicacionService.conectar("Florencio Varela","Saavedra","Aereo")
+//        ubicacionService.conectar("Florencio Varela","Don Bosco","Maritimo")
 
         var listConectados =ubicacionService.conectados("Florencio Varela")
         Assert.assertEquals(3,listConectados.size)
@@ -91,6 +94,9 @@ class UbicacionServiceTest {
     }
     @Test
     fun testVarelaNoSeConectaConNingunNodo(){
+        hibernateData.eliminarTodo()
+        neo4jData.eliminarTodo()
+        ubicacionService.crearUbicacion("Florencio Varela")
         var listConectados =ubicacionService.conectados("Florencio Varela")
         Assert.assertTrue(0 == listConectados.size)
     }
@@ -100,7 +106,8 @@ class UbicacionServiceTest {
     fun creacionDeUbicacion() {
         var ubicacion2Creada= ubicacionService.crearUbicacion("Quilmes")
 
-        Assert.assertEquals(ubicacion2Creada.nombreUbicacion, "Quilmes")
+        Assert.assertEquals("Quilmes", ubicacion2Creada.nombreUbicacion)
+        Assert.assertEquals("Quilmes", ubicacionService.recuperarUbicacion("Quilmes").nombreUbicacion)
     }
 
     @Test
@@ -118,6 +125,7 @@ class UbicacionServiceTest {
         var vectorCreado=vectorService.recuperarVector(1)
         Assert.assertEquals(vectorCreado.ubicacion?.nombreUbicacion,"Florencio Varela")
         ubicacionService.crearUbicacion("Quilmes")
+        ubicacionService.conectar("Florencio Varela", "Quilmes", "Terrestre")
         ubicacionService.mover(1,"Quilmes")
         var vectorActualizado=vectorService.recuperarVector(1)
         Assert.assertEquals(vectorActualizado.ubicacion?.nombreUbicacion,"Quilmes")
@@ -130,14 +138,12 @@ class UbicacionServiceTest {
         ubicacionService.mover(1,"Sarandi")
     }
 
-    @Test
-    fun alMoverAMismaUbicacionDondeEstaSeQuedaEnLaMismaUbicacion(){
+    @Test(expected = MoverMismaUbicacion::class)
+    fun alMoverAMismaUbicacionDondeEstaArrojaExcepcionPorqueNoEsLogico(){
         vector.ubicacion=ubicacionCreada
         vectorService.crearVector(vector)
 
         ubicacionService.mover(1,"Florencio Varela")
-        var vectorActualizado= vectorService.recuperarVector(1)
-        Assert.assertEquals(vectorActualizado.ubicacion?.nombreUbicacion,"Florencio Varela")
     }
 
     @Test(expected = IDVectorNoEncontradoException::class )
@@ -167,7 +173,8 @@ class UbicacionServiceTest {
         var  ubicacionCreadaActualizada=ubicacionService.recuperarUbicacion("Florencio Varela")
         ubicacionCreada1 = ubicacionService.crearUbicacion("Quilmes")
         Assert.assertEquals(ubicacionCreadaActualizada.vectores.size,1)
-        ubicacionService.mover(1,"Quilmes")
+        ubicacionService.conectar("Florencio Varela", "Quilmes", "Terrestre")
+        ubicacionService.mover(vector.id!!.toInt(),"Quilmes")
         var ubicacionRecuperada= ubicacionService.recuperarUbicacion("Florencio Varela")
         Assert.assertEquals(ubicacionRecuperada.vectores.size.toInt(),0)
     }
