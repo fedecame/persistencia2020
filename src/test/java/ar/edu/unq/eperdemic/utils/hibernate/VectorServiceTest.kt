@@ -70,8 +70,6 @@ class VectorServiceTest {
         ubicacion.vectores.add(vector)
         vectorService.crearVector(vector)
         ubicacionService.conectar("Quilmes","Quilmes","Terrestre")
-        ubicacionService.mover(vector.id!!.toInt(), ubicacion.nombreUbicacion)
-
     }
 
     @Test
@@ -167,7 +165,13 @@ class VectorServiceTest {
 
     @Test
     fun testAlCrearseUnVectorTieneEstadoSano(){
-        val recuperado = vectorService.recuperarVector(1)
+        val vectorSano = Vector()
+        vectorSano.tipo = Humano()
+        vectorSano.estado = Sano()
+        val jamaica = ubicacionService.crearUbicacion("Jamaica")
+        vectorSano.ubicacion = jamaica
+        vectorService.crearVector(vectorSano)
+        val recuperado = vectorService.recuperarVector(vectorSano.id!!.toInt())
         Assert.assertTrue(recuperado.estado is Sano)
     }
 
