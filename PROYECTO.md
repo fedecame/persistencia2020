@@ -1,4 +1,4 @@
-![](https://github.com/actions/persistiendoLaCuarentena-TP/workflows/Greet%20Everyone/badge.svg)
+![](https://github.com/EPERS-UNQ/persistiendoLaCuarentena/workflows/Greet%20Everyone/gradle.yml)
 
 ###Equipo: persistiendoLaCuarentena####
 
