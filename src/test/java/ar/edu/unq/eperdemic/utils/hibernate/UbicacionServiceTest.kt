@@ -68,15 +68,17 @@ class UbicacionServiceTest {
     }
 
     @Test
-    fun testVarelaEstaConectadoCon3Ubicaciones(){
-//        neo4jData.eliminarTodo()
+    fun testSaavedraEstaConectadoCon3Ubicaciones(){
 
-//        ubicacionService.conectar("Florencio Varela","Berazategui","Terrestre")
-//        ubicacionService.conectar("Florencio Varela","Saavedra","Aereo")
-//        ubicacionService.conectar("Florencio Varela","Don Bosco","Maritimo")
+        ubicacionService.conectar("Saavedra","Berazategui","Terrestre")
+        ubicacionService.conectar("Saavedra","Florencio Varela","Aereo")
+        ubicacionService.conectar("Saavedra","Don Bosco","Maritimo")
 
-        var listConectados =ubicacionService.conectados("Florencio Varela")
+        val listConectados =ubicacionService.conectados("Saavedra")
         Assert.assertEquals(3,listConectados.size)
+        Assert.assertEquals("Don Bosco",listConectados.get(0).nombreUbicacion)
+        Assert.assertEquals("Florencio Varela",listConectados.get(1).nombreUbicacion)
+        Assert.assertEquals("Berazategui",listConectados.get(2).nombreUbicacion)
     }
 
     @Test
