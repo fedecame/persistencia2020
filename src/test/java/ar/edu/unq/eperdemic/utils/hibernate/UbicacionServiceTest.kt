@@ -1,23 +1,19 @@
 package ar.edu.unq.eperdemic.utils.hibernate
 
-import ar.edu.unq.eperdemic.estado.Infectado
+
 import ar.edu.unq.eperdemic.estado.Sano
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.exception.IDVectorNoEncontradoException
 import ar.edu.unq.eperdemic.modelo.exception.MoverMismaUbicacion
 import ar.edu.unq.eperdemic.modelo.exception.NoExisteUbicacion
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.HibernateDataService
 import ar.edu.unq.eperdemic.services.Neo4jDataService
-import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
-import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.tipo.Humano
-import ar.edu.unq.eperdemic.tipo.Insecto
 import ar.edu.unq.eperdemic.utility.random.RandomMaster
 import org.junit.After
 import org.junit.Assert
@@ -25,7 +21,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.*
-import java.util.*
+
 
 class UbicacionServiceTest {
     var vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateUbicacionDAO())
@@ -61,9 +57,8 @@ class UbicacionServiceTest {
         ubicacionService.conectar("Florencio Varela","Berazategui","Terrestre")
         ubicacionService.conectar("Quilmes","Berazategui","Terrestre")
         ubicacionService.conectar("Florencio Varela","Sarandi","Terrestre")
-//        ubicacionService.conectar("Florencio Varela","Florencio Varela","Terrestre")
         ubicacionService.conectar("Berazategui","Florencio Varela","Terrestre")
-//        ubicacionService.conectar("Berazategui","Berazategui","Terrestre")
+
 
     }
 
@@ -132,7 +127,7 @@ class UbicacionServiceTest {
 
     @Test
     fun creacionDeUbicacion() {
-        var ubicacion2Creada= ubicacionService.crearUbicacion("Quilmes")
+        val ubicacion2Creada= ubicacionService.crearUbicacion("Quilmes")
 
         Assert.assertEquals("Quilmes", ubicacion2Creada.nombreUbicacion)
         Assert.assertEquals("Quilmes", ubicacionService.recuperarUbicacion("Quilmes").nombreUbicacion)

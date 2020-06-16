@@ -39,7 +39,6 @@ class capacidadDeExpancionTest {
     @Before
     fun setUp(){
         //Aca elimino lo que haya
-//        this.eliminarTodo()
         TransactionRunner.addNeo4j().addHibernate().runTrx {
             HibernateDataDAO().clear()
             Neo4jDataDAO().clear()

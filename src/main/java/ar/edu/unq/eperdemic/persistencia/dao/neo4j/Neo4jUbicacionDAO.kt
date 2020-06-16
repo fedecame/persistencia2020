@@ -19,7 +19,6 @@ import org.neo4j.driver.Value
 
 class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
       val vectorDao = HibernateVectorDAO()
-//    val session =DriverNeo4j().driver.session()
 
     override fun conectar(ubicacion1: String, ubicacion2: String, tipoCamino: String) {
         val transaction = TransactionNeo4j.currentTransaction
@@ -43,31 +42,8 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
     }
 
     override fun mover(vector: Vector, nombreUbicacion: String) {
-//        var nombreDeUbicacionV = vector.ubicacion?.nombreUbicacion
-//        var ubicacionesAledañas = conectados(nombreDeUbicacionV.toString())
-//        var ubicacionDestino = Ubicacion()
-//        ubicacionDestino.nombreUbicacion = nombreUbicacion
-//        var ubicacionAux = ubicacionesAledañas.firstOrNull { u -> u.nombreUbicacion == nombreUbicacion }
-//        var noPuedeMoverseTanLejos = ubicacionAux == null
-//        if (noPuedeMoverseTanLejos && noEsCapazDeMoverPorCamino(vector, ubicacionDestino)) {
-//            throw (lanzarExcepcionAlMover(noPuedeMoverseTanLejos, noEsCapazDeMoverPorCamino(vector, ubicacionDestino)))
-//        }
+//        TODO("Should not be implemented")
     }
-
-//    override fun capacidadDeExpansion(vectorId: Long, movimientos: Int): Int {
-//        val vector = HibernateVectorDAO().recuperar(vectorId)
-//        val nombreUbicacion = vector.ubicacion!!.nombreUbicacion
-//        val tipos = vector.tipo.posiblesCaminos.map{it.nombre()}
-//        val tiposQueryConMovimientos = this.tiposFormateados(tipos, movimientos)
-//        val transaction = TransactionNeo4j.currentTransaction
-//        val intQuery =  """
-//                        MATCH (n:Ubicacion {nombre:"${nombreUbicacion}"})-${tiposQueryConMovimientos} -> (fof) WHERE fof.nombre <> n.nombre RETURN COUNT(DISTINCT fof) AS result
-//                        """
-//        val result = transaction.run(intQuery, Values.parameters("nombreUbicacion", nombreUbicacion, "tiposQueryConMovimientos", tiposQueryConMovimientos, "movimientos", movimientos))
-//        return result.single().get("result").asInt()
-//        }
-
-//    private fun tiposFormateados(tipos : List<String>, movimientos: Int) : String = tipos.toString().toString().replace("[", "[:").replace(",", " |").replace("]", "*0..${movimientos.toString()}]").trim().trim()
 
     fun esAledaña(nombreDeUbicacion: String, uPosibleAledaña: String) {
         var transaction = TransactionNeo4j.currentTransaction
@@ -90,16 +66,6 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
             throw CaminoNoSoportado(nombreUbicacionActual, ubicacionDestino)
         }
     }
-
-//    private fun lanzarExcepcionAlMover(noPuedeMoverseTanLejos: Boolean, noPuedeMoversePorCamino: Boolean): Throwable {
-//        var excepcion: Exception
-//        if (noPuedeMoverseTanLejos) {
-//            excepcion = UbicacionMuyLejana("ne","")
-//        } else {
-//            excepcion = CaminoNoSoportado()
-//        }
-//        return excepcion
-//    }
 
     private fun darTipo(camino: String): TipoCamino? {
         when (camino) {
