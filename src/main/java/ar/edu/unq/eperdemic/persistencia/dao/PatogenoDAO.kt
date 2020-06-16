@@ -5,6 +5,7 @@ import ar.edu.unq.eperdemic.modelo.Patogeno
 interface PatogenoDAO {
     fun crear(patogeno: Patogeno): Int
     fun actualizar(patogeno: Patogeno )
-    fun recuperar(idDelPatogeno: Int): Patogeno
+    fun recuperar(patogenoId: Int): Patogeno
     fun recuperarATodos() : List<Patogeno>
+    fun eliminarTodos()
 }

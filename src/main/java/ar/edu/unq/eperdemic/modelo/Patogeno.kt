@@ -1,18 +1,42 @@
 package ar.edu.unq.eperdemic.modelo
 
 import java.io.Serializable
+import javax.persistence.*
 
-class Patogeno(val tipo: String) : Serializable{
+@Entity
+class Patogeno : Serializable{
 
-    val id : Int? = null
-    var cantidadDeEspecies: Int = 0
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id : Int? = null
+    var cantidadDeEspecies : Int = 0
+    var factorContagioAnimal : Int  = 0
+    var factorContagioInsecto :Int  = 0
+    var factorContagioHumano : Int  = 0
+    var defensaContraMicroorganismos : Int = 0
+    var letalidad : Int = 0
 
-    override fun toString(): String {
-        return tipo
-    }
+    @Column(nullable = false)
+    lateinit var tipo : String
 
-    fun crearEspecie(nombreEspecie: String, paisDeOrigen: String) : Especie{
+    fun crearEspecie(nombreEspecie: String, paisDeOrigen: String, cantidadInfectadosADN: Int = 0, mutacionesDesbloqueadas: MutableSet<Mutacion> = mutableSetOf()) : Especie{
         cantidadDeEspecies++
-        return Especie(this, nombreEspecie, paisDeOrigen)
+        val especie = Especie()
+        especie.paisDeOrigen = paisDeOrigen
+        especie.patogeno = this
+        especie.nombre = nombreEspecie
+        especie.cantidadInfectadosParaADN = cantidadInfectadosADN
+        especie.mutacionesDesbloqueadas = mutacionesDesbloqueadas
+        return especie
     }
+
+    fun factorContagioAnimal(): Int = factorContagioAnimal
+
+    fun factorContagioInsecto(): Int = factorContagioInsecto
+
+    fun factorContagioHumano(): Int = factorContagioHumano
+
+    fun defensaContraMicroorganismos(): Int = defensaContraMicroorganismos
+
+    fun letalidad(): Int = letalidad
 }
