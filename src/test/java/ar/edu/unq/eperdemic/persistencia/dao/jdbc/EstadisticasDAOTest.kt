@@ -16,6 +16,7 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEstadisticasDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jDataDAO
+import ar.edu.unq.eperdemic.services.HibernateDataService
 import ar.edu.unq.eperdemic.services.Neo4jDataService
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
@@ -47,8 +48,10 @@ class EstadisticasDAOTest {
     lateinit var ubicacion1 : Ubicacion
     lateinit var ubicacion2 : Ubicacion
     lateinit var patogeno : Patogeno
+    var dataDaoNeo4j=Neo4jDataService()
     @Before
     fun setUp(){
+        this.eliminarTodo()
         estadisticasDAO = HibernateEstadisticasDAO()
         dataDAO = HibernateDataDAO()
         vector = Vector()
@@ -82,23 +85,38 @@ class EstadisticasDAOTest {
         ubicacionService.conectar("Quilmes","Quilmes","Terrestre")
         ubicacionService.conectar("Mar del Plata","Mar del Plata","Terrestre")
         ubicacionService.conectar("Maeame","Maeame","Terrestre")
-        ubicacionService.mover(vector.id!!.toInt(), ubicacion0.nombreUbicacion)
-
-        ubicacionService.mover(vector.id!!.toInt(), ubicacion0.nombreUbicacion)
-
-
-
     }
 
+//    private fun crearNConEstadoEn(cant : Int, estado : EstadoVector, ubicacion : String){
+//        repeat(cant){
+//            var vectorInfectado = Vector()
+//            vectorInfectado.tipo = tipo
+//            vectorInfectado.estado = estado
+//            vectorInfectado.ubicacion = ubicacionService.recuperarUbicacion(ubicacion)
+//            vectorInfectado.agregarEspecie(especie)
+//            vectorService.crearVector(vectorInfectado)
+//            ubicacionService.mover(vectorInfectado.id!!.toInt(), ubicacion)
+//        }
+//    }
+
     private fun crearNConEstadoEn(cant : Int, estado : EstadoVector, ubicacion : String){
+        val ubicacionModelo = ubicacionService.recuperarUbicacion(ubicacion)
         repeat(cant){
-            var vectorInfectado = Vector()
-            vectorInfectado.tipo = tipo
-            vectorInfectado.estado = estado
-            vectorInfectado.ubicacion = ubicacionService.recuperarUbicacion(ubicacion)
-            vectorInfectado.agregarEspecie(especie)
-            vectorService.crearVector(vectorInfectado)
-            ubicacionService.mover(vectorInfectado.id!!.toInt(), ubicacion)
+            var vectorHumano = Vector()
+            vectorHumano.tipo = tipo
+            vectorHumano.ubicacion = ubicacionModelo
+            val nuevaEspecie = Especie()
+            nuevaEspecie.nombre = "HibernateEsBasura"
+            nuevaEspecie.cantidadInfectadosParaADN = 50
+            nuevaEspecie.paisDeOrigen = "Jamaica"
+            if (estado is Infectado) {
+                vectorHumano.agregarEspecie(nuevaEspecie)
+            }
+            vectorService.crearVector(vectorHumano)
+            ubicacionModelo.vectores.add(vectorHumano)
+            TransactionRunner.addHibernate().addNeo4j().runTrx {
+                ubicacionDAO.actualizar(ubicacionModelo)
+            }
         }
     }
 
@@ -123,10 +141,10 @@ class EstadisticasDAOTest {
     @Test
     fun elEstadisticasDAODevuelve2CuandoHayDosVectoresEnEsaUbicacion(){
         var res = 0
-        this.crearNConEstadoEn(1, Infectado(), "Quilmes") //Uno ya habia
-        ubicacionService.mover(vector.id!!.toInt(), ubicacion0.nombreUbicacion)
+        ubicacionService.crearUbicacion("Jamaica")
+        this.crearNConEstadoEn(2, Infectado(), "Jamaica")
         TransactionRunner.addHibernate().runTrx {
-            res = estadisticasDAO.vectoresPresentes("Quilmes")
+            res = estadisticasDAO.vectoresPresentes("Jamaica")
         }
         Assert.assertEquals(2, res)
     }
@@ -163,9 +181,10 @@ class EstadisticasDAOTest {
     @Test
     fun elEstadisticasDAODevuelve1CuandoHayUnVectorInfectadoEnEsaUbicacion(){
         var res = 0
-        this.crearNConEstadoEn(1, Infectado(), "Quilmes")
+        ubicacionService.crearUbicacion("Jamaica")
+        this.crearNConEstadoEn(1, Infectado(), "Jamaica")
         TransactionRunner.addHibernate().runTrx {
-            res = estadisticasDAO.vectoresInfectados("Quilmes")
+            res = estadisticasDAO.vectoresInfectados("Jamaica")
         }
         Assert.assertEquals(1, res)
     }
@@ -173,9 +192,10 @@ class EstadisticasDAOTest {
     @Test
     fun elEstadisticasDAODevuelve2CuandoHayDosVectoresInfectadosEnEsaUbicacion(){
         var res = 0
-        this.crearNConEstadoEn(2, Infectado(),"Quilmes")
+        ubicacionService.crearUbicacion("Jamaica")
+        this.crearNConEstadoEn(2, Infectado(),"Jamaica")
         TransactionRunner.addHibernate().runTrx {
-            res = estadisticasDAO.vectoresInfectados("Quilmes")
+            res = estadisticasDAO.vectoresInfectados("Jamaica")
         }
         Assert.assertEquals(2, res)
     }
@@ -204,9 +224,12 @@ class EstadisticasDAOTest {
     }
 
     @Test
-    fun enUnaUbicacionConMasDeUnaEspecieElNombreDeLaEspecieMasInfecciosaEsLaQueInfectaAMasVectores(){
-        val paperas = Especie()
+    fun enUnaUbicacionConMasDeUnaEspecieLaEspecieMasInfecciosaEsLaQueInfectaAMasVectores(){
         val ubicacionFinal = ubicacionService.crearUbicacion("Maeame")
+        val paperas = Especie()
+        val unaGripe = Especie()
+        unaGripe.paisDeOrigen = "Jamaica"
+        unaGripe.nombre = "GripeJ"
         paperas.paisDeOrigen = "Rusia"
         paperas.nombre = "Paperas"
         val ubi = "Maeame"
@@ -216,18 +239,16 @@ class EstadisticasDAOTest {
         vectorRandom.tipo = Humano()
         vectorAlfa.tipo = Insecto()
         vectorBeta.tipo = Animal()
-        vectorRandom.ubicacion = ubicacionFinal
         vectorRandom.infectarse(paperas)
         vectorAlfa.infectarse(paperas)
         vectorBeta.infectarse(paperas)
+        vectorBeta.infectarse(unaGripe)
+        vectorRandom.ubicacion = ubicacionFinal
         vectorAlfa.ubicacion = ubicacionFinal
         vectorBeta.ubicacion= ubicacionFinal
+        vectorService.crearVector(vectorRandom)
         vectorService.crearVector(vectorAlfa)
         vectorService.crearVector(vectorBeta)
-        vectorService.crearVector(vectorRandom)
-        ubicacionService.mover(vectorRandom.id!!.toInt(),ubi)
-        ubicacionService.mover(vectorAlfa.id!!.toInt(), ubi)
-        ubicacionService.mover(vectorBeta.id!!.toInt(),ubi)
         var res = ""
         TransactionRunner.addHibernate().runTrx {
             res = estadisticasDAO.especieQueInfectaAMasVectoresEn("Maeame")
@@ -236,11 +257,10 @@ class EstadisticasDAOTest {
     }
 
 
+
     @After
     fun eliminarTodo(){
-        TransactionRunner.addHibernate().addNeo4j().runTrx {
-            HibernateDataDAO().clear()
-            Neo4jDataDAO().clear()
-        }
+        HibernateDataService().eliminarTodo()
+        Neo4jDataService().eliminarTodo()
     }
 }

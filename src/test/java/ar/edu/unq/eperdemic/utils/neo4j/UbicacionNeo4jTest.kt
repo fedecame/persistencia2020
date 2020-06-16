@@ -15,6 +15,8 @@ import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jUbicacionDAO
 import ar.edu.unq.eperdemic.services.HibernateDataService
 import ar.edu.unq.eperdemic.services.Neo4jDataService
+import ar.edu.unq.eperdemic.services.PatogenoService
+import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
 import ar.edu.unq.eperdemic.services.runner.TransactionNeo4j
@@ -26,44 +28,32 @@ import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.mock
-import org.springframework.data.jpa.domain.AbstractPersistable_.id
-import kotlin.math.exp
 
 class UbicacionNeo4jTest {
     lateinit var neo4jData: Neo4jDataService
     lateinit var hibernateDataService: HibernateDataService
 
     var ubicacionService=UbicacionServiceImpl(HibernateUbicacionDAO())
-    var mockUbicacionService = mock(UbicacionServiceImpl(HibernateUbicacionDAO()).javaClass)
-    var mockVectorService=mock(VectorServiceImpl(HibernateVectorDAO(),HibernateUbicacionDAO()).javaClass)
-    var vector= Vector()
-    var ubicacionPlantalandia= Ubicacion()
-    var ubicacionBichoLandia=Ubicacion()
     var ubicacionTibetDojo=Ubicacion()
     var vectorService=VectorServiceImpl(HibernateVectorDAO(),HibernateUbicacionDAO())
+    var vector= Vector()
     var vectorAnimal=Vector()
-    var id=0
     @Before
     fun setUp() {
-        vector.tipo = Humano()
         neo4jData = Neo4jDataService()
         hibernateDataService = HibernateDataService()
-        neo4jData.eliminarTodo()
-        hibernateDataService.eliminarTodo()
         neo4jData.crearSetDeDatosIniciales()
         ubicacionService.crearUbicacion("BichoLandia")
         ubicacionService.crearUbicacion("Florencio Varela")
-
         ubicacionTibetDojo = ubicacionService.crearUbicacion("TibetDojo")
-        vector.ubicacion = ubicacionService.crearUbicacion("Mar Del Plata")
-        ubicacionService.crearUbicacion("Quilmes")
-        vectorAnimal.ubicacion=vector.ubicacion
+        val mdq = ubicacionService.crearUbicacion("Mar Del Plata")
+        vector.ubicacion = mdq
+        vectorAnimal.ubicacion = mdq
         vector.tipo = Humano()
-        vectorAnimal.tipo= Animal()
+        vectorAnimal.tipo = Animal()
         vector.estado = Sano()
-        vectorAnimal.estado=Sano()
-        id = vectorService.crearVector(vector)?.id?.toInt()!!
+        vectorAnimal.estado = Sano()
+        vectorService.crearVector(vector)
         vectorService.crearVector(vectorAnimal)
     }
 
@@ -90,29 +80,49 @@ class UbicacionNeo4jTest {
         ubicacionService.conectar("Mar Del Plata","Quilmes","Terrestre")
         ubicacionService.mover(vector.id?.toInt()!!,"Quilmes")
 
-        Assert.assertEquals(vectorService.recuperarVector(vector.id?.toInt()!!).ubicacion?.nombreUbicacion,"Quilmes")
+        Assert.assertEquals("Quilmes", vectorService.recuperarVector(vector.id!!.toInt()).ubicacion!!.nombreUbicacion)
     }
 
     @Test(expected = UbicacionMuyLejana::class)
     fun vectorNoPuedeMoverPorqueUbicacionEsLejana() {
-        ubicacionService.mover(1,"")
-
+        val babilonia = ubicacionService.recuperarUbicacion("Babilonia")
+        vector.ubicacion = babilonia
+        TransactionRunner.addHibernate().runTrx {
+            HibernateUbicacionDAO().actualizar(babilonia)
+        }
+        ubicacionService.mover(vector.id!!.toInt(),"Narnia")
     }
 
+    @Test(expected = NoExisteUbicacion::class)
+    fun vectorNoPuedeMoverAUnaUbicacionQueNoEstaPersistida() {
+        ubicacionService.mover(vector.id!!.toInt(),"")
+    }
 
     @Test(expected = CaminoNoSoportado::class)
-    fun vectorNoPuedeMoversePorCaminoNoSoportado() {
-        ubicacionService.conectar("Mar Del Plata","Florencio Varela", "Maritimo")
-        ubicacionService.mover(1, "Florencio Varela")
+    fun vectorHumanoNoPuedeMoversePorCaminoAereoNoSoportado() {
+        ubicacionService.conectar("Mar Del Plata","Florencio Varela", "Aereo")
+        ubicacionService.mover(vector.id!!.toInt(), "Florencio Varela")
     }
+
     @Test
     fun vectorAnimalMuevePorCaminoMaritimo(){
-        ubicacionService.conectar("Mar Del Plata", "Florencio Varela","Maritimo")
-        ubicacionService.mover(2,"Florencio Varela")
-        Assert.assertEquals(vectorAnimal.ubicacion?.nombreUbicacion,"Florencio Varela")
+        val jamaica = ubicacionService.crearUbicacion("Jamaica")
+        vectorAnimal.ubicacion = jamaica
+        jamaica.vectores.add(vectorAnimal)
+        TransactionRunner.addHibernate().runTrx {
+            HibernateUbicacionDAO().actualizar(jamaica)
+        }
+        ubicacionService.conectar("Jamaica", "Florencio Varela","Maritimo")
+        ubicacionService.mover(vectorAnimal.id!!.toInt(),"Florencio Varela")
+        val vectorAnimalActualizado = vectorService.recuperarVector(vectorAnimal.id!!.toInt())
+
+        val jamaicaActualizada = ubicacionService.recuperarUbicacion("Jamaica")
+        Assert.assertTrue(jamaicaActualizada.vectores.isEmpty())
+        Assert.assertEquals("Florencio Varela", vectorAnimalActualizado.ubicacion!!.nombreUbicacion)
+        val florencioVarelaActualizado = ubicacionService.recuperarUbicacion("Florencio Varela")
+        Assert.assertEquals(1, florencioVarelaActualizado.vectores.size)
+        Assert.assertNotNull(florencioVarelaActualizado.vectores.find { it.id!! == vectorAnimal.id!! })
     }
-
-
 
     @Test(expected = NullPointerException::class)
     fun unVectorNoPersistidoIntentaMoverMasCorto() {
@@ -226,6 +236,8 @@ class UbicacionNeo4jTest {
         TransactionRunner.addHibernate().runTrx {
             HibernateUbicacionDAO().actualizar(mordor)
         }
+        Assert.assertEquals("Mordor", vectorAnimal.ubicacion!!.nombreUbicacion)
+        Assert.assertNotNull(vectorAnimal.id)
         ubicacionService.moverMasCorto(vectorAnimal.id!!, babilonia.nombreUbicacion)
         //crear un spy de lo que sepa que se movio el vector a la nueva ubicacion
 
