@@ -19,6 +19,7 @@ import ar.edu.unq.eperdemic.utility.random.RandomMasterImpl
 
 class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionService {
     var vectorDao = HibernateVectorDAO()
+//    var vectorService: VectorService = VectorServiceImpl(vectorDao, HibernateUbicacionDAO())
     var randomGenerator: RandomMaster = RandomMasterImpl
     var neo4jUbicacionDAO=Neo4jUbicacionDAO()
 

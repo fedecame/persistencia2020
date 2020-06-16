@@ -87,6 +87,18 @@ class EstadisticasDAOTest {
         ubicacionService.conectar("Maeame","Maeame","Terrestre")
     }
 
+//    private fun crearNConEstadoEn(cant : Int, estado : EstadoVector, ubicacion : String){
+//        repeat(cant){
+//            var vectorInfectado = Vector()
+//            vectorInfectado.tipo = tipo
+//            vectorInfectado.estado = estado
+//            vectorInfectado.ubicacion = ubicacionService.recuperarUbicacion(ubicacion)
+//            vectorInfectado.agregarEspecie(especie)
+//            vectorService.crearVector(vectorInfectado)
+//            ubicacionService.mover(vectorInfectado.id!!.toInt(), ubicacion)
+//        }
+//    }
+
     private fun crearNConEstadoEn(cant : Int, estado : EstadoVector, ubicacion : String){
         val ubicacionModelo = ubicacionService.recuperarUbicacion(ubicacion)
         repeat(cant){
