@@ -35,16 +35,11 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
         val tempListNombres = result.list { record: Record ->
             val ubicacion = record.get(0)
             val _nombre = ubicacion.get("nombre").asString()
-            _nombre
+            val ubicacionTemp = Ubicacion()
+            ubicacionTemp.nombreUbicacion = _nombre
+            ubicacionTemp
         }
-
-        var listaRet  = mutableListOf<Ubicacion>()
-        tempListNombres.forEachIndexed { index, nombre ->
-            listaRet.add(Ubicacion())
-            listaRet.get(index).nombreUbicacion = nombre
-        }
-
-        return listaRet
+        return tempListNombres
     }
 
     override fun mover(vector: Vector, nombreUbicacion: String) {

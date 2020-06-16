@@ -68,6 +68,30 @@ class UbicacionServiceTest {
     }
 
     @Test
+    fun testSaavedraSeConectaConDonBoscoPorMar(){
+        ubicacionService.conectar("Saavedra","Don Bosco","Maritimo")
+        val listConectados =ubicacionService.conectados("Saavedra")
+        Assert.assertEquals(1,listConectados.size)
+        Assert.assertEquals("Don Bosco",listConectados.get(0).nombreUbicacion)
+    }
+
+    @Test
+    fun testSaavedraSeconectaConVarelaPorAire(){
+        ubicacionService.conectar("Saavedra","Florencio Varela","Aereo")
+        val listConectados =ubicacionService.conectados("Saavedra")
+        Assert.assertEquals(1,listConectados.size)
+        Assert.assertEquals("Florencio Varela",listConectados.get(0).nombreUbicacion)
+    }
+
+    @Test
+    fun testSaavedraSeconectaConBerazateguiPorTierra(){
+        ubicacionService.conectar("Saavedra","Berazategui","Terrestre")
+        val listConectados =ubicacionService.conectados("Saavedra")
+        Assert.assertEquals(1,listConectados.size)
+        Assert.assertEquals("Berazategui",listConectados.get(0).nombreUbicacion)
+    }
+
+    @Test
     fun testSaavedraEstaConectadoCon3Ubicaciones(){
 
         ubicacionService.conectar("Saavedra","Berazategui","Terrestre")
@@ -84,22 +108,24 @@ class UbicacionServiceTest {
     @Test
     fun testBerazateguiEsElConectadoConVarela(){
         ubicacionService.conectar("Florencio Varela","Berazategui","Terrestre")
-        var listConectados =ubicacionService.conectados("Florencio Varela")
+        val listConectados =ubicacionService.conectados("Florencio Varela")
+        Assert.assertEquals(1,listConectados.size)
         Assert.assertEquals("Berazategui",listConectados.get(0).nombreUbicacion)
     }
 
     @Test
     fun  testVarelaSeConectaConBerazategui(){
         ubicacionService.conectar("Florencio Varela","Berazategui","Terrestre")
-        var listConectados =ubicacionService.conectados("Florencio Varela")
+        val listConectados =ubicacionService.conectados("Florencio Varela")
         Assert.assertEquals(1, listConectados.size)
     }
+
     @Test
     fun testVarelaNoSeConectaConNingunNodo(){
         hibernateData.eliminarTodo()
         neo4jData.eliminarTodo()
         ubicacionService.crearUbicacion("Florencio Varela")
-        var listConectados =ubicacionService.conectados("Florencio Varela")
+        val listConectados =ubicacionService.conectados("Florencio Varela")
         Assert.assertTrue(0 == listConectados.size)
     }
 
