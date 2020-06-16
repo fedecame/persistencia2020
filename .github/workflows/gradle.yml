@@ -6,9 +6,15 @@ name: Java CI with Gradle
 on:
   # Sequence of patterns matched against refs/tags
   push:
+    branches:
+      - master
+      - DEV
+  pull_request:
+    branches:
+      - master
+      - DEV
     tags:
       - "*" # Push events to matching v*, i.e. v1.0, v20.15.10
-
 
 jobs:
   build:
