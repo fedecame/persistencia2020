@@ -18,18 +18,13 @@ class EstadisticasServiceImpl(private var estadisticasDAO: EstadisticasDAO) : Es
                 throw NoHayEspecieQueInfectaronHumanos()
             }
 
-    override fun lideres(): MutableList<Especie> {
-        return TransactionRunner.addHibernate().runTrx { estadisticasDAO.lideres() }
-    }
+    override fun lideres(): MutableList<Especie> = TransactionRunner.addHibernate().runTrx { estadisticasDAO.lideres() }
 
     override fun reporteDeContagios(nombreUbicacion: String): ReporteDeContagios = ReporteDeContagios(this.vectoresPresentes(nombreUbicacion), this.vectoresInfectados(nombreUbicacion), this.especieQueInfectaAMasVectoresEn(nombreUbicacion))
 
-    private fun vectoresPresentes(nombreUbicacion: String): Int {
-        return TransactionRunner.addHibernate().runTrx { estadisticasDAO.vectoresPresentes(nombreUbicacion) }
-    }
+    private fun vectoresPresentes(nombreUbicacion: String): Int = TransactionRunner.addHibernate().runTrx { estadisticasDAO.vectoresPresentes(nombreUbicacion) }
 
     private fun vectoresInfectados(nombreUbicacion: String): Int = TransactionRunner.addHibernate().runTrx { estadisticasDAO.vectoresInfectados(nombreUbicacion) }
-
 
     private fun especieQueInfectaAMasVectoresEn(nombreUbicacion: String): String {
         var res: String = ""
@@ -40,7 +35,6 @@ class EstadisticasServiceImpl(private var estadisticasDAO: EstadisticasDAO) : Es
         }
         return res
     }
-
 }
 
 

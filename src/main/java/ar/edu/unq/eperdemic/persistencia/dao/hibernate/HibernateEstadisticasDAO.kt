@@ -64,8 +64,8 @@ class HibernateEstadisticasDAO : EstadisticasDAO {
    override fun lideres(): MutableList<Especie> {
        val session = TransactionHibernate.currentSession
         val hql = """
-           select id,cantidadInfectadosParaADN,nombre,paisDeOrigen,patogeno_id
-           from Especie 
+           select distinct id,cantidadInfectadosParaADN,nombre,paisDeOrigen,patogeno_id
+           from Especie
            inner join 
            (select count(comb.especies_id) as cantidad_humanos_contagiados,comb.especies_id
            from Vector_Especie as comb
@@ -76,6 +76,7 @@ class HibernateEstadisticasDAO : EstadisticasDAO {
            order by cantidad_humanos_contagiados desc
            ) as temp on
            Especie.id = temp.especies_id
+           order by nombre
         """.trimIndent()
         val query = session!!.createNativeQuery(hql, Especie::class.java)
         query.setMaxResults(10)

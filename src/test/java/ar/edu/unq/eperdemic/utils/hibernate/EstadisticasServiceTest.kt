@@ -96,6 +96,7 @@ class EstadisticasServiceTest {
         vector.infectarse(especie)
 
         vector.agregarEspecie(especie)
+        vector.agregarEspecie(especie3)
         vector2.tipo = tipo
         vector2.estado = estado
         vector2.agregarEspecie(especie)
@@ -129,19 +130,12 @@ class EstadisticasServiceTest {
         ubicacionService.conectar("Quilmes","Quilmes","Terrestre")
         ubicacionService.conectar("Mar del Plata","Mar del Plata","Terrestre")
         ubicacionService.conectar("Maeame","Maeame","Terrestre")
-
-
     }
 
     @Test
     fun elEstadisticasServiceDevuelveUnReporteCon0VectoresPresentes0CuandoNoHayNingunVectorEnEsaUbicacion(){
-
-
-
-
         val reporte = estadisticasService.reporteDeContagios("Berazategui")
         Assert.assertEquals(0, reporte.vectoresPresentes)
-
     }
 
     @Test
@@ -241,9 +235,9 @@ class EstadisticasServiceTest {
         val reporte = estadisticasService.reporteDeContagios("Quilmes")
         Assert.assertEquals("Algo", reporte.nombreDeEspecieMasInfecciosa)
     }
+
     @Test
     fun elEstadisticasServiceDevuelveLasPrimeras10EspeciesCuandoSoloExistenTresEspecies(){
-
         val especiesLideres=estadisticasService.lideres()
         Assert.assertEquals(especiesLideres.size, 3)
     }
@@ -251,7 +245,6 @@ class EstadisticasServiceTest {
     @Test
     fun lideresTest() {
         hibernateData.eliminarTodo()
-
         especie = Especie()
         especie2 = Especie()
         especie3 = Especie()
@@ -301,11 +294,8 @@ class EstadisticasServiceTest {
         vectorService.crearVector(vectorGama)
 
         val especiesLideres=estadisticasService.lideres()
-        Assert.assertEquals(1, especiesLideres.first().id!!)
+        Assert.assertEquals(2, especiesLideres.first().id!!)
     }
-
-
-
 
     @Test
     fun  laNombreDeLaEspecieMasInfecciosaEsElStringVacioCuandoNoQueHayNingunaEspecieEnLaUbicacion(){
@@ -349,7 +339,6 @@ class EstadisticasServiceTest {
         val reporte = estadisticasService.reporteDeContagios("Maeame")
         Assert.assertEquals("Paperas", reporte.nombreDeEspecieMasInfecciosa)
     }
-
 
     @Test
     fun laEspecieQueMasHumanosInfectaEsEspecie(){
@@ -401,21 +390,23 @@ class EstadisticasServiceTest {
         vectorService.crearVector(vectorRandom)
         estadisticasService.especieLider()
     }
+
     @Test
     fun estadisticaServiceDevuelveLasPrimeros10EspeciesQueMasInfectaronEnOrdenDesendente(){
-        var vectorUno=Vector()
-        vectorUno.tipo=Humano()
-        vectorUno.ubicacion=ubicacionService.crearUbicacion("Argentina")
-        var vectorDos=Vector()
-        vectorDos.tipo=Humano()
-        vectorDos.ubicacion=ubicacionService.recuperarUbicacion("Argentina")
+        val argentina = ubicacionService.crearUbicacion("Argentina")
+        var vectorUno = Vector()
+        vectorUno.tipo = Humano()
+        vectorUno.ubicacion = argentina
+        var vectorDos = Vector()
+        vectorDos.tipo = Humano()
+        vectorDos.ubicacion = argentina
         var vectorTres=Vector()
-        vectorTres.tipo=Humano()
-        vectorTres.ubicacion=ubicacionService.recuperarUbicacion("Argentina")
-        var vectorCuatro=Vector()
-        vectorCuatro.tipo=Humano()
-        vectorCuatro.ubicacion=ubicacionService.recuperarUbicacion("Argentina")
-        especie2=patogeno.crearEspecie("especie2","Argentina")
+        vectorTres.tipo = Humano()
+        vectorTres.ubicacion = argentina
+        var vectorCuatro = Vector()
+        vectorCuatro.tipo = Humano()
+        vectorCuatro.ubicacion = argentina
+        especie2 = patogeno.crearEspecie("especie2","Argentina")
         vectorUno.agregarEspecie(especie2)
         vectorDos.agregarEspecie(especie2)
         vectorTres.agregarEspecie(especie2)
@@ -451,18 +442,65 @@ class EstadisticasServiceTest {
         vectorService.crearVector(vectorCuatro)
 
         var especies= estadisticasService.lideres()
+        Assert.assertEquals("Algo", especies[0].nombre)
+        Assert.assertEquals("Algo2", especies[1].nombre)
+        Assert.assertEquals("Algo3", especies[2].nombre)
+        Assert.assertEquals("especie2", especies[3].nombre)
+        Assert.assertEquals("especie3", especies[4].nombre)
+        Assert.assertEquals("especie4", especies[5].nombre)
+        Assert.assertEquals("especie5", especies[6].nombre)
+        Assert.assertEquals("especie6", especies[7].nombre)
+        Assert.assertEquals("especie7", especies[8].nombre)
+        Assert.assertEquals("especie8", especies[9].nombre)
+    }
 
+    @Test
+    fun estadisticaServiceDevuelveLas10SolamenteLasEspeciesQueMasInfectaron(){
+        val argentina = ubicacionService.crearUbicacion("Argentina")
+        var vectorUno = Vector()
+        vectorUno.tipo = Humano()
+        vectorUno.ubicacion = argentina
+        var vectorDos = Vector()
+        vectorDos.tipo = Humano()
+        vectorDos.ubicacion = argentina
+        var vectorTres=Vector()
+        vectorTres.tipo = Humano()
+        vectorTres.ubicacion = argentina
+        var vectorCuatro = Vector()
+        vectorCuatro.tipo = Humano()
+        vectorCuatro.ubicacion = argentina
+        especie2 = patogeno.crearEspecie("especie2","Argentina")
+        vectorUno.agregarEspecie(especie2)
+        vectorDos.agregarEspecie(especie2)
+        vectorTres.agregarEspecie(especie2)
+        especie3=patogeno.crearEspecie("especie3","Argentina")
+        vectorUno.agregarEspecie(especie3)
+        vectorDos.agregarEspecie(especie3)
+        vectorTres.agregarEspecie(especie3)
+        vectorCuatro.agregarEspecie(especie3)
+        var especie4=patogeno.crearEspecie("especie4","Argentina")
+        vectorUno.agregarEspecie(especie4)
+        vectorDos.agregarEspecie(especie4)
+        var especie5=patogeno.crearEspecie("especie5","Argentina")
+        vectorUno.agregarEspecie(especie5)
+        vectorDos.agregarEspecie(especie5)
+        var especie6=patogeno.crearEspecie("especie6","Argentina")
+        vectorUno.agregarEspecie(especie6)
+        vectorDos.agregarEspecie(especie6)
+        var especie7=patogeno.crearEspecie("especie7","Argentina")
+        vectorUno.agregarEspecie(especie7)
+        vectorDos.agregarEspecie(especie7)
+        var especie8=patogeno.crearEspecie("especie8","Argentina")
+        vectorUno.agregarEspecie(especie8)
+        vectorDos.agregarEspecie(especie8)
+
+        vectorService.crearVector(vectorUno)
+        vectorService.crearVector(vectorDos)
+        vectorService.crearVector(vectorTres)
+        vectorService.crearVector(vectorCuatro)
+
+        var especies= estadisticasService.lideres()
         Assert.assertEquals(especies.size,10)
-        Assert.assertEquals(especies[0].nombre,"especie3")
-        Assert.assertEquals(especies[1].nombre,"Algo")
-        Assert.assertEquals(especies[2].nombre,"especie2")
-        Assert.assertEquals(especies[3].nombre,"Algo3")
-        Assert.assertEquals(especies[4].nombre,"especie4")
-        Assert.assertEquals(especies[5].nombre,"especie5")
-        Assert.assertEquals(especies[6].nombre,"especie6")
-        Assert.assertEquals(especies[7].nombre,"especie7")
-        Assert.assertEquals(especies[8].nombre,"especie8")
-        Assert.assertEquals(especies[9].nombre,"Algo2")
     }
 
 
