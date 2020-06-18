@@ -137,7 +137,6 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
             throw UbicacionNoAlcanzable()
         }
 
-
         this.moverPorUbicaciones(vector, nombreUbicaciones.drop(1))
     }
 
