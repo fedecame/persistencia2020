@@ -130,11 +130,14 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
                 "nombreLlegada", ubicacion.nombreUbicacion
         ))
 
-        if (!caminoMasCorto.hasNext() || caminoMasCorto.list().size == 0) {
+        lateinit var nombreUbicaciones: List<String>
+        try {
+            nombreUbicaciones = caminoMasCorto.single().get("p").asPath().nodes().map { it.get("nombre").toString().drop(1).dropLast(1) }
+        } catch (err: Throwable) {
             throw UbicacionNoAlcanzable()
         }
 
-        val nombreUbicaciones = caminoMasCorto.single().get("p").asPath().nodes().map { it.get("nombre").toString().drop(1).dropLast(1) }
+
         this.moverPorUbicaciones(vector, nombreUbicaciones.drop(1))
     }
 
