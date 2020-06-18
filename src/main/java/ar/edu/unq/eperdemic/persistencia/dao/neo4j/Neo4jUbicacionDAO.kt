@@ -117,8 +117,6 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
         val tiposDeCaminosPosibles = vector.tipo.posiblesCaminos.map { it.name }
         val tiposDeLaRelacion = tiposDeCaminosPosibles.toString().replace(",", "|").trim().drop(1).dropLast(1).toString()
 
-        print("~~~~~~~~~~~~~~~~~ CAMINOS: ~~~~~~~~~~~~~~~~~~~~~~ ${tiposDeLaRelacion}")
-
         val query = """
             MATCH p=shortestPath(
             (salida:Ubicacion {nombre:${'$'}nombreSalida})-[:${tiposDeLaRelacion}*]->(llegada:Ubicacion {nombre:${'$'}nombreLlegada})
@@ -126,32 +124,18 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
             RETURN p
         """.trimIndent()
 
-        print("~~~~~~~~~~~~~~~~~ QUERY: ~~~~~~~~~~~~~~~~~~~~~~ ${query}")
-
         val caminoMasCorto = transaction.run(query, Values.parameters(
                 "nombreSalida", vector.ubicacion!!.nombreUbicacion,
                 "tiposDeLaRelacion", tiposDeLaRelacion,
                 "nombreLlegada", ubicacion.nombreUbicacion
-        )).single().get("p").asPath().nodes().map { it.get("nombre").toString().drop(1).dropLast(1) }
-        /**
-         *      TODO Importante!!: no hacer .single() directamente al resultado de la query porque rompe a veces!!!
-         * */
+        ))
 
+        if (!caminoMasCorto.hasNext() || caminoMasCorto.list().size == 0) {
+            throw UbicacionNoAlcanzable()
+        }
 
-//        if (caminoMasCorto.isEmpty()) {
-//            throw UbicacionNoAlcanzable()
-//        }
-
-        print("~~~~~~~~~~~~~~~~~ CAMINO MAS CORTO: ~~~~~~~~~~~~~~~~~~~~~~ ${caminoMasCorto}")
-
-//        val nombreDeUbicaciones = caminoMasCorto.toSet().filter { it.size() > 0 }.toList().map{it.get("nombre").toString()}
-
-//        print("~~~~~~~~~~~~~~~~~ UBICACIONES: ~~~~~~~~~~~~~~~~~~~~~~ ${nombreDeUbicaciones}")
-
-//        print("~~~~~~~~~~~~~~~~~ PRIMER UBICACION: ~~~~~~~~~~~~~~~~~~~~~~ ${caminoMasCorto[0]}")
-//        print("~~~~~~~~~~~~~~~~~ PRIMER UBICACION LARGO: ~~~~~~~~~~~~~~~~~~~~~~ ${caminoMasCorto[0].drop(1).dropLast(1)}")
-
-        this.moverPorUbicaciones(vector, caminoMasCorto.drop(1))
+        val nombreUbicaciones = caminoMasCorto.single().get("p").asPath().nodes().map { it.get("nombre").toString().drop(1).dropLast(1) }
+        this.moverPorUbicaciones(vector, nombreUbicaciones.drop(1))
     }
 
     private fun moverPorUbicaciones(vector: Vector, nombresDeUbicaciones: List<String>) {
