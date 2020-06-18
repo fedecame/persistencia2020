@@ -18,7 +18,8 @@ import org.neo4j.driver.Value
 
 
 class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
-      val vectorDao = HibernateVectorDAO()
+    val vectorDao = HibernateVectorDAO()
+    var hibernateUbicacionDAO = HibernateUbicacionDAO()
 
     override fun conectar(ubicacion1: String, ubicacion2: String, tipoCamino: String) {
         val transaction = TransactionNeo4j.currentTransaction
@@ -76,24 +77,6 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
         }
     }
 
-    private fun noEsCapazDeMoverPorCamino(vector: Vector, ubicacionDestino: Ubicacion?): Boolean {
-//        val session = TransactionNeo4j.currentSession
-        val transaction = TransactionNeo4j.currentTransaction
-
-        var query = """ match(u1:Ubicacion{nombre:"${vector.ubicacion?.nombreUbicacion}"})-[c:Camino]-> (u2:Ubicacion{nombre:"${ubicacionDestino?.nombreUbicacion}"}) return(c.nombre)  """
-
-        var result = transaction.run(query)
-
-        if (result.list().isEmpty()) {
-            return true
-        } else {
-            var camino = result.list().get(0)["(c.nombre)"]
-
-            return vector.tipo.posiblesCaminos().contains(darTipo(camino.toString())).not()
-
-        }
-    }
-
     override fun crear(ubicacion: Ubicacion): Ubicacion {
         super.crear(ubicacion.nombreUbicacion)
         return ubicacion
@@ -134,6 +117,8 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
         val tiposDeCaminosPosibles = vector.tipo.posiblesCaminos.map { it.name }
         val tiposDeLaRelacion = tiposDeCaminosPosibles.toString().replace(",", "|").trim().drop(1).dropLast(1).toString()
 
+        print("~~~~~~~~~~~~~~~~~ CAMINOS: ~~~~~~~~~~~~~~~~~~~~~~ ${tiposDeLaRelacion}")
+
         val query = """
             MATCH p=shortestPath(
             (salida:Ubicacion {nombre:${'$'}nombreSalida})-[:${tiposDeLaRelacion}*]->(llegada:Ubicacion {nombre:${'$'}nombreLlegada})
@@ -141,21 +126,35 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
             RETURN p
         """.trimIndent()
 
+        print("~~~~~~~~~~~~~~~~~ QUERY: ~~~~~~~~~~~~~~~~~~~~~~ ${query}")
+
         val caminoMasCorto = transaction.run(query, Values.parameters(
                 "nombreSalida", vector.ubicacion!!.nombreUbicacion,
                 "tiposDeLaRelacion", tiposDeLaRelacion,
                 "nombreLlegada", ubicacion.nombreUbicacion
-        )).list()
-        if (caminoMasCorto.isEmpty()) {
-            throw UbicacionNoAlcanzable()
-        }
+        )).single().get("p").asPath().nodes().map { it.get("nombre").toString().drop(1).dropLast(1) }
+        /**
+         *      TODO Importante!!: no hacer .single() directamente al resultado de la query porque rompe a veces!!!
+         * */
 
-        this.moverPorUbicaciones(vector, caminoMasCorto.toSet().filter { it.size() > 0 }.toList().map{it.get("nombre").toString()})
 
+//        if (caminoMasCorto.isEmpty()) {
+//            throw UbicacionNoAlcanzable()
+//        }
+
+        print("~~~~~~~~~~~~~~~~~ CAMINO MAS CORTO: ~~~~~~~~~~~~~~~~~~~~~~ ${caminoMasCorto}")
+
+//        val nombreDeUbicaciones = caminoMasCorto.toSet().filter { it.size() > 0 }.toList().map{it.get("nombre").toString()}
+
+//        print("~~~~~~~~~~~~~~~~~ UBICACIONES: ~~~~~~~~~~~~~~~~~~~~~~ ${nombreDeUbicaciones}")
+
+//        print("~~~~~~~~~~~~~~~~~ PRIMER UBICACION: ~~~~~~~~~~~~~~~~~~~~~~ ${caminoMasCorto[0]}")
+//        print("~~~~~~~~~~~~~~~~~ PRIMER UBICACION LARGO: ~~~~~~~~~~~~~~~~~~~~~~ ${caminoMasCorto[0].drop(1).dropLast(1)}")
+
+        this.moverPorUbicaciones(vector, caminoMasCorto.drop(1))
     }
 
     private fun moverPorUbicaciones(vector: Vector, nombresDeUbicaciones: List<String>) {
-        val hibernateUbicacionDAO = HibernateUbicacionDAO()
         nombresDeUbicaciones.forEach { hibernateUbicacionDAO.mover(vector, it) }
     }
 }

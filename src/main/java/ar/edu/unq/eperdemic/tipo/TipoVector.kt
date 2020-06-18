@@ -8,7 +8,7 @@ import ar.edu.unq.eperdemic.utility.random.RandomMasterImpl
 
 abstract class TipoVector(){
     var randomGenerator : RandomMaster = RandomMasterImpl
-    abstract  var posiblesCaminos :List<TipoCamino>
+    abstract var posiblesCaminos :List<TipoCamino>
 
     fun posiblesCaminos():List<TipoCamino>{
         return posiblesCaminos

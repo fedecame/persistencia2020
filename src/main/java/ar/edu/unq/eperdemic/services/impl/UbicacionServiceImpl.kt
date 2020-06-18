@@ -75,7 +75,6 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
         val vectoresAContagiar = ubicacion.vectores.filter { vector -> vector.id != vectorInfectadoAleatorio.id }
 //        vectorService.contagiar(vectorInfectadoAleatorio, vectoresAContagiar)
 
-        val vectorDao = HibernateVectorDAO()
         TransactionRunner.addHibernate().runTrx {
             vectorDao.contagiar(vectorInfectadoAleatorio, vectoresAContagiar)
         }
@@ -83,7 +82,7 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
 
     override fun moverMasCorto(vectorId: Long, nombreDeUbicacion: String) {
         TransactionRunner.addNeo4j().addHibernate().runTrx {
-            val vector = vectorDao.recuperar(vectorId)
+            val vector = vectorDao.recuperar(vectorId.toInt())
             val ubicacion = HibernateUbicacionDao.recuperar(nombreDeUbicacion)
             neo4jUbicacionDAO.moverMasCorto(vector, ubicacion)
         }

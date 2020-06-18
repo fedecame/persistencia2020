@@ -11,6 +11,7 @@ import ar.edu.unq.eperdemic.modelo.exception.UbicacionMuyLejana
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jDataDAO
+import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jUbicacionDAO
 import ar.edu.unq.eperdemic.services.HibernateDataService
 import ar.edu.unq.eperdemic.services.Neo4jDataService
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
@@ -23,6 +24,7 @@ import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import org.mockito.Mockito
 
 class UbicacionNeo4jTest {
     lateinit var neo4jData: Neo4jDataService
@@ -37,6 +39,8 @@ class UbicacionNeo4jTest {
     fun setUp() {
         neo4jData = Neo4jDataService()
         hibernateDataService = HibernateDataService()
+        neo4jData.eliminarTodo()
+        hibernateDataService.eliminarTodo()
         neo4jData.crearSetDeDatosIniciales()
         ubicacionService.crearUbicacion("BichoLandia")
         ubicacionService.crearUbicacion("Florencio Varela")
@@ -177,17 +181,60 @@ class UbicacionNeo4jTest {
 
     @Test
     fun unVectorHumanoIntentaMoverMasCortoYMueveLaCombinacionMasCortaPosible() {
-        /**
-         *  TODO Fede
-         * */
+        vectorService.borrarVector(vector.id!!.toInt())
+        vectorService.borrarVector(vectorAnimal.id!!.toInt())
+
         val zion = ubicacionService.recuperarUbicacion("Zion")
         val mordor = ubicacionService.recuperarUbicacion("Mordor")
-        vector.ubicacion = zion
-        zion.vectores.add(vector)
+
+        val vectorSpy = Mockito.spy(Vector())
+        vectorSpy.estado = Sano()
+        vectorSpy.tipo = Humano()
+        vectorSpy.ubicacion = zion
+        zion.vectores.add(vectorSpy)
+        vectorService.crearVector(vectorSpy)
+
         TransactionRunner.addHibernate().runTrx {
             HibernateUbicacionDAO().actualizar(zion)
         }
+
+        val babiloniaSpy = Mockito.spy(ubicacionService.recuperarUbicacion("Babilonia"))
+        val ezpeletaSpy = Mockito.spy(ubicacionService.recuperarUbicacion("Ezpeleta"))
+        val mordorSpy = Mockito.spy(mordor)
+        val vectorDAOSpy: HibernateVectorDAO = Mockito.mock(HibernateVectorDAO::class.java)
+        val hibernateUbicacionDAOSpy = Mockito.spy(HibernateUbicacionDAO())
+        val neo4jUbicacionDAO = Neo4jUbicacionDAO()
+        neo4jUbicacionDAO.hibernateUbicacionDAO = hibernateUbicacionDAOSpy
+        ubicacionService = UbicacionServiceImpl(hibernateUbicacionDAOSpy)
+        ubicacionService.neo4jUbicacionDAO = neo4jUbicacionDAO
+        ubicacionService.vectorDao = vectorDAOSpy
+
+        Mockito.`when`(vectorDAOSpy.recuperar(Mockito.anyInt())).thenReturn(vectorSpy)
+//        Mockito.`when`(hibernateUbicacionDAOSpy.actualizar(Mockito.any(Ubicacion::class.java) as Ubicacion)).then { print("actualizame esta") }
+        TransactionRunner.addHibernate().addNeo4j().runTrx {
+            Mockito.`when`(hibernateUbicacionDAOSpy.recuperar("Babilonia")).thenReturn(babiloniaSpy)
+        }
+        TransactionRunner.addHibernate().addNeo4j().runTrx {
+            Mockito.`when`(hibernateUbicacionDAOSpy.recuperar("Ezpeleta")).thenReturn(ezpeletaSpy)
+        }
+        TransactionRunner.addHibernate().addNeo4j().runTrx {
+            Mockito.`when`(hibernateUbicacionDAOSpy.recuperar("Mordor")).thenReturn(mordorSpy)
+        }
         ubicacionService.moverMasCorto(vector.id!!, mordor.nombreUbicacion)
+
+//        Mockito.verify(vectorSpy, Mockito.times(1)).ubicacion = babiloniaSpy
+//        Mockito.verify(vectorSpy, Mockito.times(1)).ubicacion = ezpeletaSpy
+//        Mockito.verify(vectorSpy, Mockito.times(1)).ubicacion = mordorSpy
+        Mockito.verifyNoMoreInteractions(vectorSpy)
+
+
+//        vector = vectorService.recuperarVector(vector.id!!.toInt())
+//        //verifico que el vector termina en mordor
+//        Assert.assertEquals(mordor.nombreUbicacion, vector.ubicacion!!.nombreUbicacion)
+
+        //verifico que el vector no esta mas en zion
+        Assert.assertNull(zion.vectores.find { it.id == vector.id!! })
+
         //crear un spy de lo que sepa que se movio el vector a la nueva ubicacion
 
         //de zion a mordor
@@ -340,7 +387,7 @@ class UbicacionNeo4jTest {
 
     @After
     fun eliminarTodo() {
-        neo4jData.eliminarTodo()
-        hibernateDataService.eliminarTodo()
+//        neo4jData.eliminarTodo()
+//        hibernateDataService.eliminarTodo()
     }
 }
