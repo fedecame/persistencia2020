@@ -88,8 +88,8 @@ class VectorServiceTest {
         ubicacion.vectores.add(vector1)
         vector1.ubicacion = ubicacion
         vectorService.crearVector(vector)
+
         vectorService.crearVector(vector1)
-        ubicacionService.conectar("Quilmes","Quilmes","Terrestre")
 
     }
 
@@ -107,6 +107,7 @@ class VectorServiceTest {
         val res = vectorService.recuperarVector(vector2.id!!.toInt())
 
         Assert.assertEquals(1,res.especies.size)
+
     }
 
     @Test
