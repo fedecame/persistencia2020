@@ -252,7 +252,7 @@ class VectorServiceTest {
         vectorAGuardar.ubicacion = ubicacion
         vectorService.crearVector(vectorAGuardar)
         val vectorRecuperado = vectorService.recuperarVector(vectorAGuardar.id!!.toInt())
-        Assert.assertEquals(2, vectorRecuperado.id!!)
+        Assert.assertEquals(3, vectorRecuperado.id!!)
     }
 
     @Test(expected = IDVectorNoEncontradoException::class)
