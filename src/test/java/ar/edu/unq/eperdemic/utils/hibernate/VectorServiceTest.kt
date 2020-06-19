@@ -69,7 +69,6 @@ class VectorServiceTest {
         vector.ubicacion = ubicacion
         ubicacion.vectores.add(vector)
         vectorService.crearVector(vector)
-        ubicacionService.conectar("Quilmes","Quilmes","Terrestre")
     }
 
     @Test

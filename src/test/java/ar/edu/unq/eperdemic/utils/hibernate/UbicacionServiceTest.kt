@@ -1,22 +1,30 @@
 package ar.edu.unq.eperdemic.utils.hibernate
 
 
+import ar.edu.unq.eperdemic.estado.Infectado
 import ar.edu.unq.eperdemic.estado.Sano
+import ar.edu.unq.eperdemic.modelo.Especie
+import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.exception.IDVectorNoEncontradoException
 import ar.edu.unq.eperdemic.modelo.exception.MoverMismaUbicacion
 import ar.edu.unq.eperdemic.modelo.exception.NoExisteUbicacion
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.HibernateDataService
 import ar.edu.unq.eperdemic.services.Neo4jDataService
+import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
+import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.tipo.Animal
 import ar.edu.unq.eperdemic.tipo.Humano
 import ar.edu.unq.eperdemic.tipo.Insecto
 import ar.edu.unq.eperdemic.utility.random.RandomMaster
+import ar.edu.unq.eperdemic.utility.random.RandomMasterImpl
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -36,7 +44,7 @@ class UbicacionServiceTest {
     lateinit var ubicacionCreada1: Ubicacion
     lateinit var ubicacionCreada2: Ubicacion
     lateinit var ubicacionCreada3: Ubicacion
-    lateinit var randomGenerator: RandomMaster
+    lateinit var randomGeneratorMock: RandomMaster
     lateinit var hibernateData: HibernateDataService
     lateinit var neo4jData: Neo4jDataService
 
@@ -53,8 +61,8 @@ class UbicacionServiceTest {
         ubicacionCreada1 = ubicacionService.crearUbicacion("Berazategui")
         ubicacionCreada2 = ubicacionService.crearUbicacion("Saavedra")
         ubicacionCreada3 = ubicacionService.crearUbicacion("Don Bosco")
-        randomGenerator = Mockito.mock(RandomMaster::class.java)
-        ubicacionService.randomGenerator = randomGenerator
+        randomGeneratorMock = Mockito.mock(RandomMaster::class.java)
+        ubicacionService.randomGenerator = randomGeneratorMock
         ubicacionService.conectar("Florencio Varela","Quilmes","Terrestre")
         ubicacionService.conectar("Florencio Varela","Berazategui","Terrestre")
         ubicacionService.conectar("Quilmes","Berazategui","Terrestre")
@@ -216,33 +224,154 @@ class UbicacionServiceTest {
     @Test
     fun expandirSinVectoresInfectadosEnUbicacion(){
         ubicacionService.expandir(ubicacionCreada1.nombreUbicacion)
-        verifyZeroInteractions(randomGenerator)
+        verifyZeroInteractions(randomGeneratorMock)
     }
 
-//    @Test
-//    fun expandirCon1VectorInfectadoEnUbicacion(){
-//        val vector2 = Vector()
-//        vector2.estado = Infectado()
-//        vector2.tipo = Insecto()
-//        val vectorServiceMock = mock(VectorService::class.java)
-////        ubicacionService.vectorService = vectorServiceMock
-//
-//        vector.ubicacion=ubicacionCreada1
-//        val vectorCreado = vectorService.crearVector(vector)
-//        ubicacionService.mover(vectorCreado.id!!.toInt(), ubicacionCreada1.nombreUbicacion)
-//
-//        vector1.ubicacion=ubicacionCreada1
-//        val vectorCreado1 = vectorService.crearVector(vector1)
-//        ubicacionService.mover(vectorCreado1.id!!.toInt(), ubicacionCreada1.nombreUbicacion)
-//
-//        vector2.ubicacion=ubicacionCreada1
-//        val vectorCreado2 = vectorService.crearVector(vector2)
-//        ubicacionService.mover(vectorCreado2.id!!.toInt(), ubicacionCreada1.nombreUbicacion)
-//
-//        ubicacionService.expandir(ubicacionCreada1.nombreUbicacion)
-//        verify(randomGenerator, times(1)).giveMeARandonNumberBeetween(0.0, 0.0)
-//
-//    }
+    @Test
+    fun `al expandir con mas de 1 vector infectado en la ubicacion, se usa el randomGenerator para elegir uno de los infectados aleatoriamente`(){
+        val patogenoDelTest = Patogeno()
+        patogenoDelTest.cantidadDeEspecies = 1
+        patogenoDelTest.defensaContraMicroorganismos = 2
+        patogenoDelTest.factorContagioAnimal = 3
+        patogenoDelTest.factorContagioHumano = 999 // Asigno un factor de contagio muy grande para forzar la infeccion de los vectores!
+        patogenoDelTest.factorContagioInsecto = 9
+        patogenoDelTest.letalidad = 33
+        patogenoDelTest.tipo = "Imaginario"
+
+        val especieDelTest = Especie()
+        especieDelTest.paisDeOrigen = "Argentina"
+        especieDelTest.nombre = "Argentinitis"
+        especieDelTest.cantidadInfectadosParaADN = 19
+        especieDelTest.patogeno = patogenoDelTest
+
+        val especieDelTest2 = Especie()
+        especieDelTest2.paisDeOrigen = "Jamaica"
+        especieDelTest2.nombre = "Rastafaritis"
+        especieDelTest2.cantidadInfectadosParaADN = 22
+        especieDelTest2.patogeno = patogenoDelTest
+
+        val vectorInfectado1 = Vector()
+        vectorInfectado1.tipo = Insecto()
+        vectorInfectado1.agregarEspecie(especieDelTest)
+
+        val vectorInfectado2 = Vector()
+        vectorInfectado2.tipo = Insecto()
+        vectorInfectado2.agregarEspecie(especieDelTest2)
+
+        Assert.assertTrue(vectorInfectado1.estado is Infectado)
+        Assert.assertTrue(vectorInfectado2.estado is Infectado)
+
+        vector.ubicacion = ubicacionCreada1
+        vectorService.crearVector(vector)
+        ubicacionCreada1.vectores.add(vector)
+
+        vector1.ubicacion = ubicacionCreada1
+        vectorService.crearVector(vector1)
+        ubicacionCreada1.vectores.add(vector1)
+
+        vectorInfectado1.ubicacion=ubicacionCreada1
+        vectorService.crearVector(vectorInfectado1)
+        ubicacionCreada1.vectores.add(vectorInfectado1)
+
+        vectorInfectado2.ubicacion=ubicacionCreada1
+        vectorService.crearVector(vectorInfectado2)
+        ubicacionCreada1.vectores.add(vectorInfectado2)
+
+        TransactionRunner.addHibernate().runTrx {
+            HibernateUbicacionDAO().actualizar(ubicacionCreada1)
+        }
+
+        Assert.assertNotNull(patogenoDelTest.id)
+
+        Assert.assertTrue(vector.estado is Sano)
+        Assert.assertTrue(vector1.estado is Sano)
+
+        Mockito.`when`(randomGeneratorMock.giveMeARandonNumberBeetween(0.0, 1.0)).thenReturn(0.0)
+
+        ubicacionService.expandir(ubicacionCreada1.nombreUbicacion)
+
+        Mockito.verify(randomGeneratorMock, Mockito.times(1)).giveMeARandonNumberBeetween(0.0, 1.0)
+
+        val vectorDB = vectorService.recuperarVector(vector.id!!.toInt())
+        val vector1DB = vectorService.recuperarVector(vector1.id!!.toInt())
+        Assert.assertTrue(vectorDB.estado is Infectado)
+        Assert.assertTrue(vector1DB.estado is Infectado)
+
+        Assert.assertEquals(1, vectorDB.especies.size)
+        Assert.assertEquals(1, vector1DB.especies.size)
+    }
+
+    @Test
+    fun `al expandir con 1 vector infectado en la ubicacion y 2 vectores sanos, los sanos se infectan de las especies del infectado (forzado con factor de contagio elevado)`(){
+        val patogenoDelTest = Patogeno()
+        patogenoDelTest.cantidadDeEspecies = 1
+        patogenoDelTest.defensaContraMicroorganismos = 2
+        patogenoDelTest.factorContagioAnimal = 3
+        patogenoDelTest.factorContagioHumano = 999 // Asigno un factor de contagio muy grande para forzar la infeccion de los vectores!
+        patogenoDelTest.factorContagioInsecto = 9
+        patogenoDelTest.letalidad = 33
+        patogenoDelTest.tipo = "Imaginario"
+
+        val especieDelTest = Especie()
+        especieDelTest.paisDeOrigen = "Argentina"
+        especieDelTest.nombre = "Argentinitis"
+        especieDelTest.cantidadInfectadosParaADN = 19
+        especieDelTest.patogeno = patogenoDelTest
+
+        val especieDelTest2 = Especie()
+        especieDelTest2.paisDeOrigen = "Jamaica"
+        especieDelTest2.nombre = "Rastafaritis"
+        especieDelTest2.cantidadInfectadosParaADN = 22
+        especieDelTest2.patogeno = patogenoDelTest
+
+        val vectorInfectado = Vector()
+        vectorInfectado.tipo = Insecto()
+        vectorInfectado.agregarEspecie(especieDelTest)
+        vectorInfectado.agregarEspecie(especieDelTest2)
+
+        Assert.assertTrue(vectorInfectado.estado is Infectado)
+
+        //no uso al mock de random en ubicacionService porque solo hay 1 infectado en la ubicacion
+        //en su lugar uso un spy para verificar que se mandan los parametros correctos al randomGenerator
+        val randomGeneratorSpy = Mockito.spy(RandomMasterImpl)
+        ubicacionService.randomGenerator = randomGeneratorSpy
+
+        vector.ubicacion = ubicacionCreada1
+        vectorService.crearVector(vector)
+        ubicacionCreada1.vectores.add(vector)
+
+        vector1.ubicacion = ubicacionCreada1
+        vectorService.crearVector(vector1)
+        ubicacionCreada1.vectores.add(vector1)
+
+        vectorInfectado.ubicacion=ubicacionCreada1
+        vectorService.crearVector(vectorInfectado)
+        ubicacionCreada1.vectores.add(vectorInfectado)
+
+        TransactionRunner.addHibernate().runTrx {
+            HibernateUbicacionDAO().actualizar(ubicacionCreada1)
+        }
+
+        Assert.assertTrue(vector.estado is Sano)
+        Assert.assertTrue(vector1.estado is Sano)
+
+        ubicacionService.expandir(ubicacionCreada1.nombreUbicacion)
+
+        verify(randomGeneratorSpy, times(0)).giveMeARandonNumberBeetween(Mockito.anyDouble(), Mockito.anyDouble())
+
+        val vectorDB = vectorService.recuperarVector(vector.id!!.toInt())
+        val vector1DB = vectorService.recuperarVector(vector1.id!!.toInt())
+        Assert.assertTrue(vectorDB.estado is Infectado)
+        Assert.assertTrue(vector1DB.estado is Infectado)
+
+        Assert.assertEquals(2, vectorDB.especies.size)
+        Assert.assertEquals(2, vector1DB.especies.size)
+
+        Assert.assertNotNull(vectorDB.especies.find { it.id!! == especieDelTest.id!! })
+        Assert.assertNotNull(vectorDB.especies.find { it.id!! == especieDelTest2.id!! })
+        Assert.assertNotNull(vector1DB.especies.find { it.id!! == especieDelTest.id!! })
+        Assert.assertNotNull(vector1DB.especies.find { it.id!! == especieDelTest2.id!! })
+    }
 
     @Test
     fun luegoDeExpandirEnUNaUbicacionSinVectoresInfectadosEnUbicacionNoHayVectoresEnEsaUbicacion(){

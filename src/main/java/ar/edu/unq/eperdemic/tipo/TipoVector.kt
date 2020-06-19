@@ -23,8 +23,8 @@ abstract class TipoVector(){
     }
 
     fun infectameSiCorresponde(vectorAContagiar: Vector, especie: Especie) {
-    if (this.porcentajeDeContagioExitoso(especie) >= randomGenerator.giveMeARandonNumberBeetween(1.0,100.0)) {
-        vectorAContagiar.infectarse(especie)
+        if (this.porcentajeDeContagioExitoso(especie) >= randomGenerator.giveMeARandonNumberBeetween(1.0,100.0)) {
+            vectorAContagiar.infectarse(especie)
         }
     }
 

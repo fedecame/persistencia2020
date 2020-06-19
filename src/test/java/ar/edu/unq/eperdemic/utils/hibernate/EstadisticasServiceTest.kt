@@ -125,11 +125,8 @@ class EstadisticasServiceTest {
         vectorService.crearVector(vector2)
         vectorService.crearVector(vector3)
         //dataDaoNeo4j.datosParaEstadisticaService()
-        ubicacionService.conectar(ubicacion1.nombreUbicacion.toString(),ubicacion0.nombreUbicacion.toString(),"Terrestre")
+        ubicacionService.conectar(ubicacion1.nombreUbicacion,ubicacion0.nombreUbicacion,"Terrestre")
         ubicacionService.mover(vector.id!!.toInt(), ubicacion0.nombreUbicacion)
-        ubicacionService.conectar("Quilmes","Quilmes","Terrestre")
-        ubicacionService.conectar("Mar del Plata","Mar del Plata","Terrestre")
-        ubicacionService.conectar("Maeame","Maeame","Terrestre")
     }
 
     @Test

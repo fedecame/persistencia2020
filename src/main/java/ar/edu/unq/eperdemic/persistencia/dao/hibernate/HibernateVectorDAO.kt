@@ -40,8 +40,7 @@ class HibernateVectorDAO :  HibernateDAO<Vector>(Vector::class.java), VectorDAO 
     }
 
     override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) {
-        val _vector = this.recuperar(vectorInfectado.id)
-        _vector.contagiar(vectores)
+        vectorInfectado.contagiar(vectores)
         for(vectorAContagiar in vectores){
             super.actualizar(vectorAContagiar)
         }
