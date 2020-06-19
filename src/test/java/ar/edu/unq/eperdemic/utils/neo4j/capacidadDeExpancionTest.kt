@@ -174,12 +174,263 @@ class capacidadDeExpancionTest {
         Assert.assertEquals(1, capacidad0)
     }
 
+    @Test
+    fun unVectorAnimalTieneCapacidadDeExpansion1AnteUnCaminoDeTipoMaritimoConMovimientosnmayoresA0(){
+        val origen = sut.crearUbicacion("Origen")
+        val destino = sut.crearUbicacion("Destino")
+        sut.conectar(origen.nombreUbicacion, destino.nombreUbicacion, "Maritimo")
+        val vectorAnimal = Vector()
+        vectorAnimal.tipo = Animal()
+        vectorAnimal.ubicacion = origen
+        vectorService.crearVector(vectorAnimal)
+        Assert.assertEquals(1, sut.capacidadDeExpansion(vectorAnimal.id!!, 1))
+        Assert.assertEquals(1, sut.capacidadDeExpansion(vectorAnimal.id!!, 2))
+        Assert.assertEquals(1, sut.capacidadDeExpansion(vectorAnimal.id!!, 42))
+    }
+
+    @Test
+    fun unVectorAnimalTieneCapacidadDeExpansion1AnteUnCaminoDeTipoTerrestreConMovimientosnmayoresA0(){
+        val origen = sut.crearUbicacion("Origen")
+        val destino = sut.crearUbicacion("Destino")
+        sut.conectar(origen.nombreUbicacion, destino.nombreUbicacion, "Terrestre")
+        val vectorAnimal = Vector()
+        vectorAnimal.tipo = Animal()
+        vectorAnimal.ubicacion = origen
+        vectorService.crearVector(vectorAnimal)
+        Assert.assertEquals(1, sut.capacidadDeExpansion(vectorAnimal.id!!, 1))
+        Assert.assertEquals(1, sut.capacidadDeExpansion(vectorAnimal.id!!, 2))
+        Assert.assertEquals(1, sut.capacidadDeExpansion(vectorAnimal.id!!, 42))
+    }
+
+    @Test
+    fun unVectorAnimalTieneCapacidadDeExpansion1AnteUnCaminoDeTipoAereoConMovimientosnmayoresA0(){
+        val origen = sut.crearUbicacion("Origen")
+        val destino = sut.crearUbicacion("Destino")
+        sut.conectar(origen.nombreUbicacion, destino.nombreUbicacion, "Aereo")
+        val vectorAnimal = Vector()
+        vectorAnimal.tipo = Animal()
+        vectorAnimal.ubicacion = origen
+        vectorService.crearVector(vectorAnimal)
+        Assert.assertEquals(1, sut.capacidadDeExpansion(vectorAnimal.id!!, 1))
+        Assert.assertEquals(1, sut.capacidadDeExpansion(vectorAnimal.id!!, 2))
+        Assert.assertEquals(1, sut.capacidadDeExpansion(vectorAnimal.id!!, 42))
+    }
+
+    @Test
+    fun unVectorInsectoTieneCapacidadDeExpansion1AnteUnCaminoDeTipoAereoConMovimientosnmayoresA0(){
+        this.eliminarTodo()
+        val origen = sut.crearUbicacion("Origen")
+        val destino = sut.crearUbicacion("Destino")
+        sut.conectar(origen.nombreUbicacion, destino.nombreUbicacion, "Aereo")
+        val vectorInsecto = Vector()
+        vectorInsecto.tipo = Insecto()
+        vectorInsecto.ubicacion = origen
+        vectorService.crearVector(vectorInsecto)
+        Assert.assertEquals(1, sut.capacidadDeExpansion(vectorInsecto.id!!, 1))
+        Assert.assertEquals(1, sut.capacidadDeExpansion(vectorInsecto.id!!, 2))
+        Assert.assertEquals(1, sut.capacidadDeExpansion(vectorInsecto.id!!, 42))
+    }
+
+    @Test
+    fun unVectorInsectoTieneCapacidadDeExpansion1AnteUnCaminoDeTipoTerrestreConMovimientosnmayoresA0(){
+        this.eliminarTodo()
+        val origen = sut.crearUbicacion("Origen")
+        val destino = sut.crearUbicacion("Destino")
+        sut.conectar(origen.nombreUbicacion, destino.nombreUbicacion, "Terrestre")
+        val vectorInsecto = Vector()
+        vectorInsecto.tipo = Insecto()
+        vectorInsecto.ubicacion = origen
+        vectorService.crearVector(vectorInsecto)
+        Assert.assertEquals(1, sut.capacidadDeExpansion(vectorInsecto.id!!, 1))
+        Assert.assertEquals(1, sut.capacidadDeExpansion(vectorInsecto.id!!, 2))
+        Assert.assertEquals(1, sut.capacidadDeExpansion(vectorInsecto.id!!, 42))
+    }
+
+    @Test
+    fun unVectorInsectoTieneCapacidadDeExpansion0AnteUnCaminoDeTipoMaritimoSinImportarLaCantidadDeMovimients(){
+        this.eliminarTodo()
+        val vectorInsecto = Vector()
+        vectorInsecto.tipo = Insecto()
+        val origen = sut.crearUbicacion("Origen")
+        val destino = sut.crearUbicacion("Destino")
+        vectorInsecto.ubicacion = origen
+        vectorService.crearVector(vectorInsecto)
+        sut.conectar(origen.nombreUbicacion, destino.nombreUbicacion, "Maritimo")
+        Assert.assertEquals(0, sut.capacidadDeExpansion(vectorInsecto.id!!, 1))
+        Assert.assertEquals(0, sut.capacidadDeExpansion(vectorInsecto.id!!, 2))
+        Assert.assertEquals(0, sut.capacidadDeExpansion(vectorInsecto.id!!, 42))
+    }
+
+    @Test
+    fun unVectorHumanoTieneCapacidadDeExpansion0AnteUnCaminoDeTipoAereoSinImportarLaCantidadDeMovimients(){
+        this.eliminarTodo()
+        val otroVectorHumano = Vector()
+        otroVectorHumano.tipo = Humano()
+        val origen = sut.crearUbicacion("Origen")
+        val destino = sut.crearUbicacion("Destino")
+        otroVectorHumano.ubicacion = origen
+        vectorService.crearVector(otroVectorHumano)
+        sut.conectar(origen.nombreUbicacion, destino.nombreUbicacion, "Aereo ")
+        Assert.assertEquals(0, sut.capacidadDeExpansion(otroVectorHumano.id!!, 1))
+        Assert.assertEquals(0, sut.capacidadDeExpansion(otroVectorHumano.id!!, 2))
+        Assert.assertEquals(0, sut.capacidadDeExpansion(otroVectorHumano.id!!, 42))
+    }
+
+    @Test
+    fun unVectorHumanoTieneCapacidadDeExpansion2AnteUnCaminoDeTipoTerrestreYAnteUnCaminoDeTipoMaritimoSinImportarLaCantidadDeMovimients(){
+        this.eliminarTodo()
+        val otroVectorHumano = Vector()
+        otroVectorHumano.tipo = Humano()
+        val origen = sut.crearUbicacion("Origen")
+        val destinoATierra = sut.crearUbicacion("DestinoTierra")
+        val destinoAMar = sut.crearUbicacion("DestinoMaritimo")
+        otroVectorHumano.ubicacion = origen
+        vectorService.crearVector(otroVectorHumano)
+        sut.conectar(origen.nombreUbicacion, destinoATierra.nombreUbicacion, "Terrestre")
+        sut.conectar(origen.nombreUbicacion, destinoAMar.nombreUbicacion, "Maritimo")
+        Assert.assertEquals(2, sut.capacidadDeExpansion(otroVectorHumano.id!!, 1))
+        Assert.assertEquals(2, sut.capacidadDeExpansion(otroVectorHumano.id!!, 2))
+        Assert.assertEquals(2, sut.capacidadDeExpansion(otroVectorHumano.id!!, 42))
+    }
+
+    @Test
+    fun unVectorInsectoTieneCapacidadDeExpansion2AnteUnCaminoDeTipoAereoYAnteUnCaminoDeTipoTerrestreSinImportarLaCantidadDeMovimients(){
+        this.eliminarTodo()
+        val otroVectorInsecto = Vector()
+        otroVectorInsecto.tipo = Insecto()
+        val origen = sut.crearUbicacion("Origen")
+        val destinoATierra = sut.crearUbicacion("DestinoTierra")
+        val destinoAereo = sut.crearUbicacion("DestinoAereo")
+        otroVectorInsecto.ubicacion = origen
+        vectorService.crearVector(otroVectorInsecto)
+        sut.conectar(origen.nombreUbicacion, destinoATierra.nombreUbicacion, "Terrestre")
+        sut.conectar(origen.nombreUbicacion, destinoAereo.nombreUbicacion, "Aereo")
+        Assert.assertEquals(2, sut.capacidadDeExpansion(otroVectorInsecto.id!!, 1))
+        Assert.assertEquals(2, sut.capacidadDeExpansion(otroVectorInsecto.id!!, 2))
+        Assert.assertEquals(2, sut.capacidadDeExpansion(otroVectorInsecto.id!!, 42))
+    }
+
+    @Test
+    fun unVectorAnimalTieneCapacidadDeExpansion2AnteUnCaminoDeTipoAereoYAnteUnCaminoDeTipoTerrestreSinImportarLaCantidadDeMovimients(){
+        this.eliminarTodo()
+        val otroVectorAnimal = Vector()
+        otroVectorAnimal.tipo = Animal()
+        val origen = sut.crearUbicacion("Origen")
+        val destinoATierra = sut.crearUbicacion("DestinoTierra")
+        val destinoAereo = sut.crearUbicacion("DestinoAereo")
+        otroVectorAnimal.ubicacion = origen
+        vectorService.crearVector(otroVectorAnimal)
+        sut.conectar(origen.nombreUbicacion, destinoATierra.nombreUbicacion, "Terrestre")
+        sut.conectar(origen.nombreUbicacion, destinoAereo.nombreUbicacion, "Aereo")
+        Assert.assertEquals(2, sut.capacidadDeExpansion(otroVectorAnimal.id!!, 1))
+        Assert.assertEquals(2, sut.capacidadDeExpansion(otroVectorAnimal.id!!, 2))
+        Assert.assertEquals(2, sut.capacidadDeExpansion(otroVectorAnimal.id!!, 42))
+    }
+
+    @Test
+    fun unVectorAnimalTieneCapacidadDeExpansion2AnteUnCaminoDeTipoAereoYAnteUnCaminoDeTipoMaritimoSinImportarLaCantidadDeMovimients(){
+        this.eliminarTodo()
+        val otroVectorAnimal = Vector()
+        otroVectorAnimal.tipo = Animal()
+        val origen = sut.crearUbicacion("Origen")
+        val destinoAMar = sut.crearUbicacion("DestinoAMar")
+        val destinoAereo = sut.crearUbicacion("DestinoAereo")
+        otroVectorAnimal.ubicacion = origen
+        vectorService.crearVector(otroVectorAnimal)
+        sut.conectar(origen.nombreUbicacion, destinoAMar.nombreUbicacion, "Maritimo")
+        sut.conectar(origen.nombreUbicacion, destinoAereo.nombreUbicacion, "Aereo")
+        Assert.assertEquals(2, sut.capacidadDeExpansion(otroVectorAnimal.id!!, 1))
+        Assert.assertEquals(2, sut.capacidadDeExpansion(otroVectorAnimal.id!!, 2))
+        Assert.assertEquals(2, sut.capacidadDeExpansion(otroVectorAnimal.id!!, 42))
+    }
+
+    @Test
+    fun unVectorAnimalTieneCapacidadDeExpansion2AnteUnCaminoDeTipoTerrestreYAnteUnCaminoDeTipoMaritimoinImportarLaCantidadDeMovimients(){
+        this.eliminarTodo()
+        val otroVectorAnimal = Vector()
+        otroVectorAnimal.tipo = Animal()
+        val origen = sut.crearUbicacion("Origen")
+        val destinoAMar = sut.crearUbicacion("DestinoAMar")
+        val destinoATierra = sut.crearUbicacion("DestinoATierra")
+        otroVectorAnimal.ubicacion = origen
+        vectorService.crearVector(otroVectorAnimal)
+        sut.conectar(origen.nombreUbicacion, destinoAMar.nombreUbicacion, "Maritimo")
+        sut.conectar(origen.nombreUbicacion, destinoATierra.nombreUbicacion, "Aereo")
+        Assert.assertEquals(2, sut.capacidadDeExpansion(otroVectorAnimal.id!!, 1))
+        Assert.assertEquals(2, sut.capacidadDeExpansion(otroVectorAnimal.id!!, 2))
+        Assert.assertEquals(2, sut.capacidadDeExpansion(otroVectorAnimal.id!!, 42))
+    }
+
+    @Test
+    fun unVectorAnimalTieneCapacidadDeExpansion3AnteLos3TiposDeCaminos(){
+        this.eliminarTodo()
+        val otroVectorAnimal = Vector()
+        otroVectorAnimal.tipo = Animal()
+        val origen = sut.crearUbicacion("Origen")
+        val destinoAMar = sut.crearUbicacion("DestinoAMar")
+        val destinoAereo = sut.crearUbicacion("DestinoAereo")
+        val destinoATierra = sut.crearUbicacion("DestinoATierra")
+        otroVectorAnimal.ubicacion = origen
+        vectorService.crearVector(otroVectorAnimal)
+        sut.conectar(origen.nombreUbicacion, destinoAMar.nombreUbicacion, "Maritimo")
+        sut.conectar(origen.nombreUbicacion, destinoATierra.nombreUbicacion, "Terrestre")
+        sut.conectar(origen.nombreUbicacion, destinoAereo.nombreUbicacion, "Aereo")
+        Assert.assertEquals(3, sut.capacidadDeExpansion(otroVectorAnimal.id!!, 1))
+        Assert.assertEquals(3, sut.capacidadDeExpansion(otroVectorAnimal.id!!, 2))
+        Assert.assertEquals(3, sut.capacidadDeExpansion(otroVectorAnimal.id!!, 42))
+    }
+
+    @Test
+    fun unVectorNoPasa2VecesPorElMismoNodoConRelacionesBidireccionalesIndependientementeDeSuTipoIndependientementeDeLaCantidadDemovimientos(){
+        this.eliminarTodo()
+        val otroVectorInsecto = Vector()
+        otroVectorInsecto.tipo = Insecto()
+
+        val otroVectorAnimal = Vector()
+        otroVectorAnimal.tipo = Animal()
+
+        val otroVectorHumano = Vector()
+        otroVectorHumano.tipo = Humano()
+
+        val origen = sut.crearUbicacion("Origen")
+        val destinoAMar = sut.crearUbicacion("DestinoAMar")
+        val destinoATierra = sut.crearUbicacion("DestinoATierra")
+        val destinoAereo = sut.crearUbicacion("DestinoAereo")
+        otroVectorAnimal.ubicacion = origen
+        otroVectorHumano.ubicacion = origen
+        otroVectorInsecto.ubicacion = origen
+        vectorService.crearVector(otroVectorAnimal)
+        vectorService.crearVector(otroVectorHumano)
+        vectorService.crearVector(otroVectorInsecto)
+
+        sut.conectar(origen.nombreUbicacion, destinoAMar.nombreUbicacion, "Maritimo")
+        sut.conectar(destinoAMar.nombreUbicacion,origen.nombreUbicacion, "Maritimo")
+
+        sut.conectar(origen.nombreUbicacion, destinoATierra.nombreUbicacion, "Terrestre")
+        sut.conectar(destinoATierra.nombreUbicacion, origen.nombreUbicacion, "Terrestre")
+
+        sut.conectar(origen.nombreUbicacion, destinoAereo.nombreUbicacion, "Aereo")
+        sut.conectar(destinoAereo.nombreUbicacion, origen.nombreUbicacion, "Aereo")
+
+        Assert.assertEquals(3, sut.capacidadDeExpansion(otroVectorAnimal.id!!, 1))
+        Assert.assertEquals(2, sut.capacidadDeExpansion(otroVectorHumano.id!!, 1))
+        Assert.assertEquals(2, sut.capacidadDeExpansion(otroVectorInsecto.id!!, 1))
+
+        Assert.assertEquals(3, sut.capacidadDeExpansion(otroVectorAnimal.id!!, 2))
+        Assert.assertEquals(2, sut.capacidadDeExpansion(otroVectorHumano.id!!, 2))
+        Assert.assertEquals(2, sut.capacidadDeExpansion(otroVectorInsecto.id!!, 2))
+
+        Assert.assertEquals(3, sut.capacidadDeExpansion(otroVectorAnimal.id!!, 42))
+        Assert.assertEquals(2, sut.capacidadDeExpansion(otroVectorHumano.id!!, 42))
+        Assert.assertEquals(2, sut.capacidadDeExpansion(otroVectorInsecto.id!!, 42))
+    }
+
 
     @After
     fun eliminarTodo() {
-//        TransactionRunner.addNeo4j().addHibernate().runTrx {
-//            HibernateDataDAO().clear()
-//            Neo4jDataDAO().clear()
-//        }
+        TransactionRunner.addNeo4j().addHibernate().runTrx {
+            HibernateDataDAO().clear()
+            Neo4jDataDAO().clear()
+        }
     }
 }

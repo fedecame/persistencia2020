@@ -16,6 +16,7 @@ import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
+import ar.edu.unq.eperdemic.tipo.Animal
 import ar.edu.unq.eperdemic.tipo.Humano
 import ar.edu.unq.eperdemic.tipo.Insecto
 import ar.edu.unq.eperdemic.utility.random.RandomMaster
@@ -61,9 +62,8 @@ class UbicacionServiceTest {
         ubicacionService.conectar("Florencio Varela","Berazategui","Terrestre")
         ubicacionService.conectar("Quilmes","Berazategui","Terrestre")
         ubicacionService.conectar("Florencio Varela","Sarandi","Terrestre")
-//        ubicacionService.conectar("Florencio Varela","Florencio Varela","Terrestre")
         ubicacionService.conectar("Berazategui","Florencio Varela","Terrestre")
-//        ubicacionService.conectar("Berazategui","Berazategui","Terrestre")
+
 
     }
 
@@ -126,20 +126,17 @@ class UbicacionServiceTest {
         neo4jData.eliminarTodo()
         ubicacionService.crearUbicacion("Florencio Varela")
         val listConectados =ubicacionService.conectados("Florencio Varela")
-        Assert.assertTrue(0 == listConectados.size)
+        Assert.assertEquals(0, listConectados.size)
     }
-
 
     @Test
     fun creacionDeUbicacion() {
-        var ubicacion2Creada= ubicacionService.crearUbicacion("Quilmes")
-
+        val ubicacion2Creada= ubicacionService.crearUbicacion("Quilmes")
         Assert.assertEquals("Quilmes", ubicacion2Creada.nombreUbicacion)
         Assert.assertEquals("Quilmes", ubicacionService.recuperarUbicacion("Quilmes").nombreUbicacion)
     }
 
     @Test
-
     fun verificacionDeVectorAlojado() {
         vector.ubicacion=ubicacionCreada
         vectorService.crearVector(vector)
@@ -194,6 +191,7 @@ class UbicacionServiceTest {
         var ubicacionRecuperada1= ubicacionService.recuperarUbicacion("Berazategui")
         Assert.assertEquals(ubicacionRecuperada1.vectores.size,2)
     }
+
     @Test
     fun  alMoverVectorAlojadoEnUnaPosicionLaUbicacionTieneUnVectorMenosAlojado(){
         vector.ubicacion=ubicacionCreada
@@ -206,6 +204,7 @@ class UbicacionServiceTest {
         var ubicacionRecuperada= ubicacionService.recuperarUbicacion("Florencio Varela")
         Assert.assertEquals(ubicacionRecuperada.vectores.size.toInt(),0)
     }
+
     @Test
     fun recuperarUbicacion(){
         var ubicacion= ubicacionService.recuperarUbicacion("Florencio Varela")
@@ -247,6 +246,39 @@ class UbicacionServiceTest {
 //        verify(randomGenerator, times(1)).giveMeARandonNumberBeetween(0.0, 0.0)
 //
 //    }
+
+    @Test
+    fun luegoDeExpandirEnUNaUbicacionSinVectoresInfectadosEnUbicacionNoHayVectoresEnEsaUbicacion(){
+        val jamaica = ubicacionService.crearUbicacion("Jamaica")
+        val vectorSanoA = Vector()
+        vectorSanoA.tipo = Humano()
+        vectorSanoA.ubicacion = jamaica
+
+        val vectorSanoB = Vector()
+        vectorSanoB.tipo = Animal()
+        vectorSanoB.ubicacion = jamaica
+
+        val vectorSanoC = Vector()
+        vectorSanoC.tipo = Insecto()
+        vectorSanoC.ubicacion = jamaica
+
+        vectorService.crearVector(vectorSanoA)
+        vectorService.crearVector(vectorSanoB)
+        vectorService.crearVector(vectorSanoC)
+
+        ubicacionService.expandir("Jamaica")
+        Assert.assertTrue(vectorService.recuperarVector(vectorSanoA.id!!.toInt()).estado is Sano)
+        Assert.assertTrue(vectorService.recuperarVector(vectorSanoB.id!!.toInt()).estado is Sano)
+        Assert.assertTrue(vectorService.recuperarVector(vectorSanoC.id!!.toInt()).estado is Sano)
+    }
+
+    @Test
+    fun elExpandirEnUnaUbicacionSinNingunVectorNoProvocaNingunEfecto(){
+        val jamaica = ubicacionService.crearUbicacion("Jamaica")
+        ubicacionService.expandir("Jamaica")
+        val jamaicaRecuperada = ubicacionService.recuperarUbicacion("Jamaica")
+        Assert.assertTrue(jamaicaRecuperada.vectores.isEmpty())
+    }
 
     @After
     fun eliminarTodo(){
