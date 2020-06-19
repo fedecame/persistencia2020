@@ -7,6 +7,7 @@ import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.modelo.exception.ConectarMismaUbicacion
 import ar.edu.unq.eperdemic.modelo.exception.IDVectorNoEncontradoException
 import ar.edu.unq.eperdemic.modelo.exception.MoverMismaUbicacion
 import ar.edu.unq.eperdemic.modelo.exception.NoExisteUbicacion
@@ -70,6 +71,11 @@ class UbicacionServiceTest {
         ubicacionService.conectar("Berazategui","Florencio Varela","Terrestre")
 
 
+    }
+
+    @Test(expected = ConectarMismaUbicacion::class)
+    fun noSePuedeConectarUnaUbicacionConSigoMisma(){
+        ubicacionService.conectar("Quilmes", "Quilmes", "Aereo")
     }
 
     @Test
