@@ -18,7 +18,8 @@ class Vector {
     @Column(updatable = false, nullable = false)
     var id : Long? = null
 
-    @ManyToMany(cascade=[CascadeType.ALL], fetch=FetchType.EAGER)
+    @ManyToMany(fetch=FetchType.EAGER)
+    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     var especies : MutableSet<Especie> = mutableSetOf()
 
     @Column(nullable = false)
@@ -43,7 +44,6 @@ class Vector {
 
     fun infectarse(especie: Especie){
         if (especies.find { it.id == especie.id } == null) {
-//            this.cambiarEstado(Infectado())
             this.agregarEspecie(especie)
             tipo.agregarInfectado(especie)
         }

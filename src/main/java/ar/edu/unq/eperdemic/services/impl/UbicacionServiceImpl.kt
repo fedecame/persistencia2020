@@ -3,6 +3,7 @@ package ar.edu.unq.eperdemic.services.impl
 import ar.edu.unq.eperdemic.estado.Infectado
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.modelo.exception.ConectarMismaUbicacion
 import ar.edu.unq.eperdemic.modelo.exception.MoverMismaUbicacion
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
@@ -30,6 +31,9 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
     }
 
     override fun conectar(ubicacion1: String, ubicacion2: String, tipoCamino: String) {
+        if (ubicacion1 == ubicacion2) {
+            throw ConectarMismaUbicacion()
+        }
         TransactionRunner.addNeo4j().runTrx {
             neo4jUbicacionDAO.conectar(ubicacion1, ubicacion2, tipoCamino)
         }
@@ -71,10 +75,9 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
             return
         }
         // obtengo un vector infectado aleatoriamente
-        val indiceAleatorio = randomGenerator.giveMeARandonNumberBeetween(0.0, vectoresInfectados.size.toDouble()-1).toInt()
+        val indiceAleatorio = if (vectoresInfectados.size == 1) 0 else randomGenerator.giveMeARandonNumberBeetween(0.0, vectoresInfectados.size.toDouble()-1).toInt()
         val vectorInfectadoAleatorio = vectoresInfectados.get(indiceAleatorio)
         val vectoresAContagiar = ubicacion.vectores.filter { vector -> vector.id != vectorInfectadoAleatorio.id }
-//        vectorService.contagiar(vectorInfectadoAleatorio, vectoresAContagiar)
 
         TransactionRunner.addHibernate().runTrx {
             vectorDao.contagiar(vectorInfectadoAleatorio, vectoresAContagiar)
