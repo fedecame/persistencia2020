@@ -537,7 +537,16 @@ class UbicacionNeo4jTest {
 
     }
 
-    @After
+
+    @Test
+    fun seRecuperaUnNodoUbicacionPersistidoEnNeo4j() {
+        var sut = Neo4jUbicacionDAO()
+        val res = TransactionRunner.addNeo4j().runTrx { sut.recuperar("Quilmes") }
+        Assert.assertTrue(res is Ubicacion)
+        Assert.assertEquals("Quilmes", res.nombreUbicacion)
+
+    }
+        @After
     fun eliminarTodo() {
         neo4jData.eliminarTodo()
         hibernateDataService.eliminarTodo()

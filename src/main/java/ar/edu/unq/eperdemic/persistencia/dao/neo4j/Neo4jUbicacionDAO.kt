@@ -6,6 +6,7 @@ import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.exception.CaminoNoSoportado
 import ar.edu.unq.eperdemic.modelo.exception.UbicacionMuyLejana
 import ar.edu.unq.eperdemic.modelo.exception.UbicacionNoAlcanzable
+import ar.edu.unq.eperdemic.modelo.exception.UbicacionNoEncontradaRunTimeException
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
@@ -20,6 +21,7 @@ import org.neo4j.driver.Value
 class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
     val vectorDao = HibernateVectorDAO()
     var hibernateUbicacionDAO = HibernateUbicacionDAO()
+    var myFormatter : MyFormat = MyFormatter()
 
     override fun conectar(ubicacion1: String, ubicacion2: String, tipoCamino: String) {
         val transaction = TransactionNeo4j.currentTransaction
@@ -68,23 +70,22 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
         }
     }
 
-    private fun darTipo(camino: String): TipoCamino? {
-        when (camino) {
-            "Terrestre" -> return TipoCamino.Terrestre
-            "Aereo" -> return TipoCamino.Aereo
-            "Maritimo" -> return TipoCamino.Maritimo
-            else -> return null
-        }
-    }
-
     override fun crear(ubicacion: Ubicacion): Ubicacion {
         super.crear(ubicacion.nombreUbicacion)
         return ubicacion
     }
 
     override fun recuperar(nombre: String): Ubicacion {
-//        TODO("Not yet implemented")
-        return Ubicacion()
+        val transaction = TransactionNeo4j.currentTransaction
+        val query = """ MATCH (n:Ubicacion) WHERE n.nombre = "${nombre}"
+                       RETURN n """
+        val result = transaction.run(query, Values.parameters("nombre", nombre)).single()["n"]["nombre"]
+        val ubicacion = Ubicacion()
+        ubicacion.nombreUbicacion = result.toString().replace("\"", "")
+        if(result == null){
+            throw UbicacionNoEncontradaRunTimeException(nombre)
+        }
+        return ubicacion
     }
 
     override fun actualizar(ubicacion: Ubicacion) {
@@ -95,15 +96,12 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
 //        TODO("Not yet implemented")
     }
 
-    private fun tiposFormateados(tipos : List<String>, movimientos: Int) : String = tipos.toString().toString().replace("[", "[:").replace(",", " |").replace("]", "*0..${movimientos.toString()}]").trim().trim()
-    //tipos.toString().toString().replace("[", "[:").replace(",", " |").replace("]", "]${movimientos.toString()}")+ "*".trim()
-
     override fun capacidadDeExpansion(vectorId: Long, movimientos: Int): Int {
         val vector = vectorDao.recuperar(vectorId)
         val nombreUbicacion = vector.ubicacion!!.nombreUbicacion
         val tipos = vector.tipo.posiblesCaminos.map{it.nombre()}
 
-        val tiposQueryConMovimientos = this.tiposFormateados(tipos, movimientos)
+        val tiposQueryConMovimientos = myFormatter.tiposFormateados(tipos, movimientos)
         val transaction = TransactionNeo4j.currentTransaction
         val intQuery =  """
                         MATCH (n:Ubicacion {nombre:"${nombreUbicacion}"})-${tiposQueryConMovimientos} -> (fof) WHERE fof.nombre <> n.nombre RETURN COUNT(DISTINCT fof) AS result
@@ -115,7 +113,7 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
     override fun moverMasCorto(vector: Vector, ubicacion: Ubicacion) {
         val transaction = TransactionNeo4j.currentTransaction
         val tiposDeCaminosPosibles = vector.tipo.posiblesCaminos.map { it.name }
-        val tiposDeLaRelacion = tiposDeCaminosPosibles.toString().replace(",", "|").trim().drop(1).dropLast(1).toString()
+        val tiposDeLaRelacion = myFormatter.caminosFormateados(tiposDeCaminosPosibles)
 
         val query = """
             MATCH p=shortestPath(
