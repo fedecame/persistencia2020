@@ -29,9 +29,12 @@ class VectorServiceTest {
     lateinit var vectorService : VectorService
     lateinit var ubicacionService : UbicacionService
     lateinit var vector : Vector
+    lateinit var vector1 : Vector
     lateinit var tipo : TipoVector
     lateinit var estado : EstadoVector
+    lateinit var estado1 : EstadoVector
     lateinit var especie : Especie
+    lateinit var especie1 : Especie
     lateinit var dataDAO : DataDAO
     lateinit var ubicacionDAO : UbicacionDAO
     lateinit var vectorDAO : VectorDAO
@@ -44,6 +47,7 @@ class VectorServiceTest {
     fun setUp(){
         hibernateData = HibernateDataService()
         vector = Vector()
+        vector1 = Vector()
         dataDAO = HibernateDataDAO()
         ubicacionDAO = HibernateUbicacionDAO()
         vectorDAO = HibernateVectorDAO()
@@ -52,23 +56,58 @@ class VectorServiceTest {
         ubicacion = ubicacionService.crearUbicacion("Alemania")
         tipo = Humano()
         estado = Sano()
+        estado1 = Infectado()
         especie = Especie()
         especie.cantidadInfectadosParaADN = 42
         especie.nombre = "Algo"
         especie.paisDeOrigen = "Alemania"
         patogeno = Patogeno()
         patogeno.tipo = ""
+        patogeno.factorContagioHumano= 1000
+        especie1 = Especie()
+        especie1.cantidadInfectadosParaADN = 42
+        especie1.nombre = "soyUnaEspecie"
+        especie1.paisDeOrigen = "Masachuset"
+        especie1.patogeno = patogeno
+
+
         especie.patogeno = patogeno
         vectorService = VectorServiceImpl(HibernateVectorDAO(), HibernateUbicacionDAO())
         vector.tipo = tipo
         vector.estado = estado
         vector.agregarEspecie(especie)
 
+        vector1.tipo = tipo
+        vector1.estado = estado1
+        vector1.agregarEspecie(especie1)
+
         ubicacionService = UbicacionServiceImpl(HibernateUbicacionDAO())
         ubicacion = ubicacionService.crearUbicacion("Quilmes")
         vector.ubicacion = ubicacion
         ubicacion.vectores.add(vector)
+        ubicacion.vectores.add(vector1)
+        vector1.ubicacion = ubicacion
         vectorService.crearVector(vector)
+
+        vectorService.crearVector(vector1)
+
+    }
+
+    @Test
+    fun testSeContagioVector(){
+        val vector2 = Vector()
+        vector2.tipo = tipo
+        vector2.estado = estado
+        vector2.ubicacion = ubicacionService.crearUbicacion("Saavedra")
+        vectorService.crearVector(vector2)
+        val vectoresAContagiar : MutableList<Vector> = mutableListOf()
+        vectoresAContagiar.add(vector2)
+
+        vectorService.contagiar(vector1,vectoresAContagiar)
+        val res = vectorService.recuperarVector(vector2.id!!.toInt())
+
+        Assert.assertEquals(1,res.especies.size)
+
     }
 
     @Test
@@ -125,8 +164,6 @@ class VectorServiceTest {
         Assert.assertEquals("Alemania",especie0!!.paisDeOrigen)
         Assert.assertEquals("",especie0!!.patogeno.tipo)
     }
-
-
 
     @Test
     fun testAlRecuperarUNVectorSinEspeciesRetornaUnaListaVacia(){
@@ -215,7 +252,7 @@ class VectorServiceTest {
         vectorAGuardar.ubicacion = ubicacion
         vectorService.crearVector(vectorAGuardar)
         val vectorRecuperado = vectorService.recuperarVector(vectorAGuardar.id!!.toInt())
-        Assert.assertEquals(2, vectorRecuperado.id!!)
+        Assert.assertEquals(3, vectorRecuperado.id!!)
     }
 
     @Test(expected = IDVectorNoEncontradoException::class)

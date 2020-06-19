@@ -12,7 +12,7 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
 
     override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) {
         TransactionRunner.addHibernate().runTrx {
-            vectorDao.recuperar(vectorInfectado.id!!.toInt()) // valido que este persistido el vector
+//            vectorDao.recuperar(vectorInfectado.id!!.toInt()) // valido que este persistido el vector
             vectorDao.contagiar(vectorInfectado, vectores)
         }
     }
