@@ -1,6 +1,6 @@
 package ar.edu.unq.eperdemic.services.runner
 
-import ar.edu.unq.eperdemic.modelo.Evento
+import ar.edu.unq.eperdemic.modelo.evento.Evento
 
 interface FeedService {
 
