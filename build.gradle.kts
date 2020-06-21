@@ -39,6 +39,10 @@ dependencies {
     testImplementation("junit:junit:4.12")
     runtimeOnly("mysql:mysql-connector-java")
 
+    implementation("org.mongodb:bson:4.0.1")
+    implementation("org.mongodb:mongodb-driver-sync:4.0.1")
+    implementation("org.mongodb:mongodb-driver-core:4.0.1")
+
     repositories {
         mavenCentral()
     }
