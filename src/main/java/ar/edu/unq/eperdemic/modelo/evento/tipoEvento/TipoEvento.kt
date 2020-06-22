@@ -8,7 +8,8 @@ import org.bson.codecs.pojo.annotations.BsonProperty
 @BsonDiscriminator
 abstract class TipoEvento{
     @BsonProperty("tipoEvento")
-    val tipo : String? = this.javaClass.simpleName
+    val tipo : String? = this.javaClass.simpleName.toString()
+
     @BsonIgnore
     lateinit var evento : Evento
 

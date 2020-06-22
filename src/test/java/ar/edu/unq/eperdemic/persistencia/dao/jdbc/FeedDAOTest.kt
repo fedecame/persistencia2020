@@ -31,6 +31,7 @@ class FeedDAOTest {
     lateinit var vectorService : VectorService
     lateinit var hibernateData : DataService
     lateinit var eventoFactory : EventoFactory
+    lateinit var evento : Evento
 
     @Before
     fun setUp(){
@@ -41,6 +42,40 @@ class FeedDAOTest {
         vectorService = VectorServiceImpl(HibernateVectorDAO(), ubicacionDAO)
         hibernateData = HibernateDataService()
         eventoFactory = EventoFactory()
+
+        evento = eventoFactory.eventoContagioPorPandemia("Virus")
+        dao.startTransaction()
+        dao.save(evento)
+        dao.commit()
+    }
+
+    @Test
+    fun testRollback() {
+        //Es un problema de transacciones. Cluster? Borro el test?
+        this.dropAll()
+        val resultado0 = dao.getByTipoPatogeno("Virus")
+        Assert.assertNotNull(resultado0)
+        val resultado1 = dao.getByTipoPatogeno("Virus")
+        Assert.assertNull(resultado1)
+        dao.startTransaction()
+        dao.save(evento)
+        val resultado3 = dao.getByTipoPatogeno("Virus")
+        Assert.assertNotNull(resultado3)
+        dao.rollack()
+        val resultado4 = dao.getByTipoPatogeno("Virus")
+        Assert.assertNull(resultado4)
+    }
+
+    @Test
+    fun testCommit() {
+        this.dropAll()
+        val resultado0 = dao.getByTipoPatogeno(evento.tipoPatogeno!!)
+        Assert.assertNull(resultado0)
+        dao.startTransaction()
+        dao.save(evento)
+        dao.commit()
+        val resultado1 = dao.getByTipoPatogeno(evento.tipoPatogeno!!)
+        Assert.assertNotNull(resultado1)
     }
 
 
@@ -52,10 +87,12 @@ class FeedDAOTest {
 
     @Test
     fun seGuardaYSeRecuperaPorTipoDePatogeno() {
-        val evento = eventoFactory.eventoContagioPorPandemia("Virus")
-        dao.startTransaction()
-        dao.save(evento)
-        dao.commit()
+        val resultado = dao.getByTipoPatogeno(evento.tipoPatogeno!!)
+
+    }
+
+    @Test
+    fun elEventoGuardoYRecuperadoPorElTipoDePatogenoEsConsistente(){
         val resultado = dao.getByTipoPatogeno(evento.tipoPatogeno!!)
         Assert.assertTrue(resultado is Evento)
         Assert.assertNotNull(resultado)
@@ -67,7 +104,7 @@ class FeedDAOTest {
 
     @Test
     fun seGuardaYSeRecuperaPorTipoDeEvento() {
-        val evento = eventoFactory.eventoContagioPorPandemia("Virus")
+        val evento = eventoFactory.eventoContagioPorPandemia(evento.tipoPatogeno!!)
         dao.startTransaction()
         dao.save(evento)
         dao.commit()
@@ -108,15 +145,15 @@ class FeedDAOTest {
         vectorService.infectar(vectorBabilonico, especie)
         Assert.assertTrue(patogenoService.esPandemia(especie.id!!))
         val result = dao.feedPatogeno(patogenoModel.tipo )
-//        val unicoEvento = result.get(0)
-//        Assert.assertEquals(1, result.size)
-//        Assert.assertTrue(unicoEvento is Evento)
-//        Assert.assertEquals("", unicoEvento.log())
+        val unicoEvento = result.get(0)
+        Assert.assertEquals(1, result.size)
+        Assert.assertTrue(unicoEvento is Evento)
+        Assert.assertEquals("", unicoEvento.log())
     }
 
     @After
     fun dropAll() {
-        //dao.deleteAll()
+        dao.deleteAll()
         TransactionRunner.addNeo4j().addHibernate().runTrx {
             HibernateDataDAO().clear()
             Neo4jDataDAO().clear()
