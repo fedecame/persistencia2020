@@ -1,17 +1,18 @@
 package ar.edu.unq.eperdemic.modelo.evento.tipoEvento
 
 import ar.edu.unq.eperdemic.modelo.evento.Evento
+import org.bson.codecs.pojo.annotations.BsonDiscriminator
+import org.bson.codecs.pojo.annotations.BsonIgnore
+import org.bson.codecs.pojo.annotations.BsonProperty
 
-enum class TipoEvento {
-    Arribo{
-        override fun aModel(evento : Evento) : TipoEventoModel = Arribo(evento)
-    },
-    Contagio{
-        override fun aModel(evento : Evento) : TipoEventoModel = Contagio(evento)
-    },
-    Mutacion{
-        override fun aModel(evento : Evento) : TipoEventoModel = Mutacion(evento)
-    };
+@BsonDiscriminator
+abstract class TipoEvento{
+    @BsonProperty("tipoEvento")
+    val tipo : String? = this.javaClass.simpleName
+    @BsonIgnore
+    lateinit var evento : Evento
 
-    abstract fun aModel(evento : Evento) : TipoEventoModel
+    protected constructor() {}
+
+    abstract fun log() : String
 }

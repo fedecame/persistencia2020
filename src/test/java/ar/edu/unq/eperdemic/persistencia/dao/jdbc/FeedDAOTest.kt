@@ -6,7 +6,6 @@ import ar.edu.unq.eperdemic.modelo.evento.Accion
 import ar.edu.unq.eperdemic.modelo.evento.Evento
 import ar.edu.unq.eperdemic.modelo.evento.EventoFactory
 import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.Contagio
-import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.TipoEvento
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
 import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jDataDAO
@@ -44,6 +43,13 @@ class FeedDAOTest {
         eventoFactory = EventoFactory()
     }
 
+
+    @Test
+    fun alRecuperarPorUnTipoDePatogenoInexistenteRetornNull(){
+        val resultado = dao.getByTipoPatogeno("Nisman")
+        Assert.assertNull(resultado)
+    }
+
     @Test
     fun seGuardaYSeRecuperaPorTipoDePatogeno() {
         val evento = eventoFactory.eventoContagioPorPandemia("Virus")
@@ -56,6 +62,23 @@ class FeedDAOTest {
         Assert.assertEquals(evento.tipoPatogeno, resultado!!.tipoPatogeno)
         Assert.assertEquals("Virus", resultado!!.tipoPatogeno)
         Assert.assertEquals(Accion.PATOGENO_ES_PANDEMIA.name, resultado!!.accionQueLoDesencadena)
+        Assert.assertTrue(resultado.tipoEvento is Contagio)
+    }
+
+    @Test
+    fun seGuardaYSeRecuperaPorTipoDeEvento() {
+        val evento = eventoFactory.eventoContagioPorPandemia("Virus")
+        dao.startTransaction()
+        dao.save(evento)
+        dao.commit()
+        val resultSet = dao.getByTipoEvento(Contagio())
+        val resultado = resultSet.get(0)
+        Assert.assertTrue(resultado is Evento)
+        Assert.assertNotNull(resultado)
+        Assert.assertEquals(evento.tipoPatogeno, resultado!!.tipoPatogeno)
+        Assert.assertEquals("Virus", resultado!!.tipoPatogeno)
+        Assert.assertEquals(Accion.PATOGENO_ES_PANDEMIA.name, resultado!!.accionQueLoDesencadena)
+        Assert.assertTrue(resultado.tipoEvento is Contagio)
     }
 
     @Test
@@ -93,7 +116,7 @@ class FeedDAOTest {
 
     @After
     fun dropAll() {
-        dao.deleteAll()
+        //dao.deleteAll()
         TransactionRunner.addNeo4j().addHibernate().runTrx {
             HibernateDataDAO().clear()
             Neo4jDataDAO().clear()

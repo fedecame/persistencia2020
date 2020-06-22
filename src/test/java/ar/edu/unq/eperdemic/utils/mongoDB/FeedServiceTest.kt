@@ -70,7 +70,7 @@ class FeedServiceTest {
         vectorService.infectar(vectorBabilonico, especie)
         Assert.assertTrue(patogenoService.esPandemia(especie.id!!))
         val result = feedService.feedPatogeno(patogenoModel.tipo )
-        val unicoEvento = result.get(0)
+//        val unicoEvento = result.get(0)
 //        Assert.assertEquals(1, result.size)
 //        Assert.assertTrue(unicoEvento is Evento)
 //        Assert.assertEquals("", unicoEvento.log())
