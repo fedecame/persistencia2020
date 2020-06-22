@@ -17,7 +17,7 @@ class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
 
     override fun feedPatogeno(tipoPatogeno : String) : List<Evento>{
         //Me fijo que: Dado un evento, ese evento
-        //      ((Sea de Por Pandemia **O** Por Contagio por Primera vez) **Y** (Sea del tipo de patogeno dado))
+        //      ((Haya sido generado por una Accion de Pandemia **O** Por Contagio por Primera vez) **Y** (Sea del tipo de patogeno dado))
         val match = Aggregates.match(
                 and
                 (or (eq("eventos.accion", Accion.PATOGENO_ES_PANDEMIA.name), eq("eventos.accion", Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name)),

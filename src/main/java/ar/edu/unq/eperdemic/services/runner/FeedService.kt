@@ -7,5 +7,6 @@ interface FeedService {
     fun feedPatogeno(tipoDePatogeno: String) : List<Evento>
     fun feedVector(vectorId: Long): List<Evento>
     fun feedUbicacion(nombreDeUbicacion: String): List<Evento>
+    fun agregarEvento(eventoContagioPorPandemia: Evento) : Evento
 
 }

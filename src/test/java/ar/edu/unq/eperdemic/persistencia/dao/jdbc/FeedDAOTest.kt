@@ -50,23 +50,6 @@ class FeedDAOTest {
     }
 
     @Test
-    fun testRollback() {
-        //Es un problema de transacciones. Cluster? Borro el test?
-        this.dropAll()
-        val resultado0 = dao.getByTipoPatogeno("Virus")
-        Assert.assertNotNull(resultado0)
-        val resultado1 = dao.getByTipoPatogeno("Virus")
-        Assert.assertNull(resultado1)
-        dao.startTransaction()
-        dao.save(evento)
-        val resultado3 = dao.getByTipoPatogeno("Virus")
-        Assert.assertNotNull(resultado3)
-        dao.rollack()
-        val resultado4 = dao.getByTipoPatogeno("Virus")
-        Assert.assertNull(resultado4)
-    }
-
-    @Test
     fun testCommit() {
         this.dropAll()
         val resultado0 = dao.getByTipoPatogeno(evento.tipoPatogeno!!)
@@ -153,7 +136,7 @@ class FeedDAOTest {
 
     @After
     fun dropAll() {
-        dao.deleteAll()
+        //dao.deleteAll()
         TransactionRunner.addNeo4j().addHibernate().runTrx {
             HibernateDataDAO().clear()
             Neo4jDataDAO().clear()

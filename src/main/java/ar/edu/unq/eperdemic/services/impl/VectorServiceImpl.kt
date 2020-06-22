@@ -2,8 +2,12 @@ package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.modelo.evento.EventoFactory
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
+import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 
@@ -18,7 +22,13 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
     }
 
     override fun infectar(vector: Vector, especie: Especie) {
-        TransactionRunner.addHibernate().runTrx { vectorDao.infectar(vector,especie) }    }
+        TransactionRunner.addHibernate().runTrx {
+            vectorDao.infectar(vector,especie) }
+        val patogenoService = PatogenoServiceImpl(HibernatePatogenoDAO(), HibernateEspecieDAO())
+        if(patogenoService.esPandemia(especie.id!!)){
+            FeedServiceImpl(FeedMongoDAO()).agregarEvento(EventoFactory().eventoContagioPorPandemia(especie.patogeno.tipo))
+        }
+    }
 
     override fun enfermedades(vectorId: Int): List<Especie> = TransactionRunner.addHibernate().runTrx { vectorDao.enfermedades(vectorId) }
 
