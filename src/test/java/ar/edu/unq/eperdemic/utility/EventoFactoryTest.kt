@@ -1,8 +1,8 @@
-package ar.edu.unq.eperdemic.utility.random
+package ar.edu.unq.eperdemic.utility
 
 import ar.edu.unq.eperdemic.modelo.evento.EventoFactory
 import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.Contagio
-import junit.framework.Assert
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
