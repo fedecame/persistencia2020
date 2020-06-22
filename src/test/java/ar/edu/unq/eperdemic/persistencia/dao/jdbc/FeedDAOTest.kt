@@ -37,13 +37,13 @@ class FeedDAOTest {
     }
 
     @Test
-    fun alBuscarLosEventosDContagioPorConvertirseEnPandemiaDerUnTipoDePatogenoNoCreadoRetornaUnaListaVacia(){
-        val result = dao.eventosDeContagioPorPandemia("sarasa")
+    fun alpedirLosEventosDeContagioDeUnPatogenoNoCreadoDevuelveUNaListaVacia(){
+        val result = dao.feedPatogeno("sarasa")
         Assert.assertEquals(0, result.size)
     }
 
     @Test
-    fun alBuscarLosEventosDContagioPorConvertirseEnPandemiaDerUnTipoDePatogenoQueSiEsPandemiaRetornaUnaListaCon1Evento(){
+    fun alBuscarLosEventosDeContagioDeUnPatogenoTieneUNSoloResultadoCuandoElPatogenoSoloSeVolvioPandemiaUnaUnicaVez(){
         //Una especie se vuelve pandemia se encuentra presenta en mas de la mitad de las locaciones
         val jamaica = ubicacionService.crearUbicacion("Jamaica")
         val babilonia = ubicacionService.crearUbicacion("Babilonia")
@@ -62,7 +62,7 @@ class FeedDAOTest {
         vectorService.infectar(vectorJamaiquino, especie)
         vectorService.infectar(vectorBabilonico, especie)
         Assert.assertTrue(patogenoService.esPandemia(especie.id!!))
-        val result = dao.eventosDeContagioPorPandemia("virus")
+        val result = dao.feedPatogeno(patogenoModel.tipo )
         //Assert.assertEquals(1, result.size)
     }
 

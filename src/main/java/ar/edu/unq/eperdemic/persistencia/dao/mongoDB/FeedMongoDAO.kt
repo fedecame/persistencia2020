@@ -5,10 +5,6 @@ import ar.edu.unq.eperdemic.persistencia.dao.FeedDAO
 
 class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
 
-    override fun eventosDeContagioPorPandemia(tipoPatogeno: String): List<Evento> {
-        return listOf()
-    }
-
     override fun feedPatogeno(tipoPatogeno : String) : List<Evento>{
         return listOf()
     }
