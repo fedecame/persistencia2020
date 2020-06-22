@@ -2,6 +2,7 @@ package ar.edu.unq.eperdemic.persistencia.dao.jdbc
 
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.modelo.evento.Contagio
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
 import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jDataDAO
@@ -63,7 +64,10 @@ class FeedDAOTest {
         vectorService.infectar(vectorBabilonico, especie)
         Assert.assertTrue(patogenoService.esPandemia(especie.id!!))
         val result = dao.feedPatogeno(patogenoModel.tipo )
-        //Assert.assertEquals(1, result.size)
+        val unicoEvento = result.get(0)
+        Assert.assertEquals(1, result.size)
+        Assert.assertTrue(unicoEvento is Contagio)
+        Assert.assertEquals("", unicoEvento.log())
     }
 
     @After
