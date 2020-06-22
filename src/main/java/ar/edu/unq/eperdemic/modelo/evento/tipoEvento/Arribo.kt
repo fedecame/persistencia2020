@@ -1,6 +1,8 @@
 package ar.edu.unq.eperdemic.modelo.evento.tipoEvento
 
-class Arribo : TipoEventoModel() {
+import ar.edu.unq.eperdemic.modelo.evento.Evento
+
+class Arribo (evento: Evento) : TipoEventoModel(evento){
     override fun log(): String {
         TODO("Not yet implemented")
     }
