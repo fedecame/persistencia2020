@@ -110,6 +110,7 @@ class FeedDAOTest {
     @Test
     fun alBuscarLosEventosDeContagioDeUnPatogenoTieneUNSoloResultadoCuandoElPatogenoSoloSeVolvioPandemiaUnaUnicaVez(){
         //Una especie se vuelve pandemia se encuentra presenta en mas de la mitad de las locaciones
+        dao.deleteAll()
         val jamaica = ubicacionService.crearUbicacion("Jamaica")
         val babilonia = ubicacionService.crearUbicacion("Babilonia")
         ubicacionService.crearUbicacion("NismanLandia")
@@ -136,7 +137,7 @@ class FeedDAOTest {
 
     @After
     fun dropAll() {
-        //dao.deleteAll()
+        dao.deleteAll()
         TransactionRunner.addNeo4j().addHibernate().runTrx {
             HibernateDataDAO().clear()
             Neo4jDataDAO().clear()
