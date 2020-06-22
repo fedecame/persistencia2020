@@ -3,11 +3,13 @@ package ar.edu.unq.eperdemic.services.impl
 import ar.edu.unq.eperdemic.estado.Infectado
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.modelo.evento.EventoFactory
 import ar.edu.unq.eperdemic.modelo.exception.ConectarMismaUbicacion
 import ar.edu.unq.eperdemic.modelo.exception.MoverMismaUbicacion
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
+import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jUbicacionDAO
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
@@ -65,6 +67,8 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
             neo4jUbicacionDAO.esAledaña(ubicacionInicial, nombreUbicacion) // Cambiar el nombre del mensaje
             neo4jUbicacionDAO.noEsCapazDeMoverPorCamino(vector, nombreUbicacion) // Cambiar el nombre del mensaje
             HibernateUbicacionDao.mover(vector, nombreUbicacion)
+            FeedServiceImpl(FeedMongoDAO()).agregarEvento(EventoFactory().eventoPorArribo(ubicacionInicial, nombreUbicacion))
+
         }
     }
 
