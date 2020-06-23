@@ -1,5 +1,6 @@
 package ar.edu.unq.eperdemic.utils.mongoDB
 
+import ar.edu.unq.eperdemic.estado.Sano
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.evento.Evento
@@ -70,10 +71,31 @@ class FeedServiceTest {
         vectorService.infectar(vectorBabilonico, especie)
         Assert.assertTrue(patogenoService.esPandemia(especie.id!!))
         val result = feedService.feedPatogeno(patogenoModel.tipo )
+
 //        val unicoEvento = result.get(0)
 //        Assert.assertEquals(1, result.size)
 //        Assert.assertTrue(unicoEvento is Evento)
 //        Assert.assertEquals("", unicoEvento.log())
+    }
+
+
+    @Test
+    fun testUbicacion(){
+        var vector= Vector()
+        vector.tipo=Humano()
+        vector.estado= Sano()
+        var ubicacionCreada = ubicacionService.crearUbicacion("Florencio Varela")
+
+        vector.ubicacion=ubicacionCreada
+        vectorService.crearVector(vector)
+        var vectorCreado=vectorService.recuperarVector(1)
+        Assert.assertEquals(vectorCreado.ubicacion?.nombreUbicacion,"Florencio Varela")
+        ubicacionService.crearUbicacion("Quilmes")
+        ubicacionService.conectar("Florencio Varela", "Quilmes", "Terrestre")
+        ubicacionService.mover(1,"Quilmes")
+
+        val result = feedService.feedUbicacion("Florencio Varela")
+        Assert.assertEquals(1, result.size)
     }
 
     @After

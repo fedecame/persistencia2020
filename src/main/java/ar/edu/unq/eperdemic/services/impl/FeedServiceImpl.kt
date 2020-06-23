@@ -12,9 +12,7 @@ class FeedServiceImpl(private var feedDAO: FeedMongoDAO) : FeedService {
         TODO("Not yet implemented")
     }
 
-    override fun feedUbicacion(nombreDeUbicacion: String): List<Evento> {
-        TODO("Not yet implemented")
-    }
+     override fun feedUbicacion(nombreDeUbicacion: String): List<Evento> = feedDAO.feedUbicacion(nombreDeUbicacion)
 
     override fun agregarEvento(evento: Evento): Evento {
         feedDAO.startTransaction()

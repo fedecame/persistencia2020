@@ -2,6 +2,7 @@ package ar.edu.unq.eperdemic.persistencia.dao.mongoDB
 
 import ar.edu.unq.eperdemic.modelo.evento.Accion
 import ar.edu.unq.eperdemic.modelo.evento.Evento
+import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.Arribo
 import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.TipoEvento
 import ar.edu.unq.eperdemic.persistencia.dao.FeedDAO
 import com.mongodb.client.model.Aggregates
@@ -32,8 +33,10 @@ class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
         TODO("Not yet implemented")
     }
 
-    override fun feedUbicacion(tipoPatogeno: String): List<Evento> {
-        TODO("Not yet implemented")
+     fun feedUbicacion(tipoPatogeno: String): List<Evento> {
+//val match= Aggregates.match(Filters.eq("eventos.tipoEvento","Arribo"))
+        val match= this.findEq("tipoPatogeno","Florencio Varela")
+        return match
     }
 
 }
