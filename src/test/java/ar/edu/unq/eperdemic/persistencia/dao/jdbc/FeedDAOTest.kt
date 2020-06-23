@@ -199,23 +199,23 @@ class FeedDAOTest {
         repeat(15) {//Ya hay uno
             dao.save(Evento(n++, Arribo(), "otra accion", TipoPatogeno.VIRUS.name))//El mismo tipo de patogeno.
         }
-        repeat(15) {//Ya hay uno
+        repeat(15) {
             dao.save(Evento(++n, Arribo(), "alguna otra accion", TipoPatogeno.BACTERIA.name))//El mismo tipo de patogeno.
         }
-        repeat(15) {//Ya hay uno
-            dao.save(Evento(++n, Arribo(), "no me preguntes a mi, solo soy un string AH-ja", TipoPatogeno.BACTERIA.name))//El mismo tipo de patogeno.
+        repeat(15) {
+            dao.save(Evento(++n, Arribo(), "no me preguntes a mi, solo soy un string AH-ja", TipoPatogeno.HONGO.name))//El mismo tipo de patogeno.
         }
         dao.commit()
-        //Esto asi escrito me trae todo envento que haya sido generado por una Accion de Pandemia **O** Por Contagio por Primera vez) **Y** sea del tipo de patogeno Virus
+        //Esto asi escrito me trae t0d0s los envento que haya sido generado por una Accion de Pandemia **O** Por Contagio por Primera vez) **Y** sea del tipo de patogeno Virus
         //
-        var resultadoOR = dao.find(Filters.and(
-                                                    Filters.or(Filters.eq("accionQueLoDesencadena", Accion.PATOGENO_ES_PANDEMIA.name),
-                                                    Filters.eq("accion", Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name)),
-
-                                Filters.eq("tipoPatogeno", TipoPatogeno.VIRUS.name)))
+        var resultadoOR = dao.find(
+                                Filters.and(
+                                    Filters.or(
+                                            Filters.eq("accionQueLoDesencadena", Accion.PATOGENO_ES_PANDEMIA.name),
+                                            Filters.eq("accionQueLoDesencadena", Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name)),
+                                   Filters.eq("tipoPatogeno", TipoPatogeno.VIRUS.name)))
         Assert.assertEquals(1, resultadoOR.size)
     }
-
 
     //Test de dominio:
 
@@ -267,8 +267,8 @@ class FeedDAOTest {
 
     @Test
     fun alBuscarLosEventosDeContagioDeUnPatogenoTieneUNSoloResultadoCuandoElPatogenoSoloSeVolvioPandemiaUnaUnicaVez(){
+        this.dropAll()
         //Una especie se vuelve pandemia se encuentra presenta en mas de la mitad de las locaciones
-        dao.deleteAll()
         val jamaica = ubicacionService.crearUbicacion("Jamaica")
         val babilonia = ubicacionService.crearUbicacion("Babilonia")
         ubicacionService.crearUbicacion("NismanLandia")
@@ -286,15 +286,13 @@ class FeedDAOTest {
         vectorService.infectar(vectorJamaiquino, especie)
         vectorService.infectar(vectorBabilonico, especie)
         Assert.assertTrue(patogenoService.esPandemia(especie.id!!))
-        dao.startTransaction()
-        val result = dao.feedPatogeno(patogenoModel.tipo)
-        dao.commit()
-        val pivote = dao.getByTipoPatogeno(patogenoModel.tipo)
-        Assert.assertEquals(1, pivote.size)
-//        val unicoEvento = result.get(0)
+        val result = dao.feedPatogeno(TipoPatogeno.VIRUS.name)
+        val pivote = dao.getByTipoPatogeno(TipoPatogeno.VIRUS.name)
+        Assert.assertEquals(1, pivote.size) //Hay un evento del tipo Virus (por pandemia  que genere por Infectar)
         Assert.assertEquals(1, result.size)
-//        Assert.assertTrue(unicoEvento is Evento)
-//        Assert.assertEquals("", unicoEvento.log())
+        //val unicoEvento = result.get(0)
+        //Assert.assertEquals(12, result.size)
+        //Assert.assertEquals("", unicoEvento.log())
     }
 
 
