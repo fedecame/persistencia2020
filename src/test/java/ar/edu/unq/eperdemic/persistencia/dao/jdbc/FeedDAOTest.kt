@@ -288,11 +288,12 @@ class FeedDAOTest {
         Assert.assertTrue(patogenoService.esPandemia(especie.id!!))
         val result = dao.feedPatogeno(TipoPatogeno.VIRUS.name)
         val pivote = dao.getByTipoPatogeno(TipoPatogeno.VIRUS.name)
-        Assert.assertEquals(1, pivote.size) //Hay un evento del tipo Virus (por pandemia  que genere por Infectar)
         Assert.assertEquals(1, result.size)
-        //val unicoEvento = result.get(0)
-        //Assert.assertEquals(12, result.size)
-        //Assert.assertEquals("", unicoEvento.log())
+        val unicoEvento = result.get(0)
+        Assert.assertEquals(Accion.PATOGENO_ES_PANDEMIA.name, unicoEvento.accionQueLoDesencadena)
+        Assert.assertTrue(unicoEvento.tipoEvento is Contagio)
+        Assert.assertEquals(patogenoModel.tipo, unicoEvento.tipoPatogeno)
+        Assert.assertEquals(1, unicoEvento.n)
     }
 
 

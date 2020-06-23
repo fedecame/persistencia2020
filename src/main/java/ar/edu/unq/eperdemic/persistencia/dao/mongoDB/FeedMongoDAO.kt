@@ -28,9 +28,8 @@ class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
                          eq("accionQueLoDesencadena", Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name)),
                     eq("tipoPatogeno", tipoPatogeno))
         )
-      print(match)
       val sort = Aggregates.sort(Indexes.descending("n"))
-      return aggregate(listOf(match ), Evento::class.java)
+      return aggregate(listOf(match, sort), Evento::class.java)
     }
 
     override fun feedVector(tipoPatogeno: String): List<Evento> {
