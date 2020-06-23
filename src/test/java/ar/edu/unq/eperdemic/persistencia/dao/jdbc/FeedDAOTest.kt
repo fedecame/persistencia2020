@@ -139,7 +139,7 @@ class FeedDAOTest {
         vectorService.infectar(vectorBabilonico, especie)
         dao.startTransaction()
         repeat(15) {//Ya hay uno
-            dao.save(Evento(Arribo(), "otra accion", TipoPatogeno.VIRUS.name))//El mismo tipo de patogeno.
+            dao.save(Evento(1, Arribo(), "otra accion", TipoPatogeno.VIRUS.name))//El mismo tipo de patogeno.
         }
         dao.commit()
         var cantTotal = dao.findEq("tipoPatogeno",TipoPatogeno.VIRUS.name).size
@@ -172,6 +172,52 @@ class FeedDAOTest {
         Assert.assertEquals(0, resultadoOR.size)
     }
 
+    @Test
+    fun `prueba de concepto - Comportamiento del *OR*AND* para subquery (Habiendo uno solo que cumple y muchos que no)`(){
+        dao.deleteAll()
+        val jamaica = ubicacionService.crearUbicacion("Jamaica")
+        val babilonia = ubicacionService.crearUbicacion("Babilonia")
+        ubicacionService.crearUbicacion("NismanLandia")
+        val patogenoModel = Patogeno()
+        patogenoModel.tipo = TipoPatogeno.VIRUS.name
+        val especie = patogenoService.agregarEspecie(patogenoService.crearPatogeno(patogenoModel), "gripe", "Narnia")
+
+        val vectorJamaiquino = Vector()
+        vectorJamaiquino.ubicacion = jamaica
+        vectorJamaiquino.tipo = Humano()
+        val vectorBabilonico = Vector()
+        vectorBabilonico.ubicacion = babilonia
+        vectorBabilonico.tipo= Humano()
+
+        vectorBabilonico.tipo= Humano()
+        vectorService.crearVector(vectorJamaiquino)
+        vectorService.crearVector(vectorBabilonico)
+        vectorService.infectar(vectorJamaiquino, especie)
+        vectorService.infectar(vectorBabilonico, especie)
+        dao.startTransaction()
+        var n = 0
+        repeat(15) {//Ya hay uno
+            dao.save(Evento(n++, Arribo(), "otra accion", TipoPatogeno.VIRUS.name))//El mismo tipo de patogeno.
+        }
+        repeat(15) {//Ya hay uno
+            dao.save(Evento(++n, Arribo(), "alguna otra accion", TipoPatogeno.BACTERIA.name))//El mismo tipo de patogeno.
+        }
+        repeat(15) {//Ya hay uno
+            dao.save(Evento(++n, Arribo(), "no me preguntes a mi, solo soy un string AH-ja", TipoPatogeno.BACTERIA.name))//El mismo tipo de patogeno.
+        }
+        dao.commit()
+        //Esto asi escrito me trae todo envento que haya sido generado por una Accion de Pandemia **O** Por Contagio por Primera vez) **Y** sea del tipo de patogeno Virus
+        //
+        var resultadoOR = dao.find(Filters.and(
+                                                    Filters.or(Filters.eq("accionQueLoDesencadena", Accion.PATOGENO_ES_PANDEMIA.name),
+                                                    Filters.eq("accion", Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name)),
+
+                                Filters.eq("tipoPatogeno", TipoPatogeno.VIRUS.name)))
+        Assert.assertEquals(1, resultadoOR.size)
+    }
+
+
+    //Test de dominio:
 
     @Test
     fun alRecuperarPorUnTipoDePatogenoInexistenteRetornaListaVacia(){
