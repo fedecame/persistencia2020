@@ -5,6 +5,7 @@ import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.evento.Accion
 import ar.edu.unq.eperdemic.modelo.evento.Evento
 import ar.edu.unq.eperdemic.modelo.evento.EventoFactory
+import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.Arribo
 import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.Contagio
 import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.TipoPatogeno
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
@@ -115,7 +116,7 @@ class FeedDAOTest {
     }
 
     @Test
-    fun `prueba de concepto - Comportamiento del OR-AND para subquery (Habiendo uno solo que cumple y muchos que no)`(){
+    fun `prueba de concepto - Comportamiento del OR para subquery (Habiendo uno solo que cumple y muchos que no)`(){
         dao.deleteAll()
         val jamaica = ubicacionService.crearUbicacion("Jamaica")
         val babilonia = ubicacionService.crearUbicacion("Babilonia")
@@ -123,10 +124,6 @@ class FeedDAOTest {
         val patogenoModel = Patogeno()
         patogenoModel.tipo = TipoPatogeno.VIRUS.name
         val especie = patogenoService.agregarEspecie(patogenoService.crearPatogeno(patogenoModel), "gripe", "Narnia")
-        val otroPatogenoModel = Patogeno()
-        otroPatogenoModel.tipo = TipoPatogeno.VIRUS.name
-        val otraEspecie = patogenoService.agregarEspecie(patogenoService.crearPatogeno(patogenoModel), "gripe", "Narnia")
-
 
         val vectorJamaiquino = Vector()
         vectorJamaiquino.ubicacion = jamaica
@@ -134,24 +131,21 @@ class FeedDAOTest {
         val vectorBabilonico = Vector()
         vectorBabilonico.ubicacion = babilonia
         vectorBabilonico.tipo= Humano()
-        val otroVectorJamaiquino = Vector()
-        otroVectorJamaiquino.ubicacion = jamaica
-        otroVectorJamaiquino.tipo = Humano()
-        val otroVectorBabilonico = Vector()
-        otroVectorBabilonico.ubicacion = babilonia
-        otroVectorBabilonico.tipo= Humano()
 
-
+        vectorBabilonico.tipo= Humano()
         vectorService.crearVector(vectorJamaiquino)
         vectorService.crearVector(vectorBabilonico)
-        vectorService.crearVector(otroVectorJamaiquino)
-        vectorService.crearVector(otroVectorBabilonico)
         vectorService.infectar(vectorJamaiquino, especie)
         vectorService.infectar(vectorBabilonico, especie)
-        vectorService.infectar(vectorBabilonico, especie)
-
+        dao.startTransaction()
+        repeat(15) {//Ya hay uno
+            dao.save(Evento(Arribo(), "otra accion", TipoPatogeno.VIRUS.name))//El mismo tipo de patogeno.
+        }
+        dao.commit()
+        var cantTotal = dao.findEq("tipoPatogeno",TipoPatogeno.VIRUS.name).size
+        Assert.assertEquals(16, cantTotal)
         var resultadoOR = dao.find(Filters.or(Filters.eq("accionQueLoDesencadena", Accion.PATOGENO_ES_PANDEMIA.name), Filters.eq("accion", Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name)))
-        Assert.assertEquals(2, resultadoOR.size)
+        Assert.assertEquals(1, resultadoOR.size)
     }
 
     @Test
@@ -256,6 +250,7 @@ class FeedDAOTest {
 //        Assert.assertTrue(unicoEvento is Evento)
 //        Assert.assertEquals("", unicoEvento.log())
     }
+
 
     @After
     fun dropAll() {

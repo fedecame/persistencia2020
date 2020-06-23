@@ -1,7 +1,6 @@
 package ar.edu.unq.eperdemic.modelo.evento
 
 import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.Contagio
-import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.TipoPatogeno
 
 class EventoFactory {
     //Aca faltan los parametros para que arme los eventos con la data que necesitamos
