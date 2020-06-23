@@ -6,6 +6,7 @@ import ar.edu.unq.eperdemic.modelo.evento.Accion
 import ar.edu.unq.eperdemic.modelo.evento.Evento
 import ar.edu.unq.eperdemic.modelo.evento.EventoFactory
 import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.Contagio
+import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.TipoPatogeno
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
 import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jDataDAO
@@ -44,7 +45,7 @@ class FeedDAOTest {
         hibernateData = HibernateDataService()
         eventoFactory = EventoFactory()
 
-        evento = eventoFactory.eventoContagioPorPandemia("virus")
+        evento = eventoFactory.eventoContagioPorPandemia(TipoPatogeno.VIRUS.name)
         dao.startTransaction()
         dao.save(evento)
         dao.commit()
@@ -67,7 +68,7 @@ class FeedDAOTest {
         val babilonia = ubicacionService.crearUbicacion("Babilonia")
         ubicacionService.crearUbicacion("NismanLandia")
         val patogenoModel = Patogeno()
-        patogenoModel.tipo = "virus"
+        patogenoModel.tipo = TipoPatogeno.VIRUS.name
         val especie = patogenoService.agregarEspecie(patogenoService.crearPatogeno(patogenoModel), "gripe", "Narnia")
         val vectorJamaiquino = Vector()
         vectorJamaiquino.ubicacion = jamaica
@@ -91,7 +92,7 @@ class FeedDAOTest {
         val babilonia = ubicacionService.crearUbicacion("Babilonia")
         ubicacionService.crearUbicacion("NismanLandia")
         val patogenoModel = Patogeno()
-        patogenoModel.tipo = "virus"
+        patogenoModel.tipo = TipoPatogeno.VIRUS.name
         val especie = patogenoService.agregarEspecie(patogenoService.crearPatogeno(patogenoModel), "gripe", "Narnia")
 
         val vectorJamaiquino = Vector()
@@ -120,10 +121,10 @@ class FeedDAOTest {
         val babilonia = ubicacionService.crearUbicacion("Babilonia")
         ubicacionService.crearUbicacion("NismanLandia")
         val patogenoModel = Patogeno()
-        patogenoModel.tipo = "virus"
+        patogenoModel.tipo = TipoPatogeno.VIRUS.name
         val especie = patogenoService.agregarEspecie(patogenoService.crearPatogeno(patogenoModel), "gripe", "Narnia")
         val otroPatogenoModel = Patogeno()
-        otroPatogenoModel.tipo = "virus"
+        otroPatogenoModel.tipo = TipoPatogeno.VIRUS.name
         val otraEspecie = patogenoService.agregarEspecie(patogenoService.crearPatogeno(patogenoModel), "gripe", "Narnia")
 
 
@@ -160,7 +161,7 @@ class FeedDAOTest {
         val babilonia = ubicacionService.crearUbicacion("Babilonia")
         ubicacionService.crearUbicacion("NismanLandia")
         val patogenoModel = Patogeno()
-        patogenoModel.tipo = "virus"
+        patogenoModel.tipo = TipoPatogeno.VIRUS.name
         val especie = patogenoService.agregarEspecie(patogenoService.crearPatogeno(patogenoModel), "gripe", "Narnia")
         val vectorJamaiquino = Vector()
         vectorJamaiquino.ubicacion = jamaica
@@ -197,7 +198,7 @@ class FeedDAOTest {
         Assert.assertTrue(unicoEvento is Evento)
         Assert.assertNotNull(resultado)
         Assert.assertEquals(evento.tipoPatogeno, unicoEvento!!.tipoPatogeno)
-        Assert.assertEquals("virus", unicoEvento.tipoPatogeno)
+        Assert.assertEquals(TipoPatogeno.VIRUS.name, unicoEvento.tipoPatogeno)
         Assert.assertEquals(Accion.PATOGENO_ES_PANDEMIA.name, unicoEvento.accionQueLoDesencadena)
         Assert.assertTrue(unicoEvento.tipoEvento is Contagio)
     }
@@ -213,7 +214,7 @@ class FeedDAOTest {
         Assert.assertTrue(resultado is Evento)
         Assert.assertNotNull(resultado)
         Assert.assertEquals(evento.tipoPatogeno, resultado!!.tipoPatogeno)
-        Assert.assertEquals("virus", resultado!!.tipoPatogeno)
+        Assert.assertEquals(TipoPatogeno.VIRUS.name, resultado!!.tipoPatogeno)
         Assert.assertEquals(Accion.PATOGENO_ES_PANDEMIA.name, resultado!!.accionQueLoDesencadena)
         Assert.assertTrue(resultado.tipoEvento is Contagio)
     }
@@ -232,7 +233,7 @@ class FeedDAOTest {
         val babilonia = ubicacionService.crearUbicacion("Babilonia")
         ubicacionService.crearUbicacion("NismanLandia")
         val patogenoModel = Patogeno()
-        patogenoModel.tipo = "virus"
+        patogenoModel.tipo = TipoPatogeno.VIRUS.name
         val especie = patogenoService.agregarEspecie(patogenoService.crearPatogeno(patogenoModel), "gripe", "Narnia")
         val vectorJamaiquino = Vector()
         vectorJamaiquino.ubicacion = jamaica
