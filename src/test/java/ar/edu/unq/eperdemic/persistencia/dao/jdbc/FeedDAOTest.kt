@@ -63,9 +63,9 @@ class FeedDAOTest {
 
 
     @Test
-    fun alRecuperarPorUnTipoDePatogenoInexistenteRetornNull(){
+    fun alRecuperarPorUnTipoDePatogenoInexistenteRetornaListaVacia(){
         val resultado = dao.getByTipoPatogeno("Nisman")
-        Assert.assertNull(resultado)
+        Assert.assertEquals(0, resultado.size)
     }
 
     @Test
@@ -77,12 +77,14 @@ class FeedDAOTest {
     @Test
     fun elEventoGuardoYRecuperadoPorElTipoDePatogenoEsConsistente(){
         val resultado = dao.getByTipoPatogeno(evento.tipoPatogeno!!)
-        Assert.assertTrue(resultado is Evento)
+        Assert.assertEquals(1, resultado!!.size)
+        val unicoEvento = resultado.get(0)
+        Assert.assertTrue(unicoEvento is Evento)
         Assert.assertNotNull(resultado)
-        Assert.assertEquals(evento.tipoPatogeno, resultado!!.tipoPatogeno)
-        Assert.assertEquals("Virus", resultado!!.tipoPatogeno)
-        Assert.assertEquals(Accion.PATOGENO_ES_PANDEMIA.name, resultado!!.accionQueLoDesencadena)
-        Assert.assertTrue(resultado.tipoEvento is Contagio)
+        Assert.assertEquals(evento.tipoPatogeno, unicoEvento!!.tipoPatogeno)
+        Assert.assertEquals("Virus", unicoEvento.tipoPatogeno)
+        Assert.assertEquals(Accion.PATOGENO_ES_PANDEMIA.name, unicoEvento.accionQueLoDesencadena)
+        Assert.assertTrue(unicoEvento.tipoEvento is Contagio)
     }
 
     @Test
@@ -128,11 +130,15 @@ class FeedDAOTest {
         vectorService.infectar(vectorJamaiquino, especie)
         vectorService.infectar(vectorBabilonico, especie)
         Assert.assertTrue(patogenoService.esPandemia(especie.id!!))
-        val result = dao.feedPatogeno(patogenoModel.tipo )
-        val unicoEvento = result.get(0)
+        dao.startTransaction()
+        val result = dao.feedPatogeno(patogenoModel.tipo)
+        dao.commit()
+        val pivote = dao.getByTipoPatogeno(patogenoModel.tipo)
+        Assert.assertEquals(1, pivote.size)
+//        val unicoEvento = result.get(0)
         Assert.assertEquals(1, result.size)
-        Assert.assertTrue(unicoEvento is Evento)
-        Assert.assertEquals("", unicoEvento.log())
+//        Assert.assertTrue(unicoEvento is Evento)
+//        Assert.assertEquals("", unicoEvento.log())
     }
 
     @After

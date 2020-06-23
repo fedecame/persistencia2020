@@ -16,14 +16,15 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
 
     override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) {
         TransactionRunner.addHibernate().runTrx {
-//            vectorDao.recuperar(vectorInfectado.id!!.toInt()) // valido que este persistido el vector
             vectorDao.contagiar(vectorInfectado, vectores)
         }
     }
 
     override fun infectar(vector: Vector, especie: Especie) {
         TransactionRunner.addHibernate().runTrx {
-            vectorDao.infectar(vector,especie) }
+            vectorDao.infectar(vector,especie)
+        }
+        //Si lo pongo en el bloque, no termina WTF?
         val patogenoService = PatogenoServiceImpl(HibernatePatogenoDAO(), HibernateEspecieDAO())
         if(patogenoService.esPandemia(especie.id!!)){
             FeedServiceImpl(FeedMongoDAO()).agregarEvento(EventoFactory().eventoContagioPorPandemia(especie.patogeno.tipo))

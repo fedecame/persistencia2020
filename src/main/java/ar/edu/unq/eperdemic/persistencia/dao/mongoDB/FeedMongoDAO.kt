@@ -11,7 +11,7 @@ import com.mongodb.client.model.Indexes
 
 class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
 
-    fun getByTipoPatogeno(tipo: String): Evento? = getBy("tipoPatogeno", tipo)
+    fun getByTipoPatogeno(tipo: String): List<Evento?> = findEq("tipoPatogeno", tipo)
 
     fun getByTipoEvento(tipoEvento: TipoEvento): List<Evento?> = findEq("tipoEvento", tipoEvento)
 
@@ -24,6 +24,8 @@ class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
                      eq("eventos.tipoPatogeno", tipoPatogeno))
         )
 //      val sort = Aggregates.sort(Indexes.descending("fecha"))
+        print(match)
+        print(listOf(match))
         return aggregate(listOf(match/*, sort*/), Evento::class.java)
 //      return listOf()
     }
