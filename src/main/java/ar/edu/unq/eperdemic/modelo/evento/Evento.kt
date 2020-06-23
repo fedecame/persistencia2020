@@ -1,6 +1,7 @@
 package ar.edu.unq.eperdemic.modelo.evento
 
 import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.TipoEvento
+import org.bson.codecs.pojo.annotations.BsonProperty
 
 class Evento {
    var tipoEvento: TipoEvento? = null
