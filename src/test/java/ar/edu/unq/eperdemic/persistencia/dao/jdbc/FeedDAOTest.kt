@@ -53,173 +53,6 @@ class FeedDAOTest {
     }
 
     @Test
-    fun `prueba de concepto - Test commit`(){
-        this.dropAll()
-        dao.startTransaction()
-        dao.save(evento)
-        dao.commit()
-        val resultado0 = dao.getByTipoPatogeno(evento.tipoPatogeno!!)
-        Assert.assertEquals(1, resultado0.size)
-    }
-
-    @Test
-    fun `prueba de concepto - Comportamiento del OR para subquery (Habiendo uno solo que  cumple)`(){
-        dao.deleteAll()
-        val jamaica = ubicacionService.crearUbicacion("Jamaica")
-        val babilonia = ubicacionService.crearUbicacion("Babilonia")
-        ubicacionService.crearUbicacion("NismanLandia")
-        val patogenoModel = Patogeno()
-        patogenoModel.tipo = TipoPatogeno.VIRUS.name
-        val especie = patogenoService.agregarEspecie(patogenoService.crearPatogeno(patogenoModel), "gripe", "Narnia")
-        val vectorJamaiquino = Vector()
-        vectorJamaiquino.ubicacion = jamaica
-        vectorJamaiquino.tipo = Humano()
-        val vectorBabilonico = Vector()
-        vectorBabilonico.ubicacion = babilonia
-        vectorBabilonico.tipo= Humano()
-        vectorService.crearVector(vectorJamaiquino)
-        vectorService.crearVector(vectorBabilonico)
-        vectorService.infectar(vectorJamaiquino, especie)
-        vectorService.infectar(vectorBabilonico, especie)
-
-        var resultadoOR = dao.find(Filters.or(Filters.eq("accionQueLoDesencadena", Accion.PATOGENO_ES_PANDEMIA.name), Filters.eq("accion", Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name)))
-        Assert.assertEquals(1, resultadoOR.size)
-    }
-
-    @Test
-    fun `prueba de concepto - Comportamiento del OR para subquery (Habiendo muchos)`(){
-        dao.deleteAll()
-        val jamaica = ubicacionService.crearUbicacion("Jamaica")
-        val babilonia = ubicacionService.crearUbicacion("Babilonia")
-        ubicacionService.crearUbicacion("NismanLandia")
-        val patogenoModel = Patogeno()
-        patogenoModel.tipo = TipoPatogeno.VIRUS.name
-        val especie = patogenoService.agregarEspecie(patogenoService.crearPatogeno(patogenoModel), "gripe", "Narnia")
-
-        val vectorJamaiquino = Vector()
-        vectorJamaiquino.ubicacion = jamaica
-        vectorJamaiquino.tipo = Humano()
-        val vectorBabilonico = Vector()
-        vectorBabilonico.ubicacion = babilonia
-        vectorBabilonico.tipo= Humano()
-
-        vectorService.crearVector(vectorJamaiquino)
-        vectorService.crearVector(vectorBabilonico)
-        vectorService.infectar(vectorJamaiquino, especie)
-        vectorService.infectar(vectorBabilonico, especie)
-        vectorService.infectar(vectorBabilonico, especie)
-        vectorService.infectar(vectorBabilonico, especie)
-        vectorService.infectar(vectorBabilonico, especie)
-
-        var resultadoOR = dao.find(Filters.or(Filters.eq("accionQueLoDesencadena", Accion.PATOGENO_ES_PANDEMIA.name), Filters.eq("accion", Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name)))
-        Assert.assertEquals(4, resultadoOR.size)
-    }
-
-    @Test
-    fun `prueba de concepto - Comportamiento del OR para subquery (Habiendo uno solo que cumple y muchos que no)`(){
-        dao.deleteAll()
-        val jamaica = ubicacionService.crearUbicacion("Jamaica")
-        val babilonia = ubicacionService.crearUbicacion("Babilonia")
-        ubicacionService.crearUbicacion("NismanLandia")
-        val patogenoModel = Patogeno()
-        patogenoModel.tipo = TipoPatogeno.VIRUS.name
-        val especie = patogenoService.agregarEspecie(patogenoService.crearPatogeno(patogenoModel), "gripe", "Narnia")
-
-        val vectorJamaiquino = Vector()
-        vectorJamaiquino.ubicacion = jamaica
-        vectorJamaiquino.tipo = Humano()
-        val vectorBabilonico = Vector()
-        vectorBabilonico.ubicacion = babilonia
-        vectorBabilonico.tipo= Humano()
-
-        vectorBabilonico.tipo= Humano()
-        vectorService.crearVector(vectorJamaiquino)
-        vectorService.crearVector(vectorBabilonico)
-        vectorService.infectar(vectorJamaiquino, especie)
-        vectorService.infectar(vectorBabilonico, especie)
-        dao.startTransaction()
-        repeat(15) {//Ya hay uno
-            dao.save(Evento(1, Arribo(), "otra accion", TipoPatogeno.VIRUS.name))//El mismo tipo de patogeno.
-        }
-        dao.commit()
-        var cantTotal = dao.findEq("tipoPatogeno",TipoPatogeno.VIRUS.name).size
-        Assert.assertEquals(16, cantTotal)
-        var resultadoOR = dao.find(Filters.or(Filters.eq("accionQueLoDesencadena", Accion.PATOGENO_ES_PANDEMIA.name), Filters.eq("accion", Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name)))
-        Assert.assertEquals(1, resultadoOR.size)
-    }
-
-    @Test
-    fun `prueba de concepto - Comportamiento del AND para subquery - Imposible arroje un resultado`(){
-        dao.deleteAll()
-        val jamaica = ubicacionService.crearUbicacion("Jamaica")
-        val babilonia = ubicacionService.crearUbicacion("Babilonia")
-        ubicacionService.crearUbicacion("NismanLandia")
-        val patogenoModel = Patogeno()
-        patogenoModel.tipo = TipoPatogeno.VIRUS.name
-        val especie = patogenoService.agregarEspecie(patogenoService.crearPatogeno(patogenoModel), "gripe", "Narnia")
-        val vectorJamaiquino = Vector()
-        vectorJamaiquino.ubicacion = jamaica
-        vectorJamaiquino.tipo = Humano()
-        val vectorBabilonico = Vector()
-        vectorBabilonico.ubicacion = babilonia
-        vectorBabilonico.tipo= Humano()
-        vectorService.crearVector(vectorJamaiquino)
-        vectorService.crearVector(vectorBabilonico)
-        vectorService.infectar(vectorJamaiquino, especie)
-        vectorService.infectar(vectorBabilonico, especie)
-
-        var resultadoOR = dao.find(Filters.and(Filters.eq("accionQueLoDesencadena", Accion.PATOGENO_ES_PANDEMIA.name), Filters.eq("accion", Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name)))
-        Assert.assertEquals(0, resultadoOR.size)
-    }
-
-    @Test
-    fun `prueba de concepto - Comportamiento del *OR*AND* para subquery (Habiendo uno solo que cumple y muchos que no)`(){
-        dao.deleteAll()
-        val jamaica = ubicacionService.crearUbicacion("Jamaica")
-        val babilonia = ubicacionService.crearUbicacion("Babilonia")
-        ubicacionService.crearUbicacion("NismanLandia")
-        val patogenoModel = Patogeno()
-        patogenoModel.tipo = TipoPatogeno.VIRUS.name
-        val especie = patogenoService.agregarEspecie(patogenoService.crearPatogeno(patogenoModel), "gripe", "Narnia")
-
-        val vectorJamaiquino = Vector()
-        vectorJamaiquino.ubicacion = jamaica
-        vectorJamaiquino.tipo = Humano()
-        val vectorBabilonico = Vector()
-        vectorBabilonico.ubicacion = babilonia
-        vectorBabilonico.tipo= Humano()
-
-        vectorBabilonico.tipo= Humano()
-        vectorService.crearVector(vectorJamaiquino)
-        vectorService.crearVector(vectorBabilonico)
-        vectorService.infectar(vectorJamaiquino, especie)
-        vectorService.infectar(vectorBabilonico, especie)
-        dao.startTransaction()
-        var n = 0
-        repeat(15) {//Ya hay uno
-            dao.save(Evento(n++, Arribo(), "otra accion", TipoPatogeno.VIRUS.name))//El mismo tipo de patogeno.
-        }
-        repeat(15) {
-            dao.save(Evento(++n, Arribo(), "alguna otra accion", TipoPatogeno.BACTERIA.name))//El mismo tipo de patogeno.
-        }
-        repeat(15) {
-            dao.save(Evento(++n, Arribo(), "no me preguntes a mi, solo soy un string AH-ja", TipoPatogeno.HONGO.name))//El mismo tipo de patogeno.
-        }
-        dao.commit()
-        //Esto asi escrito me trae t0d0s los envento que haya sido generado por una Accion de Pandemia **O** Por Contagio por Primera vez) **Y** sea del tipo de patogeno Virus
-        //
-        var resultadoOR = dao.find(
-                                Filters.and(
-                                    Filters.or(
-                                            Filters.eq("accionQueLoDesencadena", Accion.PATOGENO_ES_PANDEMIA.name),
-                                            Filters.eq("accionQueLoDesencadena", Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name)),
-                                   Filters.eq("tipoPatogeno", TipoPatogeno.VIRUS.name)))
-        Assert.assertEquals(1, resultadoOR.size)
-    }
-
-    //Test de dominio:
-
-    @Test
     fun alRecuperarPorUnTipoDePatogenoInexistenteRetornaListaVacia(){
         val resultado = dao.getByTipoPatogeno("Nisman")
         Assert.assertEquals(0, resultado.size)
@@ -296,6 +129,85 @@ class FeedDAOTest {
         Assert.assertEquals(1, unicoEvento.n)
     }
 
+    @Test
+    fun alBuscarLosEventosDeContagioDeUnPatogenoQueTieneVariosEstosEstanOrdenadosEn(){
+        this.dropAll()
+        //Una especie se vuelve pandemia se encuentra presenta en mas de la mitad de las locaciones
+        val jamaica = ubicacionService.crearUbicacion("Jamaica")
+        val babilonia = ubicacionService.crearUbicacion("Babilonia")
+        ubicacionService.crearUbicacion("NismanLandia")
+        val patogenoModel = Patogeno()
+        patogenoModel.tipo = TipoPatogeno.VIRUS.name
+        val especie = patogenoService.agregarEspecie(patogenoService.crearPatogeno(patogenoModel), "gripe", "Narnia")
+        val vectorJamaiquino = Vector()
+        vectorJamaiquino.ubicacion = jamaica
+        vectorJamaiquino.tipo = Humano()
+        val vectorBabilonico = Vector()
+        vectorBabilonico.ubicacion = babilonia
+        vectorBabilonico.tipo= Humano()
+        vectorService.crearVector(vectorJamaiquino)
+        vectorService.crearVector(vectorBabilonico)
+        vectorService.infectar(vectorJamaiquino, especie)
+        vectorService.infectar(vectorBabilonico, especie)
+        Assert.assertTrue(patogenoService.esPandemia(especie.id!!))
+        val result = dao.feedPatogeno(TipoPatogeno.VIRUS.name)
+        Assert.assertEquals(1, result.size)
+        val unicoEvento = result.get(0)
+        Assert.assertEquals(Accion.PATOGENO_ES_PANDEMIA.name, unicoEvento.accionQueLoDesencadena)
+        Assert.assertTrue(unicoEvento.tipoEvento is Contagio)
+        Assert.assertEquals(patogenoModel.tipo, unicoEvento.tipoPatogeno)
+        Assert.assertEquals(1, unicoEvento.n)
+    }
+
+    @Test
+    fun elFeedPatogenoRetornaUNaListaDeEventosOrdenadasPorElAtributoNDelTipoDePatogenoIndicado(){
+        val jamaica = ubicacionService.crearUbicacion("Jamaica")
+        val babilonia = ubicacionService.crearUbicacion("Babilonia")
+        ubicacionService.crearUbicacion("NismanLandia")
+        val patogenoModel = Patogeno()
+        patogenoModel.tipo = TipoPatogeno.VIRUS.name
+        val especie = patogenoService.agregarEspecie(patogenoService.crearPatogeno(patogenoModel), "gripe", "Narnia")
+
+        val vectorJamaiquino = Vector()
+        vectorJamaiquino.ubicacion = jamaica
+        vectorJamaiquino.tipo = Humano()
+        val vectorBabilonico = Vector()
+        vectorBabilonico.ubicacion = babilonia
+        vectorBabilonico.tipo= Humano()
+
+        vectorBabilonico.tipo= Humano()
+        vectorService.crearVector(vectorJamaiquino)
+        vectorService.crearVector(vectorBabilonico)
+        vectorService.infectar(vectorJamaiquino, especie)
+        dao.startTransaction()
+        var n = 0
+        repeat(7) {//Ya hay uno
+            dao.save(Evento(n++, Contagio(), Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name, TipoPatogeno.VIRUS.name))//El mismo tipo de patogeno.
+        }
+        dao.commit()
+        val result = dao.feedPatogeno(TipoPatogeno.VIRUS.name)
+        //PosicionElemento = evento
+        val uno = result.get(0)
+        val dos = result.get(1)
+        val tres = result.get(2)
+        val cuatro = result.get(3)
+        val cinco = result.get(4)
+        val seis = result.get(5)
+        val siete = result.get(6)
+        val ocho = result.get(7)
+    //Esto se cambia por Date cuando decidamos el tipo de dato
+        Assert.assertEquals(8, result.size)
+        Assert.assertEquals(6, uno.n)
+        Assert.assertEquals(5, dos.n)
+        Assert.assertEquals(4, tres.n)
+        Assert.assertEquals(3, cuatro.n)
+        Assert.assertEquals(2, cinco.n)
+        //Uno de estos es el elemento del setup
+        Assert.assertEquals(1, seis.n)
+        Assert.assertEquals(1, siete.n)
+
+        Assert.assertEquals(0, ocho.n)
+    }
 
     @After
     fun dropAll() {
