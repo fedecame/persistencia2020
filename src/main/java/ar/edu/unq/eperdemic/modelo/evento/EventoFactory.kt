@@ -6,7 +6,7 @@ import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.Contagio
 class EventoFactory {
     private var n = 0
     //Aca faltan los parametros para que arme los eventos con la data que necesitamos
- fun eventoPorArribo(ubicacionInicial: String, nombreUbicacion: String): Evento =Evento(n++,Arribo(),Accion.Arribo_A_Ubicacion.name,ubicacionInicial)
+ fun eventoPorArribo(ubicacionInicial: String, nombreUbicacion: String,idVector:Int): Evento =Evento(n++,Arribo(),Accion.Arribo_A_Ubicacion.name,null,null,nombreUbicacion,ubicacionInicial,idVector)
 
 
     fun eventoContagioPorPandemia(tipoPatogeno: String, especieNombre: String): Evento = Evento(++n, Contagio(), Accion.PATOGENO_ES_PANDEMIA.name, tipoPatogeno, especieNombre, null)

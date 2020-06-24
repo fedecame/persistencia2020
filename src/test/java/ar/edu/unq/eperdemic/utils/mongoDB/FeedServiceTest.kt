@@ -90,7 +90,7 @@ class FeedServiceTest {
         ubicacionService.conectar("Florencio Varela", "Quilmes", "Terrestre")
         ubicacionService.mover(1,"Quilmes")
 
-        val result = feedService.feedUbicacion("Florencio Varela")
+        val result = feedService.feedUbicacion("Quilmes")
         Assert.assertEquals(1, result.size)
     }
 

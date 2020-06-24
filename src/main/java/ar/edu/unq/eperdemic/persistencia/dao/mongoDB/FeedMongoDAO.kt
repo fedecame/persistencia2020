@@ -37,9 +37,9 @@ class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
         TODO("Not yet implemented")
     }
 
-     fun feedUbicacion(tipoPatogeno: String): List<Evento> {
+     override fun feedUbicacion(nombreUbicacion: String): List<Evento> {
 //val match= Aggregates.match(Filters.eq("eventos.tipoEvento","Arribo"))
-        val match= this.findEq("tipoPatogeno","Florencio Varela")
+        val match= this.findEq("nombreUbicacion",nombreUbicacion)
         return match
     }
 

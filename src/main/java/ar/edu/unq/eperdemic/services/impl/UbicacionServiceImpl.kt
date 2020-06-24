@@ -67,7 +67,7 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
             neo4jUbicacionDAO.esAledaña(ubicacionInicial, nombreUbicacion) // Cambiar el nombre del mensaje
             neo4jUbicacionDAO.noEsCapazDeMoverPorCamino(vector, nombreUbicacion) // Cambiar el nombre del mensaje
             HibernateUbicacionDao.mover(vector, nombreUbicacion)
-            FeedServiceImpl(FeedMongoDAO()).agregarEvento(EventoFactory().eventoPorArribo(ubicacionInicial, nombreUbicacion))
+            FeedServiceImpl(FeedMongoDAO()).agregarEvento(EventoFactory().eventoPorArribo(ubicacionInicial, nombreUbicacion,vectorId))
 
         }
     }
