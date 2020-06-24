@@ -116,7 +116,7 @@ class PruebaDeConceptoTest {
 
     @Test
     fun `prueba de concepto - Comportamiento del OR para subquery (Habiendo uno solo que cumple y muchos que no)`(){
-        dao.deleteAll()
+        this.dropAll()
         val jamaica = ubicacionService.crearUbicacion("Jamaica")
         val babilonia = ubicacionService.crearUbicacion("Babilonia")
         ubicacionService.crearUbicacion("NismanLandia")
