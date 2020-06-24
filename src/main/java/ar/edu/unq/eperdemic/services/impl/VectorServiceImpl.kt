@@ -9,10 +9,11 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
 import ar.edu.unq.eperdemic.services.VectorService
+import ar.edu.unq.eperdemic.services.runner.FeedService
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 
-class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO) : VectorService {
-
+class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO, var feedService : FeedService = FeedServiceImpl(FeedMongoDAO())) : VectorService {
+    private val eventoFactory = EventoFactory()
 
     override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) {
         TransactionRunner.addHibernate().runTrx {
@@ -24,10 +25,15 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
         TransactionRunner.addHibernate().runTrx {
             vectorDao.infectar(vector,especie)
         }
-        //Si lo pongo en el bloque, no termina WTF?
+        val tipoPatogenoDeLaEspecie = especie.patogeno.tipo
         val patogenoService = PatogenoServiceImpl(HibernatePatogenoDAO(), HibernateEspecieDAO())
         if(patogenoService.esPandemia(especie.id!!)){
-            FeedServiceImpl(FeedMongoDAO()).agregarEvento(EventoFactory().eventoContagioPorPandemia(especie.patogeno.tipo, especie.nombre))
+            feedService.agregarEvento(eventoFactory.eventoContagioPorPandemia(tipoPatogenoDeLaEspecie, especie.nombre))
+        }
+        //Esto hay que ponerlo en otro lado?
+        val nombreUbicacion = vector.ubicacion!!.nombreUbicacion
+        if(!feedService.especieYaEstabaEnLaUbicacion(nombreUbicacion, tipoPatogenoDeLaEspecie)){
+            feedService.agregarEvento(eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(tipoPatogenoDeLaEspecie, nombreUbicacion, especie.nombre))
         }
     }
 

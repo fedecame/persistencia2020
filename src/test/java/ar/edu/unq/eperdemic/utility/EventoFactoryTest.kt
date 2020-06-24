@@ -22,15 +22,17 @@ class EventoFactoryTest {
         Assert.assertEquals("algo", evento.tipoPatogeno)
         Assert.assertEquals("PATOGENO_ES_PANDEMIA", evento.accionQueLoDesencadena)
         Assert.assertEquals("alguna especie", evento.nombreEspecie)
+        Assert.assertNull(evento.nombreUbicacion)
     }
 
     @Test
     fun eventoFactoryDevuelveUnEventoConsistenteAlRecibirElMensajeEventoContagioPorPrimeraVezEnUbicacion(){
-        val evento = sut.eventoContagioPorPrimeraVezEnUbicacion("algo")
+        val evento = sut.eventoContagioPorPrimeraVezEnUbicacion("algo", "un nombre de ubicacion", "un nombre de especie")
         Assert.assertNotNull(evento)
         Assert.assertTrue(evento.tipoEvento is Contagio)
         Assert.assertEquals("algo", evento.tipoPatogeno)
         Assert.assertEquals("PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION", evento.accionQueLoDesencadena)
-        Assert.assertNull(evento.nombreEspecie)
+        Assert.assertEquals("un nombre de especie", evento.nombreEspecie)
+        Assert.assertEquals( "un nombre de ubicacion", evento.nombreUbicacion)
     }
 }

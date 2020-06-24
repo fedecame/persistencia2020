@@ -22,4 +22,6 @@ class FeedServiceImpl(private var feedDAO: FeedMongoDAO) : FeedService {
         feedDAO.commit()
         return evento
     }
+
+    override fun especieYaEstabaEnLaUbicacion(nombreUbicacion: String, tipoPatogenoDeLaEspecie: String): Boolean = feedDAO.especieYaEstabaEnLaUbicacion(nombreUbicacion, tipoPatogenoDeLaEspecie)
 }

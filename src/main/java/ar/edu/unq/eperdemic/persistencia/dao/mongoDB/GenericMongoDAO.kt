@@ -40,7 +40,6 @@ open class GenericMongoDAO<T>(entityType: Class<T>) {
         }else{
             collection.insertMany(objects)
         }
-
     }
 
     operator fun get(id: String?): T? {
