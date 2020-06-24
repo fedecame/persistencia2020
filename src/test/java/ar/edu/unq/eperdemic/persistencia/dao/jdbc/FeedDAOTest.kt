@@ -1,24 +1,21 @@
 package ar.edu.unq.eperdemic.persistencia.dao.jdbc
 
+import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.evento.Accion
 import ar.edu.unq.eperdemic.modelo.evento.Evento
 import ar.edu.unq.eperdemic.modelo.evento.EventoFactory
-import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.Arribo
 import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.Contagio
 import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.TipoPatogeno
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
 import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
-import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jDataDAO
 import ar.edu.unq.eperdemic.services.*
 import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
-import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.tipo.Humano
 import ar.edu.unq.eperdemic.utils.DataService
-import com.mongodb.client.model.Filters
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -43,7 +40,7 @@ class FeedDAOTest {
         hibernateData = HibernateDataService()
         eventoFactory = EventoFactory()
 
-        evento = eventoFactory.eventoContagioPorPandemia(TipoPatogeno.VIRUS.name)
+        evento = eventoFactory.eventoContagioPorPandemia(TipoPatogeno.VIRUS.name, "gripe")
         dao.startTransaction()
         dao.save(evento)
         dao.commit()
@@ -75,7 +72,7 @@ class FeedDAOTest {
 
     @Test
     fun seGuardaYSeRecuperaPorTipoDeEvento() {
-        val evento = eventoFactory.eventoContagioPorPandemia(evento.tipoPatogeno!!)
+        val evento = eventoFactory.eventoContagioPorPandemia(evento.tipoPatogeno!!, "gripe")
         dao.startTransaction()
         dao.save(evento)
         dao.commit()
@@ -102,9 +99,6 @@ class FeedDAOTest {
         val jamaica = ubicacionService.crearUbicacion("Jamaica")
         val babilonia = ubicacionService.crearUbicacion("Babilonia")
         ubicacionService.crearUbicacion("NismanLandia")
-        val patogenoModel = Patogeno()
-        patogenoModel.tipo = TipoPatogeno.VIRUS.name
-        val especie = patogenoService.agregarEspecie(patogenoService.crearPatogeno(patogenoModel), "gripe", "Narnia")
         val vectorJamaiquino = Vector()
         vectorJamaiquino.ubicacion = jamaica
         vectorJamaiquino.tipo = Humano()
@@ -113,6 +107,10 @@ class FeedDAOTest {
         vectorBabilonico.tipo= Humano()
         vectorService.crearVector(vectorJamaiquino)
         vectorService.crearVector(vectorBabilonico)
+
+        val patogenoModel = Patogeno()
+        patogenoModel.tipo = TipoPatogeno.VIRUS.name
+        val especie = patogenoService.agregarEspecie(patogenoService.crearPatogeno(patogenoModel), "gripe", "Narnia")
         vectorService.infectar(vectorJamaiquino, especie)
         vectorService.infectar(vectorBabilonico, especie)
         Assert.assertTrue(patogenoService.esPandemia(especie.id!!))

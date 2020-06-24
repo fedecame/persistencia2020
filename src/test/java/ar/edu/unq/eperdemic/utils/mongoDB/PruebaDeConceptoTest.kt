@@ -45,7 +45,7 @@ class PruebaDeConceptoTest {
         hibernateData = HibernateDataService()
         eventoFactory = EventoFactory()
 
-        evento = eventoFactory.eventoContagioPorPandemia(TipoPatogeno.VIRUS.name)
+        evento = eventoFactory.eventoContagioPorPandemia(TipoPatogeno.VIRUS.name, "un nombre de especie")
         dao.startTransaction()
         dao.save(evento)
         dao.commit()

@@ -16,11 +16,12 @@ class EventoFactoryTest {
 
     @Test
     fun eventoFactoryDevuelveUnEventoConsistenteAlRecibirElMensajeEventoContagioPorPandemia(){
-        val evento = sut.eventoContagioPorPandemia("algo")
+        val evento = sut.eventoContagioPorPandemia("algo", "alguna especie")
         Assert.assertNotNull(evento)
         Assert.assertTrue(evento.tipoEvento is Contagio)
         Assert.assertEquals("algo", evento.tipoPatogeno)
         Assert.assertEquals("PATOGENO_ES_PANDEMIA", evento.accionQueLoDesencadena)
+        Assert.assertEquals("alguna especie", evento.nombreEspecie)
     }
 
     @Test
@@ -30,5 +31,6 @@ class EventoFactoryTest {
         Assert.assertTrue(evento.tipoEvento is Contagio)
         Assert.assertEquals("algo", evento.tipoPatogeno)
         Assert.assertEquals("PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION", evento.accionQueLoDesencadena)
+        Assert.assertNull(evento.nombreEspecie)
     }
 }

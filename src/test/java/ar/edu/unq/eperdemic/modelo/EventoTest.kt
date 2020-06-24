@@ -19,7 +19,7 @@ class EventoTest {
     @Before
     fun setUp(){
         eventoFactory = EventoFactory()
-        eventoPandemia = eventoFactory.eventoContagioPorPandemia(TipoPatogeno.BACTERIA.name)
+        eventoPandemia = eventoFactory.eventoContagioPorPandemia(TipoPatogeno.BACTERIA.name, "Gripe")
         eventoPrimeraVez = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(TipoPatogeno.HONGO.name)
     }
 
@@ -28,6 +28,7 @@ class EventoTest {
         Assert.assertTrue(eventoPandemia.tipoEvento is Contagio)
         Assert.assertEquals(TipoPatogeno.BACTERIA.name, eventoPandemia.tipoPatogeno)
         Assert.assertEquals("PATOGENO_ES_PANDEMIA", eventoPandemia.accionQueLoDesencadena)
+        Assert.assertEquals("Gripe", eventoPandemia.nombreEspecie)
     }
 
     @Test
@@ -35,6 +36,7 @@ class EventoTest {
         Assert.assertTrue(eventoPrimeraVez.tipoEvento is Contagio)
         Assert.assertEquals(TipoPatogeno.HONGO.name, eventoPrimeraVez.tipoPatogeno)
         Assert.assertEquals("PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION", eventoPrimeraVez.accionQueLoDesencadena)
+        Assert.assertNull(eventoPrimeraVez.nombreEspecie)
     }
 
     @Test
