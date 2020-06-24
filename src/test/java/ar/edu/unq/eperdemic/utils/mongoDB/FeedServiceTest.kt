@@ -7,10 +7,7 @@ import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.Contagio
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
 import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jDataDAO
-import ar.edu.unq.eperdemic.services.HibernateDataService
-import ar.edu.unq.eperdemic.services.PatogenoService
-import ar.edu.unq.eperdemic.services.UbicacionService
-import ar.edu.unq.eperdemic.services.VectorService
+import ar.edu.unq.eperdemic.services.*
 import ar.edu.unq.eperdemic.services.impl.FeedServiceImpl
 import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
@@ -70,18 +67,13 @@ class FeedServiceTest {
         vectorService.infectar(vectorBabilonico, especie)
         Assert.assertTrue(patogenoService.esPandemia(especie.id!!))
         val result = feedService.feedPatogeno(patogenoModel.tipo )
-//        val unicoEvento = result.get(0)
-//        Assert.assertEquals(1, result.size)
-//        Assert.assertTrue(unicoEvento is Evento)
-//        Assert.assertEquals("", unicoEvento.log())
+        val unicoEvento = result.get(0)
+        Assert.assertEquals(1, result.size)
+        Assert.assertTrue(unicoEvento is Evento)
     }
 
     @After
     fun dropAll() {
-        dao.deleteAll()
-        TransactionRunner.addNeo4j().addHibernate().runTrx {
-            HibernateDataDAO().clear()
-            Neo4jDataDAO().clear()
-        }
-    }
+        MegalodonService().eliminarTodo()
+     }
 }

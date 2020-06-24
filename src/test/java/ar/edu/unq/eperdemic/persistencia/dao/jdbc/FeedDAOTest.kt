@@ -11,10 +11,7 @@ import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.TipoPatogeno
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
 import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jDataDAO
-import ar.edu.unq.eperdemic.services.HibernateDataService
-import ar.edu.unq.eperdemic.services.PatogenoService
-import ar.edu.unq.eperdemic.services.UbicacionService
-import ar.edu.unq.eperdemic.services.VectorService
+import ar.edu.unq.eperdemic.services.*
 import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
@@ -211,10 +208,6 @@ class FeedDAOTest {
 
     @After
     fun dropAll() {
-        dao.deleteAll()
-        TransactionRunner.addNeo4j().addHibernate().runTrx {
-            HibernateDataDAO().clear()
-            Neo4jDataDAO().clear()
-        }
+        MegalodonService().eliminarTodo()
     }
 }
