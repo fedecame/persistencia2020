@@ -26,14 +26,15 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
             vectorDao.infectar(vector,especie)
         }
         val tipoPatogenoDeLaEspecie = especie.patogeno.tipo
+        val nombre_de_la_especie = especie.nombre
         val patogenoService = PatogenoServiceImpl(HibernatePatogenoDAO(), HibernateEspecieDAO())
         if(patogenoService.esPandemia(especie.id!!)){
-            feedService.agregarEvento(eventoFactory.eventoContagioPorPandemia(tipoPatogenoDeLaEspecie, especie.nombre))
+            feedService.agregarEvento(eventoFactory.eventoContagioPorPandemia(tipoPatogenoDeLaEspecie, nombre_de_la_especie))
         }
         //Esto hay que ponerlo en otro lado?
         val nombreUbicacion = vector.ubicacion!!.nombreUbicacion
-        if(!feedService.especieYaEstabaEnLaUbicacion(nombreUbicacion, tipoPatogenoDeLaEspecie)){
-            feedService.agregarEvento(eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(tipoPatogenoDeLaEspecie, nombreUbicacion, especie.nombre))
+        if(!feedService.especieYaEstabaEnLaUbicacion(nombreUbicacion, tipoPatogenoDeLaEspecie, nombre_de_la_especie)){
+            feedService.agregarEvento(eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(tipoPatogenoDeLaEspecie, nombreUbicacion, nombre_de_la_especie))
         }
     }
 

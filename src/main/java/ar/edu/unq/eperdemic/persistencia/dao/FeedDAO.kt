@@ -6,5 +6,5 @@ interface FeedDAO {
     fun feedPatogeno(tipoPatogeno : String) : List<Evento>
     fun feedVector(tipoPatogeno : String) : List<Evento>
     fun feedUbicacion(tipoPatogeno : String) : List<Evento>
-    fun especieYaEstabaEnLaUbicacion(nombreUbicacion: String, tipoPatogenoDeLaEspecie: String): Boolean
+    fun especieYaEstabaEnLaUbicacion(nombreUbicacion: String, tipoPatogenoDeLaEspecie: String, nombreEspecie : String): Boolean
 }
