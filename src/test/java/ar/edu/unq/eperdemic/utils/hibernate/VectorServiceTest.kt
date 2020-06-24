@@ -213,7 +213,11 @@ class VectorServiceTest {
 
     @Test
     fun testAlInfectarseUnVectorTieneEstadoInfectado(){
-        val especie2 = Especie()
+        val otroPatogeno = Patogeno()
+        otroPatogeno.tipo = "VIRUS"
+        otroPatogeno.cantidadDeEspecies = 1
+        val especie2 = otroPatogeno.crearEspecie("un nombrecito", "Tailandia")
+        especie2.patogeno = otroPatogeno
         val recuperado = vectorService.recuperarVector(1)
         vectorService.infectar(recuperado,especie2)
         val recupInfectado = vectorService.recuperarVector(1)

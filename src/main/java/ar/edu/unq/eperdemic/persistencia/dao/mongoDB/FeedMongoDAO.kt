@@ -4,6 +4,7 @@ import ar.edu.unq.eperdemic.modelo.evento.Accion
 import ar.edu.unq.eperdemic.modelo.evento.Evento
 import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.Arribo
 import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.TipoEvento
+import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.TipoPatogeno
 import ar.edu.unq.eperdemic.persistencia.dao.FeedDAO
 import com.mongodb.client.model.Aggregates
 import com.mongodb.client.model.Filters
@@ -12,7 +13,9 @@ import com.mongodb.client.model.Indexes
 
 class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
 
-    fun getByTipoPatogeno(tipo: String): Evento? = getBy("tipoPatogeno", tipo)
+    //Faltaria poder recordar por un Id determinado?
+
+    fun getByTipoPatogeno(tipo: String): List<Evento?> = findEq("tipoPatogeno", tipo)
 
     fun getByTipoEvento(tipoEvento: TipoEvento): List<Evento?> = findEq("tipoEvento", tipoEvento)
 
@@ -21,12 +24,13 @@ class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
         //      ((Haya sido generado por una Accion de Pandemia **O** Por Contagio por Primera vez) **Y** (Sea del tipo de patogeno dado))
         val match = Aggregates.match(
                 and
-                (or (eq("eventos.accion", Accion.PATOGENO_ES_PANDEMIA.name), eq("eventos.accion", Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name)),
-                     eq("eventos.tipoPatogeno", tipoPatogeno))
+                    (or
+                        (eq("accionQueLoDesencadena", Accion.PATOGENO_ES_PANDEMIA.name),
+                         eq("accionQueLoDesencadena", Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name)),
+                    eq("tipoPatogeno", tipoPatogeno))
         )
-//      val sort = Aggregates.sort(Indexes.descending("fecha"))
-        return aggregate(listOf(match/*, sort*/), Evento::class.java)
-//      return listOf()
+      val sort = Aggregates.sort(Indexes.descending("n"))
+      return aggregate(listOf(match, sort), Evento::class.java)
     }
 
     override fun feedVector(tipoPatogeno: String): List<Evento> {
@@ -39,4 +43,8 @@ class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
         return match
     }
 
+    //Cambiar de lugar el crear evento de infectar a contagiar y cambiar para que contagiar o mutar tire excepcion y hau que catchearlo
+    override fun especieYaEstabaEnLaUbicacion(nombreUbicacion: String, tipoPatogenoDeLaEspecie: String, nombreEspecie : String): Boolean = true
+    //find().isEmpty()
+    //Si existe un evento de contagio por primera vez en ubicacion, entonces es unico o bien, no existe
 }

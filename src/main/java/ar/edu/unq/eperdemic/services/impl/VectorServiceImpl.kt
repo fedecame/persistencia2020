@@ -9,24 +9,32 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
 import ar.edu.unq.eperdemic.services.VectorService
+import ar.edu.unq.eperdemic.services.runner.FeedService
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 
-class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO) : VectorService {
-
+class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO, var feedService : FeedService = FeedServiceImpl(FeedMongoDAO())) : VectorService {
+    private val eventoFactory = EventoFactory()
 
     override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) {
         TransactionRunner.addHibernate().runTrx {
-//            vectorDao.recuperar(vectorInfectado.id!!.toInt()) // valido que este persistido el vector
             vectorDao.contagiar(vectorInfectado, vectores)
         }
     }
 
     override fun infectar(vector: Vector, especie: Especie) {
         TransactionRunner.addHibernate().runTrx {
-            vectorDao.infectar(vector,especie) }
+            vectorDao.infectar(vector,especie)
+        }
+        val tipoPatogenoDeLaEspecie = especie.patogeno.tipo
+        val nombre_de_la_especie = especie.nombre
         val patogenoService = PatogenoServiceImpl(HibernatePatogenoDAO(), HibernateEspecieDAO())
         if(patogenoService.esPandemia(especie.id!!)){
-            FeedServiceImpl(FeedMongoDAO()).agregarEvento(EventoFactory().eventoContagioPorPandemia(especie.patogeno.tipo))
+            feedService.agregarEvento(eventoFactory.eventoContagioPorPandemia(tipoPatogenoDeLaEspecie, nombre_de_la_especie))
+        }
+        //Esto hay que ponerlo en otro lado?
+        val nombreUbicacion = vector.ubicacion!!.nombreUbicacion
+        if(!feedService.especieYaEstabaEnLaUbicacion(nombreUbicacion, tipoPatogenoDeLaEspecie, nombre_de_la_especie)){
+            feedService.agregarEvento(eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(tipoPatogenoDeLaEspecie, nombreUbicacion, nombre_de_la_especie))
         }
     }
 
