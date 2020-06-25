@@ -1,6 +1,8 @@
 package ar.edu.unq.eperdemic.utils.mongoDB
 
+import ar.edu.unq.eperdemic.estado.Infectado
 import ar.edu.unq.eperdemic.estado.Sano
+import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.evento.Evento
@@ -77,21 +79,35 @@ class FeedServiceTest {
 
     @Test
     fun testUbicacion(){
+        var patogeno = Patogeno()
+        patogeno.tipo = ""
+        patogeno.factorContagioHumano= 1000
+        var especie1 = Especie()
+        especie1.cantidadInfectadosParaADN = 42
+        especie1.nombre = "soyUnaEspecie"
+        especie1.paisDeOrigen = "Masachuset"
+        especie1.patogeno = patogeno
         var vector= Vector()
+        vector.agregarEspecie(especie1)
         vector.tipo=Humano()
-        vector.estado= Sano()
+        vector.estado= Infectado()
+        var vector1= Vector()
+        vector1.tipo=Humano()
+        vector1.estado= Sano()
         var ubicacionCreada = ubicacionService.crearUbicacion("Florencio Varela")
 
         vector.ubicacion=ubicacionCreada
         vectorService.crearVector(vector)
         var vectorCreado=vectorService.recuperarVector(1)
         Assert.assertEquals(vectorCreado.ubicacion?.nombreUbicacion,"Florencio Varela")
-        ubicacionService.crearUbicacion("Quilmes")
+       vector1.ubicacion= ubicacionService.crearUbicacion("Quilmes")
+        vectorService.crearVector(vector1)
         ubicacionService.conectar("Florencio Varela", "Quilmes", "Terrestre")
         ubicacionService.mover(1,"Quilmes")
-
+var vectorCreado1=vectorService.recuperarVector(vector1.id?.toInt()!!)
         val result = feedService.feedUbicacion("Quilmes")
         Assert.assertEquals(1, result.size)
+                Assert.assertEquals(vector1.especies.size,vectorService.enfermedades(vector1.id?.toInt()!!).size)
     }
 
     @After

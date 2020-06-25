@@ -11,4 +11,7 @@ class EventoFactory {
 
     fun eventoContagioPorPandemia(tipoPatogeno: String, especieNombre: String): Evento = Evento(++n, Contagio(), Accion.PATOGENO_ES_PANDEMIA.name, tipoPatogeno, especieNombre, null)
     fun eventoContagioPorPrimeraVezEnUbicacion(tipoPatogeno: String, nombreUbicacion: String, nombreEspecie: String) : Evento = Evento(++n, Contagio(),Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name, tipoPatogeno, nombreEspecie, nombreUbicacion)
+    fun eventoPorArriboYContagio( nombreUbicacion: String, vectorId: Int): Evento {
+
+    }
 }
