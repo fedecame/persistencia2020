@@ -22,7 +22,7 @@ class EventoFactoryTest {
         Assert.assertEquals("algo", evento.tipoPatogeno)
         Assert.assertEquals("PATOGENO_ES_PANDEMIA", evento.accionQueLoDesencadena)
         Assert.assertEquals("alguna especie", evento.nombreEspecie)
-        Assert.assertNull(evento.nombreUbicacion)
+        Assert.assertNull(evento.ubicacionContagio)
     }
 
     @Test
@@ -33,6 +33,6 @@ class EventoFactoryTest {
         Assert.assertEquals("algo", evento.tipoPatogeno)
         Assert.assertEquals("PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION", evento.accionQueLoDesencadena)
         Assert.assertEquals("un nombre de especie", evento.nombreEspecie)
-        Assert.assertEquals( "un nombre de ubicacion", evento.nombreUbicacion)
+        Assert.assertEquals( "un nombre de ubicacion", evento.ubicacionContagio)
     }
 }

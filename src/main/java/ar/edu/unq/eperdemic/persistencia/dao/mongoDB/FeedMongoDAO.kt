@@ -44,7 +44,7 @@ class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
     override fun especieYaEstabaEnLaUbicacion(nombreUbicacion: String, tipoPatogenoDeLaEspecie: String, nombreEspecie : String): Boolean =
             find(and
                     (and
-                         (eq("nombreUbicacion", nombreUbicacion),
+                         (eq("ubicacionContagio", nombreUbicacion),
                           eq("accionQueLoDesencadena", Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name)),
                     (and
                          (eq("tipoPatogeno", tipoPatogenoDeLaEspecie),

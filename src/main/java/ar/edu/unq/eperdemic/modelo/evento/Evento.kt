@@ -11,8 +11,13 @@ class Evento {
    var tipoPatogeno : String? = null
     //Quizas convenga mas guardar una instancia de especie que solo el nombre, aunque en esta primer parte no nevcesitamos mas
    var nombreEspecie : String? = null
-   var nombreUbicacion : String? = null
-   lateinit var fecha : String
+   var ubicacionContagio : String? = null
+   var ubicacionOrigen : String? = null
+   var ubicacionDestino : String? = null
+   var idVectorQueInfecta : String? = null
+   var idVectorinfectado : String? = null
+
+    lateinit var fecha : String
 
    //Seguramente aca faltan todos los otros atributos de los eventos, independientemente de que se usen o no.
 
@@ -22,7 +27,7 @@ class Evento {
         this.accionQueLoDesencadena = _accion
         this.tipoPatogeno = _tipoPatogeno
         this.nombreEspecie = _nombreEspecie
-        this.nombreUbicacion = _nombreUbicacion
+        this.ubicacionContagio = _nombreUbicacion
         this.fecha = DateTimeFormatter.ISO_INSTANT.format(Instant.now())
    }
 
