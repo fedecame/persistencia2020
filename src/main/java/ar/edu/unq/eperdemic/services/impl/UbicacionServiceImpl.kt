@@ -53,7 +53,7 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
         val ubicacion= Ubicacion()
         ubicacion.nombreUbicacion=nombreUbicacion
         return TransactionRunner.addHibernate().addNeo4j().runTrx {
-            neo4jUbicacionDAO.crear(ubicacion)
+             neo4jUbicacionDAO.crear(ubicacion)
             HibernateUbicacionDao.crear(ubicacion)
         }
     }
@@ -69,8 +69,8 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
             neo4jUbicacionDAO.esAledaña(ubicacionInicial, nombreUbicacion) // Cambiar el nombre del mensaje
             neo4jUbicacionDAO.noEsCapazDeMoverPorCamino(vector, nombreUbicacion) // Cambiar el nombre del mensaje
             HibernateUbicacionDao.mover(vector, nombreUbicacion)
-            var cantidadDeEVentosALanzar= estadisticasDao.vectoresInfectados(nombreUbicacion)-1
-            for (i in 0 until cantidadDeEVentosALanzar) {
+            var vectoresEnUbicacion= HibernateUbicacionDao.recuperar(nombreUbicacion).vectores
+            vectoresEnUbicacion.forEach { v->if( FeedServiceImpl(FeedMongoDAO()).vectorFueContagiadoAlMover(nombreUbicacion,vector.id?.toInt()!!,v.id?.toInt()!!))
                 FeedServiceImpl(FeedMongoDAO()).agregarEvento(EventoFactory().eventoPorArriboYContagio( nombreUbicacion,vectorId))
             }
             FeedServiceImpl(FeedMongoDAO()).agregarEvento(EventoFactory().eventoPorArribo(ubicacionInicial, nombreUbicacion,vectorId))

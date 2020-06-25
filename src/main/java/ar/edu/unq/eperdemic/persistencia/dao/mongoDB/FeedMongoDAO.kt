@@ -53,4 +53,16 @@ class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
                          (eq("tipoPatogeno", tipoPatogenoDeLaEspecie),
                          eq("nombreEspecie", nombreEspecie))))).isNotEmpty()
     //Si existe un evento de contagio por primera vez en ubicacion, entonces es unico o bien, no existe
+    fun vectorFueContagiadoAlMover(_nombreUbicacion:String, _idVectorInfectado:Int, _idVectorAInfectar:Int):Boolean=
+        find(and
+        (and
+        (eq("nombreUbicacion", _nombreUbicacion),
+                eq("accionQueLoDesencadena", Accion.PADECE_ENFERMEDAD.name)),
+                (and
+                (eq("idVector", _idVectorInfectado),
+                        eq("idVectorAInfectar", _idVectorAInfectar))))).isNotEmpty()
+
+
+
+
 }

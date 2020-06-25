@@ -6,6 +6,7 @@ import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.evento.Evento
+import ar.edu.unq.eperdemic.modelo.evento.EventoFactory
 import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.Contagio
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
 import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
@@ -103,11 +104,14 @@ class FeedServiceTest {
        vector1.ubicacion= ubicacionService.crearUbicacion("Quilmes")
         vectorService.crearVector(vector1)
         ubicacionService.conectar("Florencio Varela", "Quilmes", "Terrestre")
+        FeedServiceImpl(FeedMongoDAO()).agregarEvento(EventoFactory().eventoPorContagio("Quilmes", vector.id?.toInt()!!,vector1.id?.toInt()!!))
+
+
+
         ubicacionService.mover(1,"Quilmes")
-var vectorCreado1=vectorService.recuperarVector(vector1.id?.toInt()!!)
         val result = feedService.feedUbicacion("Quilmes")
         Assert.assertEquals(1, result.size)
-                Assert.assertEquals(vector1.especies.size,vectorService.enfermedades(vector1.id?.toInt()!!).size)
+        Assert.assertEquals(vector1.especies.size,vectorService.enfermedades(vector1.id?.toInt()!!).size)
     }
 
     @After

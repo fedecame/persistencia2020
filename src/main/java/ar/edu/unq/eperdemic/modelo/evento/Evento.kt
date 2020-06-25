@@ -16,13 +16,13 @@ class Evento {
    var nombreUbicacion : String? = null
     var ubicacionOrigen :String?=null
     var idVector:Int?=null
-
+var idVectorAInfectar:Int?=null
    lateinit var fecha : String
 
    //Seguramente aca faltan todos los otros atributos de los eventos, independientemente de que se usen o no.
 
     constructor() {}
-    constructor(_int : Int, _tipoEvento : TipoEvento, _accion : String, _tipoPatogeno : String?=null, _nombreEspecie : String? = null, _nombreUbicacion : String? = null,_nombreubicacionOrigen:String?=null,_idVector:Int?=null) {
+    constructor(_int : Int, _tipoEvento : TipoEvento, _accion : String, _tipoPatogeno : String?=null, _nombreEspecie : String? = null, _nombreUbicacion : String? = null,_nombreubicacionOrigen:String?=null,_idVector:Int?=null,_idVectorAInfectar:Int?=null) {
         this.n = _int //Para probar el ordenar antes de poner una fecha
         this.tipoEvento = _tipoEvento
         this.accionQueLoDesencadena = _accion
@@ -32,6 +32,7 @@ class Evento {
         this.ubicacionOrigen=_nombreubicacionOrigen
         this.idVector=_idVector
         this.fecha = DateTimeFormatter.ISO_INSTANT.format(Instant.now())
+        this.idVectorAInfectar=_idVectorAInfectar
    }
 
     fun log() : String = tipoEvento!!.log()

@@ -18,6 +18,7 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
     override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) {
         TransactionRunner.addHibernate().runTrx {
             vectorDao.contagiar(vectorInfectado, vectores)
+
         }
         //Esto hay que ponerlo en otro lado?
         val nombreUbicacion = vectorInfectado.ubicacion!!.nombreUbicacion
