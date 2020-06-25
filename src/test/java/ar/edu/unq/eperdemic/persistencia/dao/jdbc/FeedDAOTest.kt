@@ -229,6 +229,21 @@ class FeedDAOTest {
         Assert.assertFalse(dao.especieYaEstabaEnLaUbicacion("Jamaica", TipoPatogeno.VIRUS.name, "gripe"))
     }
 
+    @Test
+    fun alConsultarSiUnaEspecieYaEstabaEnLaUbicacionCuandoEstaYaTeniaVariosEventosDeContagioPorPrimeraVezPeroDeOtrasEspeciesEnLaUbicacionDaFalse() {
+        this.dropAll()
+        dao.startTransaction()
+        val evento0 = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(TipoPatogeno.VIRUS.name, "New York, New York tararara", "gripe")
+        val evento1 = eventoFactory.eventoContagioPorPandemia(TipoPatogeno.VIRUS.name, "Jamaica")
+        val evento2 = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(TipoPatogeno.HONGO.name, "Jamaica", "gripe")
+        val evento3 = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(TipoPatogeno.VIRUS.name, "Jamaica", "sarampion")
+        val eventos = listOf(evento0, evento1, evento2, evento3)
+        eventos.forEach { dao.save(it) }
+        dao.commit()
+        Assert.assertFalse(dao.especieYaEstabaEnLaUbicacion("Jamaica", TipoPatogeno.VIRUS.name, "gripe"))
+    }
+
+
     @After
     fun dropAll() {
         MegalodonService().eliminarTodo()
