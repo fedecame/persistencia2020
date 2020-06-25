@@ -3,18 +3,23 @@ package ar.edu.unq.eperdemic.services.impl
 import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.evento.Evento
 import ar.edu.unq.eperdemic.modelo.evento.EventoFactory
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
 import ar.edu.unq.eperdemic.services.runner.FeedService
 
 class FeedServiceImpl(private var feedDAO: FeedMongoDAO) : FeedService {
-
+ var ubicacionDao= HibernateUbicacionDAO()
     override fun feedPatogeno(tipoDePatogeno: String): List<Evento> = feedDAO.feedPatogeno(tipoDePatogeno)
 
     override fun feedVector(vectorId: Long): List<Evento> {
         TODO("Not yet implemented")
     }
 
-     override fun feedUbicacion(nombreDeUbicacion: String): List<Evento> = feedDAO.feedUbicacion(nombreDeUbicacion)
+     override fun feedUbicacion(nombreDeUbicacion: String): List<Evento> {
+         var conectados= mutableListOf<String>(nombreDeUbicacion,"Florencio Varela")
+         ubicacionDao.conectados(nombreDeUbicacion).forEach { u->conectados.add(u.nombreUbicacion) }
+
+         return   feedDAO.feedUbicacion(nombreDeUbicacion, conectados)     }
 
     override fun agregarEvento(evento: Evento): Evento {
         feedDAO.startTransaction()

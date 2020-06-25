@@ -104,14 +104,17 @@ class FeedServiceTest {
        vector1.ubicacion= ubicacionService.crearUbicacion("Quilmes")
         vectorService.crearVector(vector1)
         ubicacionService.conectar("Florencio Varela", "Quilmes", "Terrestre")
+        ubicacionService.conectar("Quilmes", "Florencio Varela", "Terrestre")
+
         FeedServiceImpl(FeedMongoDAO()).agregarEvento(EventoFactory().eventoPorContagio("Quilmes", vector.id?.toInt()!!,vector1.id?.toInt()!!))
 
 
 
         ubicacionService.mover(1,"Quilmes")
+        ubicacionService.mover(1,"Florencio Varela")
+
         val result = feedService.feedUbicacion("Quilmes")
-        Assert.assertEquals(1, result.size)
-        Assert.assertEquals(vector1.especies.size,vectorService.enfermedades(vector1.id?.toInt()!!).size)
+        Assert.assertEquals(3, result.size)
     }
 
     @After

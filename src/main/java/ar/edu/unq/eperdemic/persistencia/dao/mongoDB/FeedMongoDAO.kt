@@ -6,6 +6,7 @@ import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.Arribo
 import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.TipoEvento
 import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.TipoPatogeno
 import ar.edu.unq.eperdemic.persistencia.dao.FeedDAO
+import com.mongodb.BasicDBObject
 import com.mongodb.client.model.Aggregates
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Filters.*
@@ -35,6 +36,14 @@ class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
 
     override fun feedVector(tipoPatogeno: String): List<Evento> {
         TODO("Not yet implemented")
+    }
+    fun feedUbicacion(nombreUbicacion: String,conectados:List<String>): List<Evento> {
+        var conectadoss= listOf<String>(nombreUbicacion,"Florencio Varela")
+
+        val match = Aggregates.match(`in`("nombreUbicacion", conectados))
+        val lista=Aggregates.match(eq("tipoEvento.tipo","Arribo"))
+        
+        return aggregate(listOf(match,lista), Evento::class.java)
     }
 
      override fun feedUbicacion(nombreUbicacion: String): List<Evento> {
