@@ -156,6 +156,7 @@ class FeedDAOTest {
 
     @Test
     fun elFeedPatogenoRetornaUNaListaDeEventosOrdenadasPorElAtributoNDelTipoDePatogenoIndicado(){
+        this.dropAll()
         val jamaica = ubicacionService.crearUbicacion("Jamaica")
         val babilonia = ubicacionService.crearUbicacion("Babilonia")
         ubicacionService.crearUbicacion("NismanLandia")
@@ -176,7 +177,7 @@ class FeedDAOTest {
         vectorService.infectar(vectorJamaiquino, especie)
         dao.startTransaction()
         var n = 0
-        repeat(7) {//Ya hay uno
+        repeat(7) {
             dao.save(Evento(n++, Contagio(), Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name, TipoPatogeno.VIRUS.name))//El mismo tipo de patogeno.
         }
         dao.commit()
@@ -189,9 +190,8 @@ class FeedDAOTest {
         val cinco = result.get(4)
         val seis = result.get(5)
         val siete = result.get(6)
-        val ocho = result.get(7)
     //Esto se cambia por Date cuando decidamos el tipo de dato
-        Assert.assertEquals(8, result.size)
+        Assert.assertEquals(7, result.size)
         Assert.assertEquals(6, uno.n)
         Assert.assertEquals(5, dos.n)
         Assert.assertEquals(4, tres.n)
@@ -199,9 +199,8 @@ class FeedDAOTest {
         Assert.assertEquals(2, cinco.n)
         //Uno de estos es el elemento del setup
         Assert.assertEquals(1, seis.n)
-        Assert.assertEquals(1, siete.n)
+        Assert.assertEquals(0, siete.n)
 
-        Assert.assertEquals(0, ocho.n)
     }
 
     @After
