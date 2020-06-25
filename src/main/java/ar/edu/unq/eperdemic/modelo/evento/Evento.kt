@@ -2,6 +2,8 @@ package ar.edu.unq.eperdemic.modelo.evento
 
 import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.TipoEvento
 import org.bson.codecs.pojo.annotations.BsonProperty
+import java.time.Instant
+import java.time.format.DateTimeFormatter
 
 class Evento {
     //Aca faltan colaboradores, ejemplo la especie y bla
@@ -12,6 +14,7 @@ class Evento {
     //Quizas convenga mas guardar una instancia de especie que solo el nombre, aunque en esta primer parte no nevcesitamos mas
    var nombreEspecie : String? = null
    var nombreUbicacion : String? = null
+   lateinit var fecha : String
 
    //Seguramente aca faltan todos los otros atributos de los eventos, independientemente de que se usen o no.
 
@@ -23,6 +26,7 @@ class Evento {
         this.tipoPatogeno = _tipoPatogeno
         this.nombreEspecie = _nombreEspecie
         this.nombreUbicacion = _nombreUbicacion
+        this.fecha = DateTimeFormatter.ISO_INSTANT.format(Instant.now())
    }
 
     fun log() : String = tipoEvento!!.log()

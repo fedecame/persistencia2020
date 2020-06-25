@@ -243,7 +243,6 @@ class FeedDAOTest {
         Assert.assertFalse(dao.especieYaEstabaEnLaUbicacion("Jamaica", TipoPatogeno.VIRUS.name, "gripe"))
     }
 
-
     @After
     fun dropAll() {
         MegalodonService().eliminarTodo()
