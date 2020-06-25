@@ -18,7 +18,7 @@ class EventoTest {
 
     @Before
     fun setUp(){
-        eventoFactory = EventoFactory()
+        eventoFactory = EventoFactory
         eventoPandemia = eventoFactory.eventoContagioPorPandemia(TipoPatogeno.BACTERIA.name, "Gripe")
         eventoPrimeraVez = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(TipoPatogeno.HONGO.name, "alguna ubicacion", "algun nombre de especie")
     }

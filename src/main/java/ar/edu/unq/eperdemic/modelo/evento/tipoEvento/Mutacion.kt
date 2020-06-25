@@ -4,7 +4,7 @@ import ar.edu.unq.eperdemic.modelo.evento.Evento
 
 class Mutacion : TipoEvento() {
 
-    override fun log(): String {
+    override fun log(evento: Evento): String {
         TODO("Not yet implemented")
     }
 }
