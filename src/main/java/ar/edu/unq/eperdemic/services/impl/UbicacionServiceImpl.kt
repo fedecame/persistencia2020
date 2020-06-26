@@ -82,10 +82,7 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
                 val tipoPatogenoDeLaEspecie = it.second.patogeno.tipo
                 val nombre_de_la_especie = it.second.nombre
                 val ubicacion = it.first.ubicacion
-                var vectoresEnUbicacion= HibernateUbicacionDao.recuperar(nombreUbicacion).vectores
-                vectoresEnUbicacion.forEach { v->if( FeedServiceImpl(FeedMongoDAO()).vectorFueContagiadoAlMover(nombreUbicacion,vectorId,v.id?.toInt()!!))
-                    FeedServiceImpl(FeedMongoDAO()).agregarEvento(EventoFactory.eventoPorArriboYContagio(nombreUbicacion,vectorId.toLong(),v.id!!))
-                }
+
 
                 if (ubicacion !== null && !feedService.especieYaEstabaEnLaUbicacion(ubicacion.nombreUbicacion, tipoPatogenoDeLaEspecie, nombre_de_la_especie)) {
                     feedService.agregarEvento(EventoFactory.eventoContagioPorPrimeraVezEnUbicacion(tipoPatogenoDeLaEspecie, ubicacion.nombreUbicacion, nombre_de_la_especie))
@@ -95,6 +92,10 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
                     feedService.agregarEvento(EventoFactory.eventoContagioPorPandemia(tipoPatogenoDeLaEspecie, nombre_de_la_especie))
                 }
                 feedService.agregarEvento(EventoFactory.eventoContagioNormal(vectorId.toLong(), it.first.id!!, ubicacion?.nombreUbicacion))
+            }
+            var vectoresEnUbicacion= HibernateUbicacionDao.recuperar(nombreUbicacion).vectores
+            vectoresEnUbicacion.forEach { v->if( FeedServiceImpl(FeedMongoDAO()).vectorFueContagiadoAlMover(nombreUbicacion,vectorId,v.id?.toInt()!!))
+                FeedServiceImpl(FeedMongoDAO()).agregarEvento(EventoFactory.eventoPorArriboYContagio(nombreUbicacion,vectorId.toLong(),v.id!!))
             }
         }
 
