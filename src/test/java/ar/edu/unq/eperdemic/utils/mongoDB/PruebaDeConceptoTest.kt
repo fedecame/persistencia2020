@@ -228,7 +228,7 @@ class PruebaDeConceptoTest {
         dao.commit()
         val eventoRecuperado0 = dao.getByTipoPatogeno("un tipo").get(0)
         val eventoRecuperado1 = dao.getByTipoPatogeno("otro tipo").get(0)
-        Assert.assertTrue(eventoRecuperado1!!.fecha > eventoRecuperado0!!.fecha)
+        Assert.assertTrue(eventoRecuperado1!!.fecha >= eventoRecuperado0!!.fecha)
     }
 
     @After

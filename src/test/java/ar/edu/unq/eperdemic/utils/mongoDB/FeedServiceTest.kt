@@ -3,17 +3,14 @@ package ar.edu.unq.eperdemic.utils.mongoDB
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.evento.Evento
-import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.Contagio
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
 import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
-import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jDataDAO
 import ar.edu.unq.eperdemic.services.*
 import ar.edu.unq.eperdemic.services.impl.FeedServiceImpl
 import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
-import ar.edu.unq.eperdemic.services.runner.FeedService
-import ar.edu.unq.eperdemic.services.runner.TransactionRunner
+import ar.edu.unq.eperdemic.services.FeedService
 import ar.edu.unq.eperdemic.tipo.Humano
 import ar.edu.unq.eperdemic.utils.DataService
 import org.junit.After
@@ -23,7 +20,7 @@ import org.junit.Test
 
 class FeedServiceTest {
     lateinit var dao : FeedMongoDAO
-    lateinit var feedService :  FeedService
+    lateinit var feedService : FeedService
     lateinit var ubicacionService : UbicacionService
     lateinit var patogenoService : PatogenoService
     lateinit var vectorService : VectorService
