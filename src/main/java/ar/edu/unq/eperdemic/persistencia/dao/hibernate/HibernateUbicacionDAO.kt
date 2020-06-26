@@ -44,7 +44,7 @@ class HibernateUbicacionDAO : HibernateDAO<Ubicacion>(Ubicacion::class.java), Ub
         return listOf()
     }
 
-    override fun mover(vector: Vector, nombreUbicacion: String) : List<Pair<Vector, Especie>> {
+    override fun mover(vector: Vector, nombreUbicacion: String) : Pair<List<Pair<Vector, Especie>>, List<Ubicacion>>  {
         val ubicacionNueva = this.recuperar(nombreUbicacion) // recupero la ubicacion nueva
         val nombreUbicacionOrigen = vector.ubicacion!!.nombreUbicacion
         val ubicacionOrigen = this.recuperar(nombreUbicacionOrigen) // recupero la ubicacion original
@@ -57,12 +57,12 @@ class HibernateUbicacionDAO : HibernateDAO<Ubicacion>(Ubicacion::class.java), Ub
         vector.ubicacion = ubicacionNueva // asigno Ubicacion de Vector
         ubicacionNueva.vectores.add(vector) // agrego el vector a la nueva ubicacion
         this.actualizar(ubicacionNueva)
-        return infecciones
+        return Pair(infecciones, listOf(ubicacionNueva))
     }
 
-    override fun moverMasCorto(vector: Vector, ubicacion: Ubicacion) : List<Pair<Vector, Especie>>{
+    override fun moverMasCorto(vector: Vector, ubicacion: Ubicacion) : Pair<List<Pair<Vector, Especie>>, List<Ubicacion>> {
 //        TODO("Should not be implemented")
-        return listOf()
+        return Pair(listOf(), listOf())
     }
 
     override fun capacidadDeExpansion(vectorId: Long, movimientos: Int): Int {

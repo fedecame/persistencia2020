@@ -16,6 +16,7 @@ class Evento {
    var ubicacionDestino : String? = null
    var idVectorQueInfecta : Long? = null
    var idVectorinfectado : Long? = null
+   var idVectorQueSeMueve : Long? = null
    lateinit var mensaje : String
    lateinit var fecha : String
 
@@ -23,7 +24,8 @@ class Evento {
 
     constructor() {}
     constructor(_tipoEvento : TipoEvento, _accion : String, _tipoPatogeno : String? = null, _nombreEspecie : String? = null, _nombreUbicacion : String? = null,
-                _idVectorInfectado : Long? = null, _idVectorQueInfecta : Long? = null, _ubicacionOrigen : String? = null, _ubicacionDestino : String? = null) {
+                _idVectorInfectado : Long? = null, _idVectorQueInfecta : Long? = null, _ubicacionOrigen : String? = null, _ubicacionDestino : String? = null,
+                _idVectorQueSeMueve : Long? = null) {
         this.tipoEvento = _tipoEvento
         this.accionQueLoDesencadena = _accion
         this.tipoPatogeno = _tipoPatogeno
@@ -35,6 +37,7 @@ class Evento {
         this.idVectorQueInfecta = _idVectorQueInfecta
         this.ubicacionOrigen = _ubicacionOrigen
         this.ubicacionDestino = _ubicacionDestino
+        this.idVectorQueSeMueve = _idVectorQueSeMueve
    }
 
     fun log() : String = tipoEvento!!.log(this)

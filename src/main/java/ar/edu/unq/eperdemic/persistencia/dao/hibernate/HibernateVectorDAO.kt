@@ -62,7 +62,7 @@ class HibernateVectorDAO :  HibernateDAO<Vector>(Vector::class.java), VectorDAO 
         return infeccion
     }
 
-    override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) : List<Pair<Vector, Especie>>  {
+    override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) : List<Pair<Vector, Especie>> {
         val infecciones: List<Pair<Vector, Especie>> = vectorInfectado.contagiar(vectores)
 
 //        infecciones.forEach {

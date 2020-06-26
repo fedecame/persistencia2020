@@ -45,9 +45,9 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
         return tempListNombres
     }
 
-    override fun mover(vector: Vector, nombreUbicacion: String) : List<Pair<Vector, Especie>> {
+    override fun mover(vector: Vector, nombreUbicacion: String) : Pair<List<Pair<Vector, Especie>>, List<Ubicacion>> {
 //        TODO("Should not be implemented")
-        return listOf()
+        return Pair(listOf(), listOf())
     }
 
     fun esAledaña(nombreDeUbicacion: String, uPosibleAledaña: String) {
@@ -112,7 +112,7 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
         return result.single().get("result").asInt()
     }
 
-    override fun moverMasCorto(vector: Vector, ubicacion: Ubicacion) : List<Pair<Vector, Especie>> {
+    override fun moverMasCorto(vector: Vector, ubicacion: Ubicacion) : Pair<List<Pair<Vector, Especie>>, List<Ubicacion>> {
         val transaction = TransactionNeo4j.currentTransaction
         val tiposDeCaminosPosibles = vector.tipo.posiblesCaminos.map { it.name }
         val tiposDeLaRelacion = myFormatter.caminosFormateados(tiposDeCaminosPosibles)
@@ -140,11 +140,14 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
         return this.moverPorUbicaciones(vector, nombreUbicaciones.drop(1))
     }
 
-    private fun moverPorUbicaciones(vector: Vector, nombresDeUbicaciones: List<String>) : List<Pair<Vector, Especie>> {
+    private fun moverPorUbicaciones(vector: Vector, nombresDeUbicaciones: List<String>) : Pair<List<Pair<Vector, Especie>>, List<Ubicacion>> {
         var infecciones : List<Pair<Vector, Especie>> = listOf()
+        var ubicaciones : List<Ubicacion> = listOf()
         nombresDeUbicaciones.forEach {
-            infecciones += hibernateUbicacionDAO.mover(vector, it)
+            val infeccionesUbicaciones = hibernateUbicacionDAO.mover(vector, it)
+            infecciones += infeccionesUbicaciones.first
+            ubicaciones += infeccionesUbicaciones.second
         }
-        return infecciones
+        return Pair(infecciones, ubicaciones)
     }
 }

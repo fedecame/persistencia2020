@@ -14,7 +14,7 @@ interface UbicacionDAO {
     //Entrega Neo4j
     fun conectar(ubicacion1: String, ubicacion2: String, tipoCamino: String)
     fun conectados(nombreDeUbicacion:String): List<Ubicacion>
-    fun mover(vector: Vector, nombreUbicacion:String) : List<Pair<Vector, Especie>>
+    fun mover(vector: Vector, nombreUbicacion:String) : Pair<List<Pair<Vector, Especie>>, List<Ubicacion>>
     fun capacidadDeExpansion(vectorId: Long, movimientos:Int): Int
-    fun moverMasCorto(vector: Vector, ubicacion: Ubicacion) : List<Pair<Vector, Especie>>
+    fun moverMasCorto(vector: Vector, ubicacion: Ubicacion) : Pair<List<Pair<Vector, Especie>>, List<Ubicacion>>
 }
