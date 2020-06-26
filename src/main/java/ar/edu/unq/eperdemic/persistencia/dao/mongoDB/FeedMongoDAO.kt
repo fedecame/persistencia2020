@@ -50,4 +50,13 @@ class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
                          (eq("tipoPatogeno", tipoPatogenoDeLaEspecie),
                          eq("nombreEspecie", nombreEspecie))))).isNotEmpty()
     //Si existe un evento de contagio por primera vez en ubicacion, entonces es unico o bien, no existe
+
+    //Cambiar de lugar el crear evento de infectar a contagiar y cambiar para que contagiar o mutar tire excepcion y hau que catchearlo
+    override fun especieYaEsPandemia(tipoPatogenoDeLaEspecie: String, nombreEspecie : String): Boolean =
+            find(and(
+                    eq("accionQueLoDesencadena", Accion.PATOGENO_ES_PANDEMIA.name),
+                    (and
+                    (eq("tipoPatogeno", tipoPatogenoDeLaEspecie),
+                            eq("nombreEspecie", nombreEspecie))))).isNotEmpty()
+    //Si existe un evento de contagio por primera vez en ubicacion, entonces es unico o bien, no existeimimkkkk
 }
