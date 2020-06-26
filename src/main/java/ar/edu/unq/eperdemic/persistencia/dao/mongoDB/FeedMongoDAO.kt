@@ -39,10 +39,21 @@ class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
       return aggregate(listOf(match, sort), Evento::class.java)
     }
 
-    override fun feedVector(tipoPatogeno: String): List<Evento> {
-        TODO("Not yet implemented")
+    override fun feedVector(vectorId: Long): List<Evento> {
+        val match = Aggregates.match(
+                    or(
+                        eq("idVectorQueSeMueve", vectorId),
+                        or(
+                            eq("idVectorinfectado", vectorId),
+                            eq("idVectorQueInfecta", vectorId)
+                        )
+                    )
+        )
+        val sort = Aggregates.sort(Indexes.descending("fecha"))
+        return aggregate(listOf(match, sort), Evento::class.java)
     }
-    fun feedUbicacion(nombreUbicacion: String,conectados:List<String>): List<Evento> {
+
+    override fun feedUbicacion(nombreUbicacion: String,conectados:List<String>): List<Evento> {
         var conectadoss=conectados
         conectadoss+=listOf(nombreUbicacion)
         val match = Aggregates.match(or(
@@ -53,11 +64,11 @@ class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
         return aggregate(listOf(match,ordenados), Evento::class.java)
     }
 
-     override fun feedUbicacion(nombreUbicacion: String): List<Evento> {
-//val match= Aggregates.match(Filters.eq("eventos.tipoEvento","Arribo"))
-        val match= this.findEq("nombreUbicacion",nombreUbicacion)
-        return match
-    }
+//     override fun feedUbicacion(nombreUbicacion: String): List<Evento> {
+////val match= Aggregates.match(Filters.eq("eventos.tipoEvento","Arribo"))
+//        val match= this.findEq("nombreUbicacion",nombreUbicacion)
+//        return match
+//    }
 
     //Cambiar de lugar el crear evento de infectar a contagiar y cambiar para que contagiar o mutar tire excepcion y hau que catchearlo
     override fun especieYaEstabaEnLaUbicacion(nombreUbicacion: String, tipoPatogenoDeLaEspecie: String, nombreEspecie : String): Boolean =

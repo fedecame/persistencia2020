@@ -10,7 +10,7 @@ class Contagio : TipoEvento() {
         return when (evento.accionQueLoDesencadena) {
             Accion.PATOGENO_ES_PANDEMIA.name -> inicio0 + " se volvio pandemia"
             Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name -> inicio1 + " por primera vez"
-            Accion.CONTAGIO_NORMAL.name -> inicio1
+            Accion.CONTAGIO_NORMAL.name -> "El vector ${evento.idVectorQueInfecta} infecto al vector ${evento.idVectorinfectado} en la ubicacion ${evento.ubicacionContagio}"
             else -> ""
         }
     }

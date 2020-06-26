@@ -17,6 +17,7 @@ import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
 import ar.edu.unq.eperdemic.services.FeedService
+import ar.edu.unq.eperdemic.tipo.Animal
 import ar.edu.unq.eperdemic.tipo.Humano
 import ar.edu.unq.eperdemic.utils.DataService
 import org.junit.After
@@ -44,7 +45,7 @@ class FeedServiceTest {
     }
 
     @Test
-    fun alpedirLosEventosDeContagioDeUnPatogenoNoCreadoDevuelveUNaListaVacia(){
+    fun alpedirLosEventosDeContagioDeUnPatogenoNoCreadoDevuelveUnaListaVacia(){
         val result = feedService.feedPatogeno("sarasa")
         Assert.assertEquals(0, result.size)
     }
@@ -155,6 +156,53 @@ class FeedServiceTest {
         val result = feedService.feedUbicacion("Quilmes")
         Assert.assertEquals(2, result.size)
         Assert.assertEquals(2L,result.get(0).idVectorQueSeMueve)
+    }
+
+    @Test
+    fun `feedVector de un vector recien creado retorna una lista vacia`() {
+        val vectorNuevo = Vector()
+        vectorNuevo.estado = Sano()
+        vectorNuevo.tipo = Humano()
+        vectorNuevo.ubicacion = ubicacionService.crearUbicacion("Jamaica")
+        vectorService.crearVector(vectorNuevo)
+
+        val listaDeEventos = feedService.feedVector(vectorNuevo.id!!)
+        Assert.assertTrue(listaDeEventos.isEmpty())
+        Assert.assertEquals(0, listaDeEventos.size)
+    }
+
+    @Test
+    fun `mover un vector infectado a una ubicacion con un vector sano genera 3 eventos(2 arribos y 1 contagio feedVector)`() {
+        val patogeno = Patogeno()
+        patogeno.tipo = "virus"
+        patogeno.factorContagioHumano= 1000
+        patogenoService.crearPatogeno(patogeno)
+        val especie = patogenoService.agregarEspecie(patogeno.id!!, "varicela", "brasil")
+
+        val vectorInfectado = Vector()
+        vectorInfectado.estado = Infectado()
+        vectorInfectado.tipo = Animal()
+        vectorInfectado.agregarEspecie(especie)
+        vectorInfectado.ubicacion = ubicacionService.crearUbicacion("Jamaica")
+        vectorService.crearVector(vectorInfectado)
+
+        val kongo = ubicacionService.crearUbicacion("Kongo")
+        ubicacionService.conectar("Jamaica", "Kongo", "Maritimo")
+        val vectorSano = Vector()
+        vectorSano.estado = Sano()
+        vectorSano.tipo = Humano()
+        vectorSano.ubicacion = kongo
+        vectorService.crearVector(vectorSano)
+        ubicacionService.mover(vectorInfectado.id!!.toInt(), kongo.nombreUbicacion)
+        val eventosDelQueInfecta = feedService.feedVector(vectorInfectado.id!!)
+        Assert.assertEquals(2, eventosDelQueInfecta.size)
+        var accionesDelFeed = eventosDelQueInfecta.map{ it.accionQueLoDesencadena }
+        Assert.assertTrue(accionesDelFeed.containsAll(listOf(Accion.ARRIBO.name, Accion.CONTAGIO_NORMAL.name)))
+
+        val eventosDelQueEsInfectado = feedService.feedVector(vectorSano.id!!)
+        Assert.assertEquals(1, eventosDelQueEsInfectado.size)
+        accionesDelFeed = eventosDelQueEsInfectado.map{ it.accionQueLoDesencadena }
+        Assert.assertTrue(accionesDelFeed.contains(Accion.CONTAGIO_NORMAL.name))
     }
 
     @After

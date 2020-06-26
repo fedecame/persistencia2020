@@ -13,19 +13,17 @@ class FeedServiceImpl(private var feedDAO: FeedMongoDAO) : FeedService {
  var neo4jUbicacionDAO= Neo4jUbicacionDAO()
     override fun feedPatogeno(tipoDePatogeno: String): List<Evento> = feedDAO.feedPatogeno(tipoDePatogeno)
 
-    override fun feedVector(vectorId: Long): List<Evento> {
-        return listOf()
+    override fun feedVector(vectorId: Long): List<Evento> = feedDAO.feedVector(vectorId)
+
+    override fun feedUbicacion(nombreDeUbicacion: String): List<Evento> {
+    //         var conectados= mutableListOf<String>(nombreDeUbicacion,"Florencio Varela")
+        lateinit var conectados : List<String>
+        TransactionRunner.addNeo4j().runTrx {
+            conectados = neo4jUbicacionDAO.conectados(nombreDeUbicacion).map { it.nombreUbicacion }
+        }
+
+        return feedDAO.feedUbicacion(nombreDeUbicacion, conectados)
     }
-
-     override fun feedUbicacion(nombreDeUbicacion: String): List<Evento> {
-//         var conectados= mutableListOf<String>(nombreDeUbicacion,"Florencio Varela")
-         lateinit var conectados : List<String>
-         TransactionRunner.addNeo4j().runTrx {
-             conectados = neo4jUbicacionDAO.conectados(nombreDeUbicacion).map { it.nombreUbicacion }
-         }
-
-         return feedDAO.feedUbicacion(nombreDeUbicacion, conectados)
-     }
 
     override fun agregarEvento(evento: Evento): Evento {
         feedDAO.startTransaction()
