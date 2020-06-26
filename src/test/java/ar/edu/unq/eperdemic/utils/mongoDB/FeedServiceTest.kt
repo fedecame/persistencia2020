@@ -265,7 +265,7 @@ class FeedServiceTest {
     }
 
     @Test
-    fun `mover un vector infectado a una ubicacion con un vector sano genera 3 eventos(2 arribos y 1 contagio feedVector)`() {
+    fun `mover un vector infectado a una ubicacion con un vector sano genera 3 eventos(2 arribos y 2 contagio feedVector)`() {
         val patogeno = Patogeno()
         patogeno.tipo = "virus"
         patogeno.factorContagioHumano= 1000
