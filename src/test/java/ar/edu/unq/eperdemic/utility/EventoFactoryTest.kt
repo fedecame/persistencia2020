@@ -2,6 +2,7 @@ package ar.edu.unq.eperdemic.utility
 
 import ar.edu.unq.eperdemic.modelo.evento.EventoFactory
 import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.Contagio
+import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.Mutacion
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -34,5 +35,16 @@ class EventoFactoryTest {
         Assert.assertEquals("PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION", evento.accionQueLoDesencadena)
         Assert.assertEquals("un nombre de especie", evento.nombreEspecie)
         Assert.assertEquals( "un nombre de ubicacion", evento.ubicacionContagio)
+    }
+
+    @Test
+    fun eventoFactoryDevuelveUnEventoConsistenteAlRecibirElMensajeEventoEspecieCreada(){
+        val evento = sut.eventoEspecieCreada("algo","un nombre de especie")
+        Assert.assertNotNull(evento)
+        Assert.assertTrue(evento.tipoEvento is Mutacion)
+        Assert.assertEquals("algo", evento.tipoPatogeno)
+        Assert.assertEquals("ESPECIE_CREADA", evento.accionQueLoDesencadena)
+        Assert.assertEquals("un nombre de especie", evento.nombreEspecie)
+        Assert.assertNull(evento.ubicacionContagio)
     }
 }
