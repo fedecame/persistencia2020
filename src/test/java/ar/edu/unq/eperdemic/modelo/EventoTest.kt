@@ -10,14 +10,14 @@ import org.junit.Before
 import org.junit.Test
 
 class EventoTest {
-    lateinit var eventoPandemia : Evento
-    lateinit var eventoPrimeraVez : Evento
-    lateinit var contagioPandemia : TipoEvento
-    lateinit var contagioPrimeraVez : TipoEvento
-    lateinit var eventoFactory : EventoFactory
+    lateinit var eventoPandemia: Evento
+    lateinit var eventoPrimeraVez: Evento
+    lateinit var contagioPandemia: TipoEvento
+    lateinit var contagioPrimeraVez: TipoEvento
+    lateinit var eventoFactory: EventoFactory
 
     @Before
-    fun setUp(){
+    fun setUp() {
         eventoFactory = EventoFactory
         eventoPandemia = eventoFactory.eventoContagioPorPandemia(TipoPatogeno.BACTERIA.name, "Gripe")
         eventoPrimeraVez = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(TipoPatogeno.HONGO.name, "alguna ubicacion", "algun nombre de especie")
@@ -51,4 +51,6 @@ class EventoTest {
             Assert.assertEquals("", eventoPandemia.log())
         }
     }
+
+
 }

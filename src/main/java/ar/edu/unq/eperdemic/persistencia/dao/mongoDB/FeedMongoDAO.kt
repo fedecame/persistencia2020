@@ -22,11 +22,16 @@ class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
         //Me fijo que: Dado un evento, ese evento
         //      ((Haya sido generado por una Accion de Pandemia **O** Por Contagio por Primera vez) **Y** (Sea del tipo de patogeno dado))
         val match = Aggregates.match(//Aca falta la logica de mutacion
-                and
-                    (or
-                        (eq("accionQueLoDesencadena", Accion.PATOGENO_ES_PANDEMIA.name),
-                         eq("accionQueLoDesencadena", Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name)),
-                    eq("tipoPatogeno", tipoPatogeno))
+                and(
+                     or(
+                        eq("accionQueLoDesencadena", Accion.ESPECIE_CREADA.name),
+                        or(
+                           eq("accionQueLoDesencadena", Accion.PATOGENO_ES_PANDEMIA.name),
+                           eq("accionQueLoDesencadena", Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name)
+                        )
+                     ),
+                    eq("tipoPatogeno", tipoPatogeno)
+                )
         )
       val sort = Aggregates.sort(Indexes.descending("fecha"))
       return aggregate(listOf(match, sort), Evento::class.java)
