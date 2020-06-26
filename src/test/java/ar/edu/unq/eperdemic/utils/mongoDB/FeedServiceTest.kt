@@ -45,6 +45,19 @@ class FeedServiceTest {
     }
 
     @Test
+    fun alBuscarLosEventosDeMutacionDeUnPatogenoTieneUnResultadoCuandoSeCreaUnaEspecieDelPatogeno(){
+        val patogenoModel = Patogeno()
+        patogenoModel.tipo = "virus"
+        val especie = patogenoService.agregarEspecie(patogenoService.crearPatogeno(patogenoModel), "gripe", "Narnia")
+        val result = feedService.feedPatogeno(patogenoModel.tipo)
+        val eventosDeCreacion = result.filter { it.accionQueLoDesencadena == Accion.ESPECIE_CREADA.name }
+        val unicoEventoCreacion = eventosDeCreacion.get(0)
+        Assert.assertEquals(1, result.size)
+        Assert.assertTrue(unicoEventoCreacion is Evento)
+        Assert.assertEquals(Accion.ESPECIE_CREADA.name, unicoEventoCreacion.accionQueLoDesencadena)
+    }
+
+    @Test
     fun alBuscarLosEventosDeContagioDeUnPatogenoTieneCuatroResultadosCuandoElPatogenoSoloSeVolvioPandemiaUnaUnicaVez(){
         //Una especie se vuelve pandemia se encuentra presenta en mas de la mitad de las locaciones
         val jamaica = ubicacionService.crearUbicacion("Jamaica")
