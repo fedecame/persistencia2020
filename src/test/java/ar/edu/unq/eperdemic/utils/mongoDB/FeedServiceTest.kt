@@ -115,6 +115,7 @@ class FeedServiceTest {
 
         val result = feedService.feedUbicacion("Quilmes")
         Assert.assertEquals(3, result.size)
+        Assert.assertEquals(result.get(0).nombreUbicacion,"Florencio Varela")
     }
 
     @After

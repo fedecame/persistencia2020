@@ -42,8 +42,8 @@ class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
 
         val match = Aggregates.match(`in`("nombreUbicacion", conectados))
         val lista=Aggregates.match(eq("tipoEvento.tipo","Arribo"))
-        
-        return aggregate(listOf(match,lista), Evento::class.java)
+        val ordenados=Aggregates.sort(Indexes.descending("fecha"))
+        return aggregate(listOf(match,lista,ordenados), Evento::class.java)
     }
 
      override fun feedUbicacion(nombreUbicacion: String): List<Evento> {
