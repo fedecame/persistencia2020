@@ -38,9 +38,9 @@ class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
         TODO("Not yet implemented")
     }
     fun feedUbicacion(nombreUbicacion: String,conectados:List<String>): List<Evento> {
-        var conectadoss= listOf<String>(nombreUbicacion,"Florencio Varela")
-
-        val match = Aggregates.match(`in`("nombreUbicacion", conectados))
+        var conectadoss=conectados
+        conectadoss+=nombreUbicacion
+        val match = Aggregates.match(`in`("nombreUbicacion", conectadoss))
         val lista=Aggregates.match(eq("tipoEvento.tipo","Arribo"))
         val ordenados=Aggregates.sort(Indexes.descending("fecha"))
         return aggregate(listOf(match,lista,ordenados), Evento::class.java)
@@ -70,8 +70,5 @@ class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
                 (and
                 (eq("idVector", _idVectorInfectado),
                         eq("idVectorAInfectar", _idVectorAInfectar))))).isNotEmpty()
-
-
-
 
 }

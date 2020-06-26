@@ -117,6 +117,22 @@ class FeedServiceTest {
         Assert.assertEquals(3, result.size)
         Assert.assertEquals(result.get(0).nombreUbicacion,"Florencio Varela")
     }
+    @Test
+    fun ubicacionRecibeUnArriboYSeLanzaUnEvento() {
+        var vector1= Vector()
+        vector1.tipo=Humano()
+        vector1.estado= Sano()
+        vector1.ubicacion= ubicacionService.crearUbicacion("Florencio Varela")
+        vectorService.crearVector(vector1)
+        ubicacionService.crearUbicacion("Quilmes")
+        ubicacionService.conectar("Florencio Varela","Quilmes","Terrestre")
+        ubicacionService.mover(vector1.id?.toInt()!!,"Quilmes")
+        val result = feedService.feedUbicacion("Quilmes")
+        Assert.assertEquals(1, result.size)
+    }
+
+
+
 
     @After
     fun dropAll() {
