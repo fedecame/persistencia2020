@@ -79,7 +79,7 @@ class FeedServiceTest {
 
 
     @Test
-    fun testUbicacion(){
+    fun testUbicacionPruebasVarias(){
         var patogeno = Patogeno()
         patogeno.tipo = ""
         patogeno.factorContagioHumano= 1000
@@ -96,7 +96,6 @@ class FeedServiceTest {
         vector1.tipo=Humano()
         vector1.estado= Sano()
         var ubicacionCreada = ubicacionService.crearUbicacion("Florencio Varela")
-
         vector.ubicacion=ubicacionCreada
         vectorService.crearVector(vector)
         var vectorCreado=vectorService.recuperarVector(1)
@@ -129,9 +128,10 @@ class FeedServiceTest {
         ubicacionService.mover(vector1.id?.toInt()!!,"Quilmes")
         val result = feedService.feedUbicacion("Quilmes")
         Assert.assertEquals(1, result.size)
+        Assert.assertEquals(result.get(0).nombreUbicacion,"Quilmes")
     }
     @Test
-    fun ubicacionRecibeDosArribosYSeLanzanDosEvento() {
+    fun ubicacionRecibeDosArribos_SeLanzanDosEvento_ElUltimoQueSeLanzaEsElPrimero () {
         var vector1= Vector()
         vector1.tipo=Humano()
         vector1.estado= Sano()
@@ -148,6 +148,7 @@ class FeedServiceTest {
         ubicacionService.mover(vector2.id?.toInt()!!,"Quilmes")
         val result = feedService.feedUbicacion("Quilmes")
         Assert.assertEquals(2, result.size)
+        Assert.assertEquals(result.get(0).idVector,2)
     }
 
     @After
