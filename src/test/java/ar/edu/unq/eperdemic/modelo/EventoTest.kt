@@ -3,6 +3,7 @@ package ar.edu.unq.eperdemic.modelo
 import ar.edu.unq.eperdemic.modelo.evento.Evento
 import ar.edu.unq.eperdemic.modelo.evento.EventoFactory
 import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.Contagio
+import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.Mutacion
 import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.TipoEvento
 import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.TipoPatogeno
 import org.junit.Assert
@@ -12,6 +13,7 @@ import org.junit.Test
 class EventoTest {
     lateinit var eventoPandemia: Evento
     lateinit var eventoPrimeraVez: Evento
+    lateinit var eventoMutacion: Evento
     lateinit var contagioPandemia: TipoEvento
     lateinit var contagioPrimeraVez: TipoEvento
     lateinit var eventoFactory: EventoFactory
@@ -21,6 +23,7 @@ class EventoTest {
         eventoFactory = EventoFactory
         eventoPandemia = eventoFactory.eventoContagioPorPandemia(TipoPatogeno.BACTERIA.name, "Gripe")
         eventoPrimeraVez = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(TipoPatogeno.HONGO.name, "alguna ubicacion", "algun nombre de especie")
+        eventoMutacion = eventoFactory.eventoEspecieCreada(TipoPatogeno.BACTERIA.name, "Corona" )
     }
 
     @Test
@@ -52,5 +55,12 @@ class EventoTest {
         }
     }
 
-
+    @Test
+    fun losEventosDeMutacionAlCrearUnaEspecieSonConsistentes(){
+        Assert.assertTrue(eventoMutacion.tipoEvento is Mutacion)
+        Assert.assertEquals(TipoPatogeno.BACTERIA.name, eventoMutacion.tipoPatogeno)
+        Assert.assertEquals("ESPECIE_CREADA", eventoMutacion.accionQueLoDesencadena)
+        Assert.assertEquals("Corona", eventoMutacion.nombreEspecie)
+        Assert.assertNull(eventoMutacion.ubicacionContagio)
+    }
 }
