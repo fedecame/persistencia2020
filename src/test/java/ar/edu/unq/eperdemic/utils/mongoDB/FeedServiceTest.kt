@@ -20,6 +20,7 @@ import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
 import ar.edu.unq.eperdemic.services.FeedService
 import ar.edu.unq.eperdemic.services.impl.*
+import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import ar.edu.unq.eperdemic.tipo.Animal
 import ar.edu.unq.eperdemic.tipo.Humano
 import ar.edu.unq.eperdemic.tipo.Insecto
@@ -294,6 +295,165 @@ class FeedServiceTest {
         Assert.assertEquals(1, eventosDelQueEsInfectado.size)
         accionesDelFeed = eventosDelQueEsInfectado.map{ it.accionQueLoDesencadena }
         Assert.assertTrue(accionesDelFeed.contains(Accion.CONTAGIO_NORMAL.name))
+    }
+
+    @Test
+    fun `infectar un vector genera 1 evento de contagio de feedVector`() {
+        val patogeno = Patogeno()
+        patogeno.tipo = "virus"
+        patogeno.factorContagioHumano= 1000
+        patogenoService.crearPatogeno(patogeno)
+        val especie = patogenoService.agregarEspecie(patogeno.id!!, "varicela", "brasil")
+
+        val vector = Vector()
+        vector.tipo = Insecto()
+        vector.estado = Sano()
+        vector.ubicacion = ubicacionService.crearUbicacion("guadalajara")
+        vectorService.crearVector(vector)
+        vectorService.infectar(vector, especie)
+
+        val eventosDeContagio = feedService.feedVector(vector.id!!)
+        Assert.assertEquals(1, eventosDeContagio.size)
+        Assert.assertEquals(Accion.CONTAGIO_NORMAL.name, eventosDeContagio.first().accionQueLoDesencadena)
+    }
+
+    @Test
+    fun `al hacer moverMasCorto y forzar la infeccion se generan tanto eventos de contagio como de arribo en feedVector`() {
+        Neo4jDataService().crearSetDeDatosIniciales()
+        // camino mas corto: Narnia>Ezpeleta>Babilonia
+        val patogeno = Patogeno()
+        patogeno.tipo = "virus"
+        patogeno.factorContagioHumano= 1000
+        patogenoService.crearPatogeno(patogeno)
+        val especie = patogenoService.agregarEspecie(patogeno.id!!, "varicela", "brasil")
+
+        val narnia = ubicacionService.recuperarUbicacion("Narnia")
+        val vectorInfectado = Vector()
+        vectorInfectado.estado = Infectado()
+        vectorInfectado.tipo = Animal()
+        vectorInfectado.agregarEspecie(especie)
+        vectorInfectado.ubicacion = narnia
+        vectorService.crearVector(vectorInfectado)
+        narnia.vectores.add(vectorInfectado)
+
+        val humano1 = Vector()
+        val humano2 = Vector()
+        val humano3 = Vector()
+        humano1.tipo = Humano()
+        humano2.tipo = Humano()
+        humano3.tipo = Humano()
+        humano1.estado = Sano()
+        humano2.estado = Sano()
+        humano3.estado = Sano()
+        val ezpeleta = ubicacionService.recuperarUbicacion("Ezpeleta")
+        val babilonia = ubicacionService.recuperarUbicacion("Babilonia")
+        humano1.ubicacion = ezpeleta
+        humano2.ubicacion = ezpeleta
+        humano3.ubicacion = babilonia
+        vectorService.crearVector(humano1)
+        vectorService.crearVector(humano2)
+        vectorService.crearVector(humano3)
+
+        ezpeleta.vectores.addAll(listOf(humano1, humano2))
+        babilonia.vectores.add(humano3)
+        TransactionRunner.addHibernate().runTrx {
+            HibernateUbicacionDAO().actualizar(narnia)
+            HibernateUbicacionDAO().actualizar(ezpeleta)
+            HibernateUbicacionDAO().actualizar(babilonia)
+        }
+
+        ubicacionService.moverMasCorto(vectorInfectado.id!!, "Babilonia")
+        val eventosFeedVector = feedService.feedVector(vectorInfectado.id!!)
+
+        Assert.assertEquals(5, eventosFeedVector.size)
+        Assert.assertEquals(2, eventosFeedVector.filter {it.accionQueLoDesencadena == Accion.ARRIBO.name}.size)
+        Assert.assertEquals(3, eventosFeedVector.filter {it.accionQueLoDesencadena == Accion.CONTAGIO_NORMAL.name}.size)
+    }
+
+    @Test
+    fun `al hacer expandir y forzar la infeccion se generan eventos de contagio`() {
+        val patogeno = Patogeno()
+        patogeno.tipo = "virus"
+        patogeno.factorContagioAnimal= 1000
+        patogenoService.crearPatogeno(patogeno)
+        val especie = patogenoService.agregarEspecie(patogeno.id!!, "gripeJ", "costa rica")
+
+        val jamaica = ubicacionService.crearUbicacion("Jamaica")
+        val vectorInfectado = Vector()
+        vectorInfectado.estado = Infectado()
+        vectorInfectado.tipo = Insecto()
+        vectorInfectado.agregarEspecie(especie)
+        vectorInfectado.ubicacion = jamaica
+        vectorService.crearVector(vectorInfectado)
+        jamaica.vectores.add(vectorInfectado)
+
+        val animal1 = Vector()
+        val animal2 = Vector()
+        val animal3 = Vector()
+        animal1.tipo = Animal()
+        animal2.tipo = Animal()
+        animal3.tipo = Animal()
+        animal1.estado = Sano()
+        animal2.estado = Sano()
+        animal3.estado = Sano()
+        animal1.ubicacion = jamaica
+        animal2.ubicacion = jamaica
+        animal3.ubicacion = jamaica
+        vectorService.crearVector(animal1)
+        vectorService.crearVector(animal2)
+        vectorService.crearVector(animal3)
+        jamaica.vectores.addAll(listOf(animal1, animal2, animal3))
+        TransactionRunner.addHibernate().runTrx {
+            HibernateUbicacionDAO().actualizar(jamaica)
+        }
+
+        ubicacionService.expandir(jamaica.nombreUbicacion)
+        val eventosFeedVector = feedService.feedVector(vectorInfectado.id!!)
+        Assert.assertEquals(3, eventosFeedVector.size)
+        Assert.assertEquals(Accion.CONTAGIO_NORMAL.name, eventosFeedVector.first().accionQueLoDesencadena)
+    }
+
+    @Test
+    fun `al hacer contagiar y forzar la infeccion se generan evidentemente eventos de contagio`() {
+        val patogeno = Patogeno()
+        patogeno.tipo = "virus"
+        patogeno.factorContagioInsecto= 1000
+        patogenoService.crearPatogeno(patogeno)
+        val especie = patogenoService.agregarEspecie(patogeno.id!!, "gripeN", "Japon")
+
+        val jamaica = ubicacionService.crearUbicacion("Jamaica")
+        val vectorInfectado = Vector()
+        vectorInfectado.estado = Infectado()
+        vectorInfectado.tipo = Humano()
+        vectorInfectado.agregarEspecie(especie)
+        vectorInfectado.ubicacion = jamaica
+        vectorService.crearVector(vectorInfectado)
+        jamaica.vectores.add(vectorInfectado)
+
+        val insecto1 = Vector()
+        val insecto2 = Vector()
+        val insecto3 = Vector()
+        insecto1.tipo = Insecto()
+        insecto2.tipo = Insecto()
+        insecto3.tipo = Insecto()
+        insecto1.estado = Sano()
+        insecto2.estado = Sano()
+        insecto3.estado = Sano()
+        insecto1.ubicacion = jamaica
+        insecto2.ubicacion = jamaica
+        insecto3.ubicacion = jamaica
+        vectorService.crearVector(insecto1)
+        vectorService.crearVector(insecto2)
+        vectorService.crearVector(insecto3)
+        jamaica.vectores.addAll(listOf(insecto1, insecto2, insecto3))
+        TransactionRunner.addHibernate().runTrx {
+            HibernateUbicacionDAO().actualizar(jamaica)
+        }
+
+        vectorService.contagiar(vectorInfectado, listOf(insecto1, insecto2, insecto3))
+        val eventosFeedVector = feedService.feedVector(vectorInfectado.id!!)
+        Assert.assertEquals(3, eventosFeedVector.size)
+        Assert.assertEquals(Accion.CONTAGIO_NORMAL.name, eventosFeedVector.first().accionQueLoDesencadena)
     }
 
     @After
