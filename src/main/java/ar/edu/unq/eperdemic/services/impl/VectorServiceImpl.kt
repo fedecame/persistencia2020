@@ -13,14 +13,16 @@ import ar.edu.unq.eperdemic.services.FeedService
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 
 class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO, var feedService : FeedService = FeedServiceImpl(FeedMongoDAO())) : VectorService {
-    private val eventoFactory = EventoFactory
 
     override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) {
         var infecciones: List<Pair<Vector, Especie>> = listOf()
         TransactionRunner.addHibernate().runTrx {
             infecciones = vectorDao.contagiar(vectorInfectado, vectores)
         }
+        this.fastForwardFeed(infecciones, vectorInfectado.id)
+    }
 
+    fun fastForwardFeed(infecciones: List<Pair<Vector, Especie>>, vectorInfectado: Long? = null){
         val especieDAO = HibernateEspecieDAO()
         TransactionRunner.addHibernate().runTrx {
             infecciones.forEach {
@@ -30,38 +32,21 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
                 if (ubicacion !== null && !feedService.especieYaEstabaEnLaUbicacion(ubicacion.nombreUbicacion, tipoPatogenoDeLaEspecie, nombre_de_la_especie)) {
                     feedService.agregarEvento(EventoFactory.eventoContagioPorPrimeraVezEnUbicacion(tipoPatogenoDeLaEspecie, ubicacion.nombreUbicacion, nombre_de_la_especie))
                 }
-//            val especieDB = especieDAO.recuperarEspecie(it.second.id!!)
-                if (especieDAO.esPandemia(it.second)) { // agregar validacion de que sea la primera vez que es pandemia
+                if (especieDAO.esPandemia(it.second)) {
                     feedService.agregarEvento(EventoFactory.eventoContagioPorPandemia(tipoPatogenoDeLaEspecie, nombre_de_la_especie))
                 }
-                feedService.agregarEvento(EventoFactory.eventoContagioNormal(vectorInfectado.id!!, it.first.id!!, ubicacion?.nombreUbicacion))
+                feedService.agregarEvento(EventoFactory.eventoContagioNormal(vectorInfectado, it.first.id!!, ubicacion?.nombreUbicacion))
             }
         }
     }
 
     override fun infectar(vector: Vector, especie: Especie) {
         var infeccion : List<Pair<Vector, Especie>> = listOf()
-        val especieDAO = HibernateEspecieDAO()
         TransactionRunner.addHibernate().runTrx {
             val especieDB = HibernateEspecieDAO().recuperarEspecie(especie.id!!)
             infeccion = vectorDao.infectar(vector,especieDB)
         }
-
-        TransactionRunner.addHibernate().runTrx {
-            if (infeccion.size > 0) {
-                val tipoPatogenoDeLaEspecie = infeccion.first().second.patogeno.tipo
-                val nombre_de_la_especie = infeccion.first().second.nombre
-                val ubicacion = infeccion.first().first.ubicacion
-                if (ubicacion !== null && !feedService.especieYaEstabaEnLaUbicacion(ubicacion.nombreUbicacion, tipoPatogenoDeLaEspecie, nombre_de_la_especie)) {
-                    feedService.agregarEvento(EventoFactory.eventoContagioPorPrimeraVezEnUbicacion(tipoPatogenoDeLaEspecie, ubicacion.nombreUbicacion, nombre_de_la_especie))
-                }
-//            val especieDB = especieDAO.recuperarEspecie(infeccion.first().second.id!!)
-                if (especieDAO.esPandemia(infeccion.first().second)) { // agregar validacion de que sea la primera vez que es pandemia
-                    feedService.agregarEvento(EventoFactory.eventoContagioPorPandemia(tipoPatogenoDeLaEspecie, nombre_de_la_especie))
-                }
-                feedService.agregarEvento(EventoFactory.eventoContagioNormal(null, infeccion.first().first.id!!, ubicacion?.nombreUbicacion))
-            }
-        }
+        this.fastForwardFeed(infeccion)
     }
 
     override fun enfermedades(vectorId: Int): List<Especie> = TransactionRunner.addHibernate().runTrx { vectorDao.enfermedades(vectorId) }
