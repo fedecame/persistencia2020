@@ -88,7 +88,7 @@ class PruebaDeConceptoTest {
     }
 
     @Test
-    fun `prueba de concepto - Comportamiento del OR para subquery (Habiendo muchos)`(){
+    fun `prueba de concepto - Comportamiento del OR para subquery (Habiendo muchos que cumplen)`(){
         dao.deleteAll()
         val jamaica = ubicacionService.crearUbicacion("Jamaica")
         val babilonia = ubicacionService.crearUbicacion("Babilonia")
@@ -108,16 +108,13 @@ class PruebaDeConceptoTest {
         vectorService.crearVector(vectorBabilonico)
         vectorService.infectar(vectorJamaiquino, especie)
         vectorService.infectar(vectorBabilonico, especie)
-        vectorService.infectar(vectorBabilonico, especie)
-        vectorService.infectar(vectorBabilonico, especie)
-        vectorService.infectar(vectorBabilonico, especie)
 
-        var resultadoOR = dao.find(Filters.or(Filters.eq("accionQueLoDesencadena", Accion.PATOGENO_ES_PANDEMIA.name), Filters.eq("accion", Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name)))
-        Assert.assertEquals(4, resultadoOR.size)
+        var resultadoOR = dao.find(Filters.or(Filters.eq("accionQueLoDesencadena", Accion.PATOGENO_ES_PANDEMIA.name), Filters.eq("accionQueLoDesencadena", Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name)))
+        Assert.assertEquals(3, resultadoOR.size)
     }
 
     @Test
-    fun `prueba de concepto - Comportamiento del OR para subquery (Habiendo uno solo que cumple y muchos que no)`(){
+    fun `prueba de concepto - Comportamiento del OR para subquery (Habiendo tres que cumplen y muchos que no)`(){
         this.dropAll()
         val jamaica = ubicacionService.crearUbicacion("Jamaica")
         val babilonia = ubicacionService.crearUbicacion("Babilonia")
@@ -133,7 +130,6 @@ class PruebaDeConceptoTest {
         vectorBabilonico.ubicacion = babilonia
         vectorBabilonico.tipo= Humano()
 
-        vectorBabilonico.tipo= Humano()
         vectorService.crearVector(vectorJamaiquino)
         vectorService.crearVector(vectorBabilonico)
         vectorService.infectar(vectorJamaiquino, especie)
@@ -144,9 +140,9 @@ class PruebaDeConceptoTest {
         }
         dao.commit()
         var cantTotal = dao.findEq("tipoPatogeno", TipoPatogeno.VIRUS.name).size
-        Assert.assertEquals(16, cantTotal)
-        var resultadoOR = dao.find(Filters.or(Filters.eq("accionQueLoDesencadena", Accion.PATOGENO_ES_PANDEMIA.name), Filters.eq("accion", Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name)))
-        Assert.assertEquals(1, resultadoOR.size)
+        Assert.assertEquals(19, cantTotal)
+        var resultadoOR = dao.find(Filters.or(Filters.eq("accionQueLoDesencadena", Accion.PATOGENO_ES_PANDEMIA.name), Filters.eq("accionQueLoDesencadena", Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name)))
+        Assert.assertEquals(3, resultadoOR.size)
     }
 
     @Test
@@ -174,7 +170,7 @@ class PruebaDeConceptoTest {
     }
 
     @Test
-    fun `prueba de concepto - Comportamiento del *OR*AND* para subquery (Habiendo uno solo que cumple y muchos que no)`(){
+    fun `prueba de concepto - Comportamiento del *OR*AND* para subquery (Habiendo tres que cumplen y muchos que no)`(){
         dao.deleteAll()
         val jamaica = ubicacionService.crearUbicacion("Jamaica")
         val babilonia = ubicacionService.crearUbicacion("Babilonia")
@@ -214,7 +210,7 @@ class PruebaDeConceptoTest {
                                 Filters.eq("accionQueLoDesencadena", Accion.PATOGENO_ES_PANDEMIA.name),
                                 Filters.eq("accionQueLoDesencadena", Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name)),
                         Filters.eq("tipoPatogeno", TipoPatogeno.VIRUS.name)))
-        Assert.assertEquals(1, resultadoOR.size)
+        Assert.assertEquals(3, resultadoOR.size)
     }
 
     @Test

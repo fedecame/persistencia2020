@@ -13,6 +13,7 @@ import ar.edu.unq.eperdemic.services.HibernateDataService
 import ar.edu.unq.eperdemic.services.Neo4jDataService
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
+import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
@@ -213,11 +214,14 @@ class VectorServiceTest {
 
     @Test
     fun testAlInfectarseUnVectorTieneEstadoInfectado(){
+        val patogenoService = PatogenoServiceImpl(HibernatePatogenoDAO(), HibernateEspecieDAO())
         val otroPatogeno = Patogeno()
         otroPatogeno.tipo = "VIRUS"
         otroPatogeno.cantidadDeEspecies = 1
-        val especie2 = otroPatogeno.crearEspecie("un nombrecito", "Tailandia")
-        especie2.patogeno = otroPatogeno
+        patogenoService.crearPatogeno(otroPatogeno)
+//        val especie2 = otroPatogeno.crearEspecie("un nombrecito", "Tailandia")
+        val especie2 = patogenoService.agregarEspecie(otroPatogeno.id!!, "un nombrecito", "Tailandia")
+//        especie2.patogeno = otroPatogeno
         val recuperado = vectorService.recuperarVector(1)
         vectorService.infectar(recuperado,especie2)
         val recupInfectado = vectorService.recuperarVector(1)
