@@ -119,8 +119,9 @@ class FeedServiceTest {
         ubicacionService.conectar("Quilmes", "Florencio Varela", "Terrestre")
         ubicacionService.mover(1,"Quilmes")
         val result = feedService.feedUbicacion("Quilmes")
-        Assert.assertEquals(3, result.size)
-        Assert.assertEquals("ARRIBO", result.get(0).accionQueLoDesencadena)
+        Assert.assertEquals(2, result.size)
+        Assert.assertEquals("Vector_Contagia_Al_Mover", result.get(0).accionQueLoDesencadena)//Se dispara ultimo porque primero mueve y despues infecta
+
     }
     @Test
     fun ubicacionRecibeUnArriboYSeLanzaUnEvento() {

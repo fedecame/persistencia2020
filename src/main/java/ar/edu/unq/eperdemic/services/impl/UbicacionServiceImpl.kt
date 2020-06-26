@@ -93,13 +93,14 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
                 }
                 feedService.agregarEvento(EventoFactory.eventoContagioNormal(vectorId.toLong(), it.first.id!!, ubicacion?.nombreUbicacion))
             }
+            feedService.agregarEvento(EventoFactory.eventoArribo(vectorId.toLong(), ubicacionInicial, nombreUbicacion))
+
             var vectoresEnUbicacion= HibernateUbicacionDao.recuperar(nombreUbicacion).vectores
             vectoresEnUbicacion.forEach { v->if( FeedServiceImpl(FeedMongoDAO()).vectorFueContagiadoAlMover(nombreUbicacion,vectorId,v.id?.toInt()!!))
                 FeedServiceImpl(FeedMongoDAO()).agregarEvento(EventoFactory.eventoPorArriboYContagio(nombreUbicacion,vectorId.toLong(),v.id!!))
             }
         }
 
-        feedService.agregarEvento(EventoFactory.eventoArribo(vectorId.toLong(), ubicacionInicial, nombreUbicacion))
     }
 
     override fun expandir(nombreUbicacion: String) {
