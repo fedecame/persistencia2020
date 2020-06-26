@@ -140,7 +140,7 @@ class PruebaDeConceptoTest {
         }
         dao.commit()
         var cantTotal = dao.findEq("tipoPatogeno", TipoPatogeno.VIRUS.name).size
-        Assert.assertEquals(18, cantTotal)
+        Assert.assertEquals(19, cantTotal)
         var resultadoOR = dao.find(Filters.or(Filters.eq("accionQueLoDesencadena", Accion.PATOGENO_ES_PANDEMIA.name), Filters.eq("accionQueLoDesencadena", Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name)))
         Assert.assertEquals(3, resultadoOR.size)
     }

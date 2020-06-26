@@ -93,7 +93,7 @@ class FeedDAOTest {
     }
 
     @Test
-    fun alBuscarLosEventosDeContagioDeUnPatogenoTieneUnSoloResultadoCuandoElPatogenoSoloSeVolvioPandemiaUnaUnicaVez(){
+    fun alBuscarLosEventosDeContagioDeUnPatogenoTieneCuatroResultadosCuandoElPatogenoSoloSeVolvioPandemiaUnaUnicaVez(){
         this.dropAll()
         //Una especie se vuelve pandemia se encuentra presenta en mas de la mitad de las locaciones
         val jamaica = ubicacionService.crearUbicacion("Jamaica")
@@ -116,7 +116,7 @@ class FeedDAOTest {
         Assert.assertTrue(patogenoService.esPandemia(especie.id!!))
         val result = dao.feedPatogeno(TipoPatogeno.VIRUS.name)
         val pivote = dao.getByTipoPatogeno(TipoPatogeno.VIRUS.name)
-        Assert.assertEquals(3, result.size)
+        Assert.assertEquals(4, result.size)
         val unicoEvento = result.get(0)
         Assert.assertEquals(Accion.PATOGENO_ES_PANDEMIA.name, unicoEvento.accionQueLoDesencadena)
         Assert.assertTrue(unicoEvento.tipoEvento is Contagio)
@@ -145,7 +145,7 @@ class FeedDAOTest {
         vectorService.infectar(vectorBabilonico, especie)
         Assert.assertTrue(patogenoService.esPandemia(especie.id!!))
         val result = dao.feedPatogeno(TipoPatogeno.VIRUS.name)
-        Assert.assertEquals(3, result.size)
+        Assert.assertEquals(4, result.size)
         val unicoEvento = result.get(0)
         Assert.assertEquals(Accion.PATOGENO_ES_PANDEMIA.name, unicoEvento.accionQueLoDesencadena)
         Assert.assertTrue(unicoEvento.tipoEvento is Contagio)
@@ -190,7 +190,7 @@ class FeedDAOTest {
         val ocho = result.get(7)
     //Esto se cambia por Date cuando decidamos el tipo de dato
 
-        Assert.assertEquals(8, result.size)
+        Assert.assertEquals(9, result.size)
 
         Assert.assertTrue(ocho.fecha < siete.fecha)
         Assert.assertTrue(siete.fecha < seis.fecha)

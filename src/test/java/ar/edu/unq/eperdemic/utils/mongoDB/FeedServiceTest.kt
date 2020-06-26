@@ -45,7 +45,7 @@ class FeedServiceTest {
     }
 
     @Test
-    fun alBuscarLosEventosDeContagioDeUnPatogenoTieneUNSoloResultadoCuandoElPatogenoSoloSeVolvioPandemiaUnaUnicaVez(){
+    fun alBuscarLosEventosDeContagioDeUnPatogenoTieneCuatroResultadosCuandoElPatogenoSoloSeVolvioPandemiaUnaUnicaVez(){
         //Una especie se vuelve pandemia se encuentra presenta en mas de la mitad de las locaciones
         val jamaica = ubicacionService.crearUbicacion("Jamaica")
         val babilonia = ubicacionService.crearUbicacion("Babilonia")
@@ -66,7 +66,7 @@ class FeedServiceTest {
         val result = feedService.feedPatogeno(patogenoModel.tipo )
         val eventosPandemia = result.filter{it.accionQueLoDesencadena == Accion.PATOGENO_ES_PANDEMIA.name}
         val unicoEventoPandemia = eventosPandemia.get(0)
-        Assert.assertEquals(3, result.size)
+        Assert.assertEquals(4, result.size)
         Assert.assertEquals(1, eventosPandemia.size)
         Assert.assertTrue(unicoEventoPandemia is Evento)
         Assert.assertTrue(patogenoService.esPandemia(especie.id!!))
