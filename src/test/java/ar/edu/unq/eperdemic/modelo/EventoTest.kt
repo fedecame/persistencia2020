@@ -13,7 +13,8 @@ import org.junit.Test
 class EventoTest {
     lateinit var eventoPandemia: Evento
     lateinit var eventoPrimeraVez: Evento
-    lateinit var eventoMutacion: Evento
+    lateinit var eventoSeCreaEspecie: Evento
+    lateinit var eventoSeMutaEspecie: Evento
     lateinit var contagioPandemia: TipoEvento
     lateinit var contagioPrimeraVez: TipoEvento
     lateinit var eventoFactory: EventoFactory
@@ -23,7 +24,8 @@ class EventoTest {
         eventoFactory = EventoFactory
         eventoPandemia = eventoFactory.eventoContagioPorPandemia(TipoPatogeno.BACTERIA.name, "Gripe")
         eventoPrimeraVez = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(TipoPatogeno.HONGO.name, "alguna ubicacion", "algun nombre de especie")
-        eventoMutacion = eventoFactory.eventoEspecieCreada(TipoPatogeno.BACTERIA.name, "Corona" )
+        eventoSeCreaEspecie = eventoFactory.eventoEspecieCreada(TipoPatogeno.BACTERIA.name, "Corona" )
+        eventoSeMutaEspecie = eventoFactory.eventoEspecieDePatogenoMuta(TipoPatogeno.BACTERIA.name, "fiebreDisco")
     }
 
     @Test
@@ -57,15 +59,29 @@ class EventoTest {
 
     @Test
     fun losEventosDeMutacionAlCrearUnaEspecieSonConsistentes(){
-        Assert.assertTrue(eventoMutacion.tipoEvento is Mutacion)
-        Assert.assertEquals(TipoPatogeno.BACTERIA.name, eventoMutacion.tipoPatogeno)
-        Assert.assertEquals("ESPECIE_CREADA", eventoMutacion.accionQueLoDesencadena)
-        Assert.assertEquals("Corona", eventoMutacion.nombreEspecie)
-        Assert.assertNull(eventoMutacion.ubicacionContagio)
+        Assert.assertTrue(eventoSeCreaEspecie.tipoEvento is Mutacion)
+        Assert.assertEquals(TipoPatogeno.BACTERIA.name, eventoSeCreaEspecie.tipoPatogeno)
+        Assert.assertEquals("ESPECIE_CREADA", eventoSeCreaEspecie.accionQueLoDesencadena)
+        Assert.assertEquals("Corona", eventoSeCreaEspecie.nombreEspecie)
+        Assert.assertNull(eventoSeCreaEspecie.ubicacionContagio)
     }
 
     @Test
     fun elLogDelEventoDeMutacionPorCrearUnaEspecieEsElIndicado(){
-        Assert.assertEquals("Se crea la especie Corona del patogeno BACTERIA ", eventoMutacion.log())
+        Assert.assertEquals("Se crea la especie Corona del patogeno BACTERIA ", eventoSeCreaEspecie.log())
+    }
+
+    @Test
+    fun losEventosDeMutacionAlMutarUnaEspecieSonConsistentes(){
+        Assert.assertTrue(eventoSeMutaEspecie.tipoEvento is Mutacion)
+        Assert.assertEquals(TipoPatogeno.BACTERIA.name, eventoSeMutaEspecie.tipoPatogeno)
+        Assert.assertEquals("ESPECIE_MUTADA", eventoSeMutaEspecie.accionQueLoDesencadena)
+        Assert.assertEquals("fiebreDisco", eventoSeMutaEspecie.nombreEspecie)
+        Assert.assertNull(eventoSeMutaEspecie.ubicacionContagio)
+    }
+
+    @Test
+    fun elLogDelEventoDeMutacionPorMutarUnaEspecieEsElIndicado(){
+        Assert.assertEquals("La especie fiebreDisco del patogeno BACTERIA ha mutado", eventoSeMutaEspecie.log())
     }
 }
