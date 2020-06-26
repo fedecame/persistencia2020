@@ -19,6 +19,7 @@ import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
 import ar.edu.unq.eperdemic.services.FeedService
 import ar.edu.unq.eperdemic.tipo.Animal
 import ar.edu.unq.eperdemic.tipo.Humano
+import ar.edu.unq.eperdemic.tipo.Insecto
 import ar.edu.unq.eperdemic.utils.DataService
 import org.junit.After
 import org.junit.Assert
@@ -169,6 +170,51 @@ class FeedServiceTest {
         val listaDeEventos = feedService.feedVector(vectorNuevo.id!!)
         Assert.assertTrue(listaDeEventos.isEmpty())
         Assert.assertEquals(0, listaDeEventos.size)
+    }
+
+    @Test
+    fun `mover un vector a una ubicacion sin vectores genera 1 evento de arribo feedVector`() {
+        val vector = Vector()
+        vector.tipo = Animal()
+        vector.estado = Sano()
+        vector.ubicacion = ubicacionService.crearUbicacion("Jamaica")
+        vectorService.crearVector(vector)
+
+        val fiyi = ubicacionService.crearUbicacion("Fiyi")
+        ubicacionService.conectar("Jamaica", "Fiyi", "Aereo")
+        ubicacionService.mover(vector.id!!.toInt(), "Fiyi")
+
+        val eventos = feedService.feedVector(vector.id!!)
+        Assert.assertEquals(1, eventos.size)
+        Assert.assertEquals(Accion.ARRIBO.name, eventos.first().accionQueLoDesencadena)
+    }
+
+    @Test
+    fun `mover un vector sano a una ubicacion con vectores genera 1 evento de arribo feedVector`() {
+        val vector = Vector()
+        vector.tipo = Animal()
+        vector.estado = Sano()
+        vector.ubicacion = ubicacionService.crearUbicacion("Jamaica")
+        vectorService.crearVector(vector)
+
+        val fiyi = ubicacionService.crearUbicacion("Fiyi")
+        ubicacionService.conectar("Jamaica", "Fiyi", "Aereo")
+
+        val vector1 = Vector()
+        vector1.ubicacion = fiyi
+        vector1.estado = Infectado()
+        vector1.tipo = Insecto()
+        val vector2 = Vector()
+        vector2.ubicacion = fiyi
+        vector2.estado = Sano()
+        vector2.tipo = Humano()
+        vectorService.crearVector(vector1)
+        vectorService.crearVector(vector2)
+        ubicacionService.mover(vector.id!!.toInt(), "Fiyi")
+
+        val eventos = feedService.feedVector(vector.id!!)
+        Assert.assertEquals(1, eventos.size)
+        Assert.assertEquals(Accion.ARRIBO.name, eventos.first().accionQueLoDesencadena)
     }
 
     @Test
