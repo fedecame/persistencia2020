@@ -203,10 +203,11 @@ class FeedDAOTest {
         val seis = result.get(5)
         val siete = result.get(6)
         val ocho = result.get(7)
-    //Esto se cambia por Date cuando decidamos el tipo de dato
+        val nueve = result.get(8)
 
         Assert.assertEquals(9, result.size)
 
+        Assert.assertTrue(nueve.fecha <= ocho.fecha)
         Assert.assertTrue(ocho.fecha <= siete.fecha)
         Assert.assertTrue(siete.fecha <= seis.fecha)
         Assert.assertTrue(seis.fecha <= cinco.fecha)
