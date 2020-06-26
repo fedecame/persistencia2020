@@ -47,4 +47,15 @@ class EventoFactoryTest {
         Assert.assertEquals("un nombre de especie", evento.nombreEspecie)
         Assert.assertNull(evento.ubicacionContagio)
     }
+
+    @Test
+    fun eventoFactoryDevuelveUnEventoConsistenteAlRecibirElMensajeEventoEspecieDePatogenoMuta(){
+        val evento = sut.eventoEspecieDePatogenoMuta("algo","un nombre de especie")
+        Assert.assertNotNull(evento)
+        Assert.assertTrue(evento.tipoEvento is Mutacion)
+        Assert.assertEquals("algo", evento.tipoPatogeno)
+        Assert.assertEquals("ESPECIE_MUTADA", evento.accionQueLoDesencadena)
+        Assert.assertEquals("un nombre de especie", evento.nombreEspecie)
+        Assert.assertNull(evento.ubicacionContagio)
+    }
 }
