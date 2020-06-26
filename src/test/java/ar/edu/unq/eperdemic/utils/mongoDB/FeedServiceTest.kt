@@ -79,7 +79,7 @@ class FeedServiceTest {
 
 
     @Test
-    fun testUbicacionPruebasVarias(){
+    fun vectorInfectadoMueveAUbicacionDondeHayVectoresLosInfectaYSeDisparaEvento(){
         var patogeno = Patogeno()
         patogeno.tipo = ""
         patogeno.factorContagioHumano= 1000
@@ -104,17 +104,11 @@ class FeedServiceTest {
         vectorService.crearVector(vector1)
         ubicacionService.conectar("Florencio Varela", "Quilmes", "Terrestre")
         ubicacionService.conectar("Quilmes", "Florencio Varela", "Terrestre")
-
         FeedServiceImpl(FeedMongoDAO()).agregarEvento(EventoFactory.eventoPorContagio("Quilmes", vector.id?.toInt()!!,vector1.id?.toInt()!!))
-
-
-
         ubicacionService.mover(1,"Quilmes")
-        ubicacionService.mover(1,"Florencio Varela")
-
         val result = feedService.feedUbicacion("Quilmes")
-        Assert.assertEquals(3, result.size)
-        Assert.assertEquals(result.get(0).nombreUbicacion,"Florencio Varela")
+        Assert.assertEquals(2, result.size)
+        Assert.assertEquals(result.get(0).accionQueLoDesencadena,"Vector_Contagia_Al_Mover")
     }
     @Test
     fun ubicacionRecibeUnArriboYSeLanzaUnEvento() {
