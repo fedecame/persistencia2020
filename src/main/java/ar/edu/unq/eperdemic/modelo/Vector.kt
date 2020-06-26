@@ -65,7 +65,7 @@ class Vector {
         return tipo.contagiamePor(this, vectorQueContagia.tipo, vectorQueContagia.especies.toList())
     }
 
-    fun contagiar(vectoresAContagiar: List<Vector>) : List<Pair<Vector, Especie>> { // retorna los vectores que se infectaron
+    fun contagiar(vectoresAContagiar: List<Vector>) : List<Pair<Vector, Especie>> { // retorna los vectores que se infectaron por las especies
         return estado.contagiar(this, vectoresAContagiar)
     }
 }
