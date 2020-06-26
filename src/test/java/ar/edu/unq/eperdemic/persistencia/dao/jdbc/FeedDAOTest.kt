@@ -239,6 +239,36 @@ class FeedDAOTest {
         Assert.assertFalse(dao.especieYaEstabaEnLaUbicacion("Jamaica", TipoPatogeno.VIRUS.name, "gripe"))
     }
 
+    @Test
+    fun cuandoNoExisteUnEventoDePandemiaParaLaEspecieDeUnPantogenoDadoElMensajeEspecieYaEsPandemiaDelFeedDAODevuelveFalse(){
+        this.dropAll()
+        Assert.assertFalse(dao.especieYaEsPandemia("un patogeno", "una especie"))
+    }
+
+    @Test
+    fun cuandoNoExisteUnEventoDePandemiaParaLaEspecieDeUnPantogenoDadoElMensajeEspecieYaEsPandemiaDelFeedDAODevuelveTrue(){
+        this.dropAll()
+        val jamaica = ubicacionService.crearUbicacion("Jamaica")
+        val babilonia = ubicacionService.crearUbicacion("Babilonia")
+        ubicacionService.crearUbicacion("NismanLandia")
+        val vectorJamaiquino = Vector()
+        vectorJamaiquino.ubicacion = jamaica
+        vectorJamaiquino.tipo = Humano()
+        val vectorBabilonico = Vector()
+        vectorBabilonico.ubicacion = babilonia
+        vectorBabilonico.tipo= Humano()
+        vectorService.crearVector(vectorJamaiquino)
+        vectorService.crearVector(vectorBabilonico)
+
+        val patogenoModel = Patogeno()
+        patogenoModel.tipo = TipoPatogeno.VIRUS.name
+        val especie = patogenoService.agregarEspecie(patogenoService.crearPatogeno(patogenoModel), "gripe", "Narnia")
+        vectorService.infectar(vectorJamaiquino, especie)
+        vectorService.infectar(vectorBabilonico, especie)
+        Assert.assertTrue(patogenoService.esPandemia(especie.id!!))
+        Assert.assertTrue(dao.especieYaEsPandemia(patogenoModel.tipo, "gripe"))
+    }
+
     @After
     fun dropAll() {
         MegalodonService().eliminarTodo()

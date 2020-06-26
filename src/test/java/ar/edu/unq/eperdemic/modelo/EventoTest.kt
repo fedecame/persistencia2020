@@ -36,25 +36,26 @@ class EventoTest {
         Assert.assertEquals("Gripe", eventoPandemia.nombreEspecie)
         Assert.assertNull(eventoPandemia.ubicacionContagio)
 
-        @Test
-        fun losEventosDeContagioPorPContagioPorPrimeraVezEnUbicacionDelPatogenoSonConsistentes() {
-            Assert.assertTrue(eventoPrimeraVez.tipoEvento is Contagio)
-            Assert.assertEquals(TipoPatogeno.HONGO.name, eventoPrimeraVez.tipoPatogeno)
-            Assert.assertEquals("PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION", eventoPrimeraVez.accionQueLoDesencadena)
-            Assert.assertNull(eventoPrimeraVez.nombreEspecie)
-            Assert.assertEquals("alguna ubicacion", eventoPrimeraVez.ubicacionContagio)
-        }
+    }
 
-        @Test
-        fun elLogDelEventoDeContagioPorPandemiaDelPatogenoEsElIndicado() {
-            Assert.assertEquals("", eventoPandemia.log())
-        }
+    @Test
+    fun losEventosDeContagioPorPContagioPorPrimeraVezEnUbicacionDelPatogenoSonConsistentes() {
+        Assert.assertTrue(eventoPrimeraVez.tipoEvento is Contagio)
+        Assert.assertEquals(TipoPatogeno.HONGO.name, eventoPrimeraVez.tipoPatogeno)
+        Assert.assertEquals("PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION", eventoPrimeraVez.accionQueLoDesencadena)
+        Assert.assertEquals("algun nombre de especie", eventoPrimeraVez.nombreEspecie)
+        Assert.assertEquals("alguna ubicacion", eventoPrimeraVez.ubicacionContagio)
+    }
 
+    @Test
+    fun elLogDelEventoDeContagioPorPandemiaDelPatogenoEsElIndicado() {
+        Assert.assertEquals("El patogeno BACTERIA se volvio pandemia", eventoPandemia.log())
+    }
 
-        @Test
-        fun elLogDelEventoDeContagioContagioPorPrimeraVezEnUbicacionDelPatogenoEsElIndicado() {
-            Assert.assertEquals("", eventoPandemia.log())
-        }
+    @Test
+    fun elLogDelEventoDeContagioContagioPorPrimeraVezEnUbicacionDelPatogenoEsElIndicado() {
+        eventoPrimeraVez.idVectorinfectado = 16.toLong()
+        Assert.assertEquals("El patogeno HONGO contagio al vector 16 con la especie algun nombre de especie en la ubicacion alguna ubicacion  por primera vez", eventoPrimeraVez.log())
     }
 
     @Test

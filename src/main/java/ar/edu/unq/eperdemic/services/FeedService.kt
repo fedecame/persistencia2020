@@ -1,4 +1,4 @@
-package ar.edu.unq.eperdemic.services.runner
+package ar.edu.unq.eperdemic.services
 
 import ar.edu.unq.eperdemic.modelo.evento.Evento
 

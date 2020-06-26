@@ -224,11 +224,13 @@ class PruebaDeConceptoTest {
         val evento0 = eventoFactory.eventoContagioPorPandemia("un tipo", "una especie")
         val evento1 = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion("otro tipo", "Un lugar lejano", "una especie")
         dao.save(evento0)
+        dao.commit()
+        dao.startTransaction()
         dao.save(evento1)
         dao.commit()
         val eventoRecuperado0 = dao.getByTipoPatogeno("un tipo").get(0)
         val eventoRecuperado1 = dao.getByTipoPatogeno("otro tipo").get(0)
-        Assert.assertTrue(eventoRecuperado1!!.fecha > eventoRecuperado0!!.fecha)
+        Assert.assertTrue(eventoRecuperado1!!.fecha >= eventoRecuperado0!!.fecha)
     }
 
     @After

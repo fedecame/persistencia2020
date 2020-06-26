@@ -14,8 +14,8 @@ class Evento {
    var ubicacionContagio : String? = null
    var ubicacionOrigen : String? = null
    var ubicacionDestino : String? = null
-   var idVectorQueInfecta : String? = null
-   var idVectorinfectado : String? = null
+   var idVectorQueInfecta : Long? = null
+   var idVectorinfectado : Long? = null
    lateinit var mensaje : String
    lateinit var fecha : String
 
