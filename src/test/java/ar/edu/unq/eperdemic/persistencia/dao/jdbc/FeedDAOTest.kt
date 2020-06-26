@@ -48,6 +48,19 @@ class FeedDAOTest {
     }
 
     @Test
+    fun seGuardaYSeRecuperaPorUnTipoDePatogenoAlMutarUnaEspecie(){
+        val evento1 = eventoFactory.eventoEspecieDePatogenoMuta(TipoPatogeno.VIRUS.name, "gripe")
+        dao.startTransaction()
+        dao.save(evento1)
+        dao.commit()
+        val resultado = dao.getByTipoPatogeno(evento1.tipoPatogeno!!)
+        val eventoMutar = resultado.get(1)
+        Assert.assertEquals(2, resultado!!.size)
+        Assert.assertTrue(eventoMutar!!.tipoEvento is Mutacion)
+        Assert.assertEquals(Accion.ESPECIE_MUTADA.name, eventoMutar.accionQueLoDesencadena)
+    }
+
+    @Test
     fun seGuardaYSeRecuperaPorUnTipoDePatogenoAlCrearUnaEspecie(){
         val evento1 = eventoFactory.eventoEspecieCreada(TipoPatogeno.VIRUS.name, "gripe")
         dao.startTransaction()

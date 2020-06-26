@@ -3,12 +3,14 @@ package ar.edu.unq.eperdemic.utils.mongoDB
 import ar.edu.unq.eperdemic.estado.Infectado
 import ar.edu.unq.eperdemic.estado.Sano
 import ar.edu.unq.eperdemic.modelo.Especie
+import ar.edu.unq.eperdemic.modelo.Mutacion
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.evento.Accion
 import ar.edu.unq.eperdemic.modelo.evento.Evento
 import ar.edu.unq.eperdemic.modelo.evento.EventoFactory
 import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.Contagio
+import ar.edu.unq.eperdemic.modelo.tipoMutacion.MutacionFactorContagioInsecto
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
 import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
 import ar.edu.unq.eperdemic.services.*
@@ -17,6 +19,7 @@ import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
 import ar.edu.unq.eperdemic.services.FeedService
+import ar.edu.unq.eperdemic.services.impl.*
 import ar.edu.unq.eperdemic.tipo.Animal
 import ar.edu.unq.eperdemic.tipo.Humano
 import ar.edu.unq.eperdemic.tipo.Insecto
@@ -49,6 +52,48 @@ class FeedServiceTest {
     fun alpedirLosEventosDeContagioDeUnPatogenoNoCreadoDevuelveUnaListaVacia(){
         val result = feedService.feedPatogeno("sarasa")
         Assert.assertEquals(0, result.size)
+    }
+
+    @Test
+    fun alBuscarLosEventosDeMutacionDeUnPatogenoTieneUnResultadoCuandoSeMutaUnaEspecieDelPatogeno(){
+
+        var mutacionDAO = HibernateMutacionDAO()
+        var mutacionService = MutacionServiceImpl(mutacionDAO, patogenoService)
+
+        var mutacion1 = Mutacion()
+        mutacion1.adnNecesario = 1
+        mutacion1.tipo = MutacionFactorContagioInsecto()
+        mutacionService.crearMutacion(mutacion1)
+        mutacionService.actualizarMutacion(mutacion1)
+
+        var patogeno = Patogeno()
+        patogeno.cantidadDeEspecies = 1
+        patogeno.tipo = "Virus"
+        patogeno.factorContagioHumano = 80
+        patogeno.factorContagioInsecto = 15
+        patogeno.factorContagioAnimal = 50
+        patogeno.defensaContraMicroorganismos = 30
+        patogeno.letalidad = 5
+
+        var especie = Especie()
+        especie.nombre = "Corona"
+        especie.paisDeOrigen = "China"
+        especie.mutacionesDesbloqueadas.add(mutacion1)
+        especie.cantidadInfectadosParaADN = 18
+        especie.patogeno = patogeno
+
+        patogenoService.crearPatogeno(patogeno)
+        patogenoService.crearEspecie(especie)
+
+        mutacionService.mutar(especie.id!!, mutacion1.id!!.toInt())
+
+        val result = feedService.feedPatogeno(patogeno.tipo)
+
+        val eventosDeMutacion = result.filter { it.accionQueLoDesencadena == Accion.ESPECIE_MUTADA.name }
+        val unicoEventoDeMutacion = eventosDeMutacion.get(0)
+        Assert.assertEquals(2, result.size)
+        Assert.assertTrue(unicoEventoDeMutacion is Evento)
+        Assert.assertEquals(Accion.ESPECIE_MUTADA.name, unicoEventoDeMutacion.accionQueLoDesencadena)
     }
 
     @Test
