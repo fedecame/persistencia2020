@@ -192,13 +192,13 @@ class FeedDAOTest {
 
         Assert.assertEquals(9, result.size)
 
-        Assert.assertTrue(ocho.fecha < siete.fecha)
-        Assert.assertTrue(siete.fecha < seis.fecha)
-        Assert.assertTrue(seis.fecha < cinco.fecha)
-        Assert.assertTrue(cinco.fecha < cuatro.fecha)
-        Assert.assertTrue(cuatro.fecha < tres.fecha)
-        Assert.assertTrue(tres.fecha < dos.fecha)
-        Assert.assertTrue(dos.fecha < uno.fecha)
+        Assert.assertTrue(ocho.fecha <= siete.fecha)
+        Assert.assertTrue(siete.fecha <= seis.fecha)
+        Assert.assertTrue(seis.fecha <= cinco.fecha)
+        Assert.assertTrue(cinco.fecha <= cuatro.fecha)
+        Assert.assertTrue(cuatro.fecha <= tres.fecha)
+        Assert.assertTrue(tres.fecha <= dos.fecha)
+        Assert.assertTrue(dos.fecha <= uno.fecha)
     }
 
     @Test

@@ -81,7 +81,7 @@ class FeedServiceTest {
     @Test
     fun vectorInfectadoMueveAUbicacionDondeHayVectoresLosInfectaYSeDisparaEvento(){
         var patogeno = Patogeno()
-        patogeno.tipo = ""
+        patogeno.tipo = "virus"
         patogeno.factorContagioHumano= 1000
         var especie1 = Especie()
         especie1.cantidadInfectadosParaADN = 42
@@ -100,15 +100,14 @@ class FeedServiceTest {
         vectorService.crearVector(vector)
         var vectorCreado=vectorService.recuperarVector(1)
         Assert.assertEquals(vectorCreado.ubicacion?.nombreUbicacion,"Florencio Varela")
-       vector1.ubicacion= ubicacionService.crearUbicacion("Quilmes")
+        vector1.ubicacion= ubicacionService.crearUbicacion("Quilmes")
         vectorService.crearVector(vector1)
         ubicacionService.conectar("Florencio Varela", "Quilmes", "Terrestre")
         ubicacionService.conectar("Quilmes", "Florencio Varela", "Terrestre")
-        FeedServiceImpl(FeedMongoDAO()).agregarEvento(EventoFactory.eventoPorContagio("Quilmes", vector.id?.toInt()!!,vector1.id?.toInt()!!))
         ubicacionService.mover(1,"Quilmes")
         val result = feedService.feedUbicacion("Quilmes")
-        Assert.assertEquals(2, result.size)
-        Assert.assertEquals(result.get(0).accionQueLoDesencadena,"Vector_Contagia_Al_Mover")
+        Assert.assertEquals(3, result.size)
+        Assert.assertEquals("ARRIBO", result.get(0).accionQueLoDesencadena)
     }
     @Test
     fun ubicacionRecibeUnArriboYSeLanzaUnEvento() {
@@ -122,7 +121,7 @@ class FeedServiceTest {
         ubicacionService.mover(vector1.id?.toInt()!!,"Quilmes")
         val result = feedService.feedUbicacion("Quilmes")
         Assert.assertEquals(1, result.size)
-        Assert.assertEquals(result.get(0).nombreUbicacion,"Quilmes")
+        Assert.assertEquals(result.get(0).ubicacionDestino,"Quilmes")
     }
     @Test
     fun ubicacionRecibeDosArribos_SeLanzanDosEvento_ElUltimoQueSeLanzaEsElPrimero () {
@@ -142,7 +141,7 @@ class FeedServiceTest {
         ubicacionService.mover(vector2.id?.toInt()!!,"Quilmes")
         val result = feedService.feedUbicacion("Quilmes")
         Assert.assertEquals(2, result.size)
-        Assert.assertEquals(result.get(0).idVector,2)
+        Assert.assertEquals(2L,result.get(0).idVectorQueSeMueve)
     }
 
     @After
