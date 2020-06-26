@@ -1,15 +1,21 @@
 package ar.edu.unq.eperdemic.persistencia.dao.hibernate
 
 import ar.edu.unq.eperdemic.modelo.Especie
+import ar.edu.unq.eperdemic.modelo.evento.EventoFactory
 import ar.edu.unq.eperdemic.modelo.exception.EspecieNotFoundRunTimeException
 import ar.edu.unq.eperdemic.persistencia.dao.EspecieDAO
+import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
+import ar.edu.unq.eperdemic.services.impl.FeedServiceImpl
+import ar.edu.unq.eperdemic.services.runner.FeedService
 import ar.edu.unq.eperdemic.services.runner.TransactionHibernate
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 
 class HibernateEspecieDAO : HibernateDAO<Especie>(Especie::class.java), EspecieDAO {
-
+    val feedService : FeedService = FeedServiceImpl(FeedMongoDAO())
+    val eventoFactory = EventoFactory
     override fun crearEspecie(especie : Especie) : Int{
         super.guardar(especie)
+        feedService.agregarEvento(eventoFactory.eventoEspecieCreada(especie.patogeno.tipo, especie.nombre))
         return especie.id!!
     }
     override fun recuperarEspecie(especieId: Int): Especie {
