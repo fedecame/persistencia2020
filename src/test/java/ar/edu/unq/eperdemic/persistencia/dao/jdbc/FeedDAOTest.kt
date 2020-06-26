@@ -7,6 +7,7 @@ import ar.edu.unq.eperdemic.modelo.evento.Accion
 import ar.edu.unq.eperdemic.modelo.evento.Evento
 import ar.edu.unq.eperdemic.modelo.evento.EventoFactory
 import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.Contagio
+import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.Mutacion
 import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.TipoPatogeno
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
 import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
@@ -22,16 +23,16 @@ import org.junit.Before
 import org.junit.Test
 
 class FeedDAOTest {
-    lateinit var dao : FeedMongoDAO
-    lateinit var ubicacionService : UbicacionService
-    lateinit var patogenoService : PatogenoService
-    lateinit var vectorService : VectorService
-    lateinit var hibernateData : DataService
-    lateinit var eventoFactory : EventoFactory
-    lateinit var evento : Evento
+    lateinit var dao: FeedMongoDAO
+    lateinit var ubicacionService: UbicacionService
+    lateinit var patogenoService: PatogenoService
+    lateinit var vectorService: VectorService
+    lateinit var hibernateData: DataService
+    lateinit var eventoFactory: EventoFactory
+    lateinit var evento: Evento
 
     @Before
-    fun setUp(){
+    fun setUp() {
         dao = FeedMongoDAO()
         val ubicacionDAO = HibernateUbicacionDAO()
         ubicacionService = UbicacionServiceImpl(ubicacionDAO)
@@ -47,6 +48,19 @@ class FeedDAOTest {
     }
 
     @Test
+    fun seGuardaYSeRecuperaPorUnTipoDePatogenoAlCrearUnaEspecie(){
+        val evento1 = eventoFactory.eventoEspecieCreada(TipoPatogeno.VIRUS.name, "gripe")
+        dao.startTransaction()
+        dao.save(evento1)
+        dao.commit()
+        val resultado = dao.getByTipoPatogeno(evento1.tipoPatogeno!!)
+        val eventoCreate = resultado.get(1)
+        Assert.assertEquals(2, resultado!!.size)
+        Assert.assertTrue(eventoCreate!!.tipoEvento is Mutacion)
+
+    }
+
+    @Test
     fun alRecuperarPorUnTipoDePatogenoInexistenteRetornaListaVacia(){
         val resultado = dao.getByTipoPatogeno("Nisman")
         Assert.assertEquals(0, resultado.size)
@@ -55,6 +69,7 @@ class FeedDAOTest {
     @Test
     fun seGuardaYSeRecuperaPorTipoDePatogeno() {
         val resultado = dao.getByTipoPatogeno(evento.tipoPatogeno!!)
+        Assert.assertEquals(1, resultado.size)
     }
 
     @Test
@@ -188,10 +203,11 @@ class FeedDAOTest {
         val seis = result.get(5)
         val siete = result.get(6)
         val ocho = result.get(7)
-    //Esto se cambia por Date cuando decidamos el tipo de dato
+        val nueve = result.get(8)
 
         Assert.assertEquals(9, result.size)
 
+        Assert.assertTrue(nueve.fecha <= ocho.fecha)
         Assert.assertTrue(ocho.fecha <= siete.fecha)
         Assert.assertTrue(siete.fecha <= seis.fecha)
         Assert.assertTrue(seis.fecha <= cinco.fecha)
