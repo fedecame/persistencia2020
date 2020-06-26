@@ -288,12 +288,12 @@ class FeedServiceTest {
         vectorService.crearVector(vectorSano)
         ubicacionService.mover(vectorInfectado.id!!.toInt(), kongo.nombreUbicacion)
         val eventosDelQueInfecta = feedService.feedVector(vectorInfectado.id!!)
-        Assert.assertEquals(2, eventosDelQueInfecta.size)
+        Assert.assertEquals(3, eventosDelQueInfecta.size)
         var accionesDelFeed = eventosDelQueInfecta.map{ it.accionQueLoDesencadena }
         Assert.assertTrue(accionesDelFeed.containsAll(listOf(Accion.ARRIBO.name, Accion.CONTAGIO_NORMAL.name)))
 
         val eventosDelQueEsInfectado = feedService.feedVector(vectorSano.id!!)
-        Assert.assertEquals(1, eventosDelQueEsInfectado.size)
+        Assert.assertEquals(2, eventosDelQueEsInfectado.size)
         accionesDelFeed = eventosDelQueEsInfectado.map{ it.accionQueLoDesencadena }
         Assert.assertTrue(accionesDelFeed.contains(Accion.CONTAGIO_NORMAL.name))
     }
