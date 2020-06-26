@@ -12,4 +12,6 @@ object EventoFactory {
     fun eventoContagioPorPrimeraVezEnUbicacion(tipoPatogeno: String, nombreUbicacion: String, nombreEspecie: String): Evento = Evento(Contagio(),Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name, tipoPatogeno, nombreEspecie, nombreUbicacion)
     fun eventoContagioNormal(vectorQueInfectaId: Long?, vectorInfectadoId: Long, ubicacionDeContagio: String?): Evento = Evento(Contagio(), Accion.CONTAGIO_NORMAL.name, _nombreUbicacion = ubicacionDeContagio, _idVectorInfectado = vectorInfectadoId, _idVectorQueInfecta = vectorQueInfectaId)
     fun eventoArribo(vectorQueSeMueveId: Long?, ubicacionOrigen: String?, ubicacionDestino: String?): Evento = Evento(Arribo(), Accion.ARRIBO.name, _idVectorQueSeMueve = vectorQueSeMueveId, _ubicacionOrigen = ubicacionOrigen, _ubicacionDestino = ubicacionDestino)
+    fun eventoPorArriboYContagio( nombreUbicacion: String, vectorId: Long,vectorAInfectar:Long): Evento =Evento( Arribo(),Accion.Vector_Contagia_Al_Mover.name, null, null, nombreUbicacion,vectorAInfectar,vectorId)
+
 }

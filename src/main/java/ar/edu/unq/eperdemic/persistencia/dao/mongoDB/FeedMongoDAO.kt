@@ -63,8 +63,10 @@ class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
                 `in`("ubicacionDestino", conectadoss),
                 `in`("ubicacionContagio", conectadoss)
         ))
+        val lista= Aggregates.match(or(eq("accionQueLoDesencadena","ARRIBO"),(eq("accionQueLoDesencadena","Vector_Contagia_Al_Mover"))))
+
         val ordenados=Aggregates.sort(Indexes.descending("fecha"))
-        return aggregate(listOf(match,ordenados), Evento::class.java)
+        return aggregate(listOf(match,lista,ordenados), Evento::class.java)
     }
 
 //     override fun feedUbicacion(nombreUbicacion: String): List<Evento> {
@@ -95,10 +97,10 @@ class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
     fun vectorFueContagiadoAlMover(_nombreUbicacion:String, _idVectorInfectado:Int, _idVectorAInfectar:Int):Boolean=
         find(and
         (and
-        (eq("nombreUbicacion", _nombreUbicacion),
-                eq("accionQueLoDesencadena", Accion.PADECE_ENFERMEDAD.name)),
+        (eq("ubicacionContagio", _nombreUbicacion),
+                eq("accionQueLoDesencadena", Accion.CONTAGIO_NORMAL.name)),
                 (and
-                (eq("idVector", _idVectorInfectado),
-                        eq("idVectorAInfectar", _idVectorAInfectar))))).isNotEmpty()
+                (eq("idVectorQueInfecta",_idVectorInfectado ),
+                        eq("idVectorinfectado",_idVectorAInfectar ))))).isNotEmpty()
 
 }
