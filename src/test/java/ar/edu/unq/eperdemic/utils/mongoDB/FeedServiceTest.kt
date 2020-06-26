@@ -106,7 +106,7 @@ class FeedServiceTest {
         ubicacionService.conectar("Florencio Varela", "Quilmes", "Terrestre")
         ubicacionService.conectar("Quilmes", "Florencio Varela", "Terrestre")
 
-        FeedServiceImpl(FeedMongoDAO()).agregarEvento(EventoFactory().eventoPorContagio("Quilmes", vector.id?.toInt()!!,vector1.id?.toInt()!!))
+        FeedServiceImpl(FeedMongoDAO()).agregarEvento(EventoFactory.eventoPorContagio("Quilmes", vector.id?.toInt()!!,vector1.id?.toInt()!!))
 
 
 
@@ -130,9 +130,25 @@ class FeedServiceTest {
         val result = feedService.feedUbicacion("Quilmes")
         Assert.assertEquals(1, result.size)
     }
-
-
-
+    @Test
+    fun ubicacionRecibeDosArribosYSeLanzanDosEvento() {
+        var vector1= Vector()
+        vector1.tipo=Humano()
+        vector1.estado= Sano()
+        vector1.ubicacion= ubicacionService.crearUbicacion("Florencio Varela")
+        var vector2= Vector()
+        vector2.tipo=Humano()
+        vector2.estado= Sano()
+        vector2.ubicacion= ubicacionService.recuperarUbicacion("Florencio Varela")
+        vectorService.crearVector(vector1)
+        vectorService.crearVector(vector2)
+        ubicacionService.crearUbicacion("Quilmes")
+        ubicacionService.conectar("Florencio Varela","Quilmes","Terrestre")
+        ubicacionService.mover(vector1.id?.toInt()!!,"Quilmes")
+        ubicacionService.mover(vector2.id?.toInt()!!,"Quilmes")
+        val result = feedService.feedUbicacion("Quilmes")
+        Assert.assertEquals(2, result.size)
+    }
 
     @After
     fun dropAll() {

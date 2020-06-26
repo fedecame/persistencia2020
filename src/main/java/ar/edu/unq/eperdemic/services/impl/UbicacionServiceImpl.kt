@@ -71,9 +71,9 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
             HibernateUbicacionDao.mover(vector, nombreUbicacion)
             var vectoresEnUbicacion= HibernateUbicacionDao.recuperar(nombreUbicacion).vectores
             vectoresEnUbicacion.forEach { v->if( FeedServiceImpl(FeedMongoDAO()).vectorFueContagiadoAlMover(nombreUbicacion,vector.id?.toInt()!!,v.id?.toInt()!!))
-                FeedServiceImpl(FeedMongoDAO()).agregarEvento(EventoFactory().eventoPorArriboYContagio( nombreUbicacion,vectorId))
+                FeedServiceImpl(FeedMongoDAO()).agregarEvento(EventoFactory.eventoPorArriboYContagio( nombreUbicacion,vectorId))
             }
-            FeedServiceImpl(FeedMongoDAO()).agregarEvento(EventoFactory().eventoPorArribo(ubicacionInicial, nombreUbicacion,vectorId))
+            FeedServiceImpl(FeedMongoDAO()).agregarEvento(EventoFactory.eventoPorArribo(ubicacionInicial, nombreUbicacion,vectorId))
         }
     }
 
