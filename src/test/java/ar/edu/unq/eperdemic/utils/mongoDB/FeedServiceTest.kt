@@ -2,6 +2,7 @@ package ar.edu.unq.eperdemic.utils.mongoDB
 
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.modelo.evento.Accion
 import ar.edu.unq.eperdemic.modelo.evento.Evento
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
 import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
@@ -45,7 +46,6 @@ class FeedServiceTest {
 
     @Test
     fun alBuscarLosEventosDeContagioDeUnPatogenoTieneUNSoloResultadoCuandoElPatogenoSoloSeVolvioPandemiaUnaUnicaVez(){
-
         //Una especie se vuelve pandemia se encuentra presenta en mas de la mitad de las locaciones
         val jamaica = ubicacionService.crearUbicacion("Jamaica")
         val babilonia = ubicacionService.crearUbicacion("Babilonia")
@@ -64,9 +64,12 @@ class FeedServiceTest {
         vectorService.infectar(vectorJamaiquino, especie)
         vectorService.infectar(vectorBabilonico, especie)
         val result = feedService.feedPatogeno(patogenoModel.tipo )
-        val unicoEvento = result.get(0)
-        Assert.assertEquals(1, result.size)
-        Assert.assertTrue(unicoEvento is Evento)
+        val eventosPandemia = result.filter{it.accionQueLoDesencadena == Accion.PATOGENO_ES_PANDEMIA.name}
+        val unicoEventoPandemia = eventosPandemia.get(0)
+        Assert.assertEquals(3, result.size)
+        Assert.assertEquals(1, eventosPandemia.size)
+        Assert.assertTrue(unicoEventoPandemia is Evento)
+        Assert.assertTrue(patogenoService.esPandemia(especie.id!!))
     }
 
     @After
