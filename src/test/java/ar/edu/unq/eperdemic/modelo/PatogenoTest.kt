@@ -1,5 +1,6 @@
 package ar.edu.unq.eperdemic.modelo
 
+import ar.edu.unq.eperdemic.services.MegalodonService
 import org.junit.Assert
 import org.junit.Test
 
@@ -27,5 +28,7 @@ class PatogenoTest {
         Assert.assertTrue(especieCreada2.mutacionesDesbloqueadas.isNotEmpty())
         Assert.assertEquals(2, especieCreada2.mutacionesDesbloqueadas.size)
         Assert.assertTrue(especieCreada2.mutacionesDesbloqueadas.containsAll(mutableSetOf(mutacion1, mutacion2)))
+
+        MegalodonService().eliminarTodo()
     }
 }
