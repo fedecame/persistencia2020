@@ -5,8 +5,8 @@ import ar.edu.unq.eperdemic.modelo.evento.EventoFactory
 import ar.edu.unq.eperdemic.modelo.exception.EspecieNotFoundRunTimeException
 import ar.edu.unq.eperdemic.persistencia.dao.EspecieDAO
 import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
+import ar.edu.unq.eperdemic.services.FeedService
 import ar.edu.unq.eperdemic.services.impl.FeedServiceImpl
-import ar.edu.unq.eperdemic.services.runner.FeedService
 import ar.edu.unq.eperdemic.services.runner.TransactionHibernate
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 
