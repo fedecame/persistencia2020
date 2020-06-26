@@ -63,4 +63,9 @@ class EventoTest {
         Assert.assertEquals("Corona", eventoMutacion.nombreEspecie)
         Assert.assertNull(eventoMutacion.ubicacionContagio)
     }
+
+    @Test
+    fun elLogDelEventoDeMutacionPorCrearUnaEspecieEsElIndicado(){
+        Assert.assertEquals("Se crea la especie Corona del patogeno BACTERIA ", eventoMutacion.log())
+    }
 }
