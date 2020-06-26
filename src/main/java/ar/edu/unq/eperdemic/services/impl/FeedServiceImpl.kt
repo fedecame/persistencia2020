@@ -14,7 +14,7 @@ class FeedServiceImpl(private var feedDAO: FeedMongoDAO) : FeedService {
     override fun feedPatogeno(tipoDePatogeno: String): List<Evento> = feedDAO.feedPatogeno(tipoDePatogeno)
 
     override fun feedVector(vectorId: Long): List<Evento> {
-        TODO("Not yet implemented")
+        return listOf()
     }
 
      override fun feedUbicacion(nombreDeUbicacion: String): List<Evento> {
