@@ -13,7 +13,7 @@ import ar.edu.unq.eperdemic.services.runner.FeedService
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 
 class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO, var feedService : FeedService = FeedServiceImpl(FeedMongoDAO())) : VectorService {
-    private val eventoFactory = EventoFactory()
+    private val eventoFactory = EventoFactory
 
     override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) {
         TransactionRunner.addHibernate().runTrx {

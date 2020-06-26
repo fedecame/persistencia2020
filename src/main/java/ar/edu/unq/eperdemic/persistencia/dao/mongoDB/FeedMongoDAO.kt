@@ -30,7 +30,7 @@ class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
                          eq("accionQueLoDesencadena", Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name)),
                     eq("tipoPatogeno", tipoPatogeno))
         )
-      val sort = Aggregates.sort(Indexes.descending("n"))
+      val sort = Aggregates.sort(Indexes.descending("fecha"))
       return aggregate(listOf(match, sort), Evento::class.java)
     }
 
@@ -56,7 +56,7 @@ class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
     override fun especieYaEstabaEnLaUbicacion(nombreUbicacion: String, tipoPatogenoDeLaEspecie: String, nombreEspecie : String): Boolean =
             find(and
                     (and
-                         (eq("nombreUbicacion", nombreUbicacion),
+                         (eq("ubicacionContagio", nombreUbicacion),
                           eq("accionQueLoDesencadena", Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name)),
                     (and
                          (eq("tipoPatogeno", tipoPatogenoDeLaEspecie),

@@ -45,7 +45,7 @@ class PruebaDeConceptoTest {
         patogenoService = PatogenoServiceImpl(HibernatePatogenoDAO(), HibernateEspecieDAO())
         vectorService = VectorServiceImpl(HibernateVectorDAO(), ubicacionDAO)
         hibernateData = HibernateDataService()
-        eventoFactory = EventoFactory()
+        eventoFactory = EventoFactory
 
         evento = eventoFactory.eventoContagioPorPandemia(TipoPatogeno.VIRUS.name, "un nombre de especie")
         dao.startTransaction()
@@ -140,7 +140,7 @@ class PruebaDeConceptoTest {
         vectorService.infectar(vectorBabilonico, especie)
         dao.startTransaction()
         repeat(15) {//Ya hay uno
-            dao.save(Evento(1, Arribo(), "otra accion", TipoPatogeno.VIRUS.name))//El mismo tipo de patogeno.
+            dao.save(Evento(Arribo(), "otra accion", TipoPatogeno.VIRUS.name))//El mismo tipo de patogeno.
         }
         dao.commit()
         var cantTotal = dao.findEq("tipoPatogeno", TipoPatogeno.VIRUS.name).size
@@ -196,15 +196,14 @@ class PruebaDeConceptoTest {
         vectorService.infectar(vectorJamaiquino, especie)
         vectorService.infectar(vectorBabilonico, especie)
         dao.startTransaction()
-        var n = 0
         repeat(15) {//Ya hay uno
-            dao.save(Evento(n++, Arribo(), "otra accion", TipoPatogeno.VIRUS.name))//El mismo tipo de patogeno.
+            dao.save(Evento(Arribo(), "otra accion", TipoPatogeno.VIRUS.name))//El mismo tipo de patogeno.
         }
         repeat(15) {
-            dao.save(Evento(++n, Arribo(), "alguna otra accion", TipoPatogeno.BACTERIA.name))//El mismo tipo de patogeno.
+            dao.save(Evento(Arribo(), "alguna otra accion", TipoPatogeno.BACTERIA.name))//El mismo tipo de patogeno.
         }
         repeat(15) {
-            dao.save(Evento(++n, Arribo(), "no me preguntes a mi, solo soy un string AH-ja", TipoPatogeno.HONGO.name))//El mismo tipo de patogeno.
+            dao.save(Evento(Arribo(), "no me preguntes a mi, solo soy un string AH-ja", TipoPatogeno.HONGO.name))//El mismo tipo de patogeno.
         }
         dao.commit()
         //Esto asi escrito me trae t0d0s los envento que haya sido generado por una Accion de Pandemia **O** Por Contagio por Primera vez) **Y** sea del tipo de patogeno Virus
@@ -216,6 +215,20 @@ class PruebaDeConceptoTest {
                                 Filters.eq("accionQueLoDesencadena", Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name)),
                         Filters.eq("tipoPatogeno", TipoPatogeno.VIRUS.name)))
         Assert.assertEquals(1, resultadoOR.size)
+    }
+
+    @Test
+    fun alCrearDosEventoLaFechaDelEvento1EsMayorQueLaDelEvento0(){
+        this.dropAll()
+        dao.startTransaction()
+        val evento0 = eventoFactory.eventoContagioPorPandemia("un tipo", "una especie")
+        val evento1 = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion("otro tipo", "Un lugar lejano", "una especie")
+        dao.save(evento0)
+        dao.save(evento1)
+        dao.commit()
+        val eventoRecuperado0 = dao.getByTipoPatogeno("un tipo").get(0)
+        val eventoRecuperado1 = dao.getByTipoPatogeno("otro tipo").get(0)
+        Assert.assertTrue(eventoRecuperado1!!.fecha > eventoRecuperado0!!.fecha)
     }
 
     @After

@@ -38,7 +38,7 @@ class FeedDAOTest {
         patogenoService = PatogenoServiceImpl(HibernatePatogenoDAO(), HibernateEspecieDAO())
         vectorService = VectorServiceImpl(HibernateVectorDAO(), ubicacionDAO)
         hibernateData = HibernateDataService()
-        eventoFactory = EventoFactory()
+        eventoFactory = EventoFactory
 
         evento = eventoFactory.eventoContagioPorPandemia(TipoPatogeno.VIRUS.name, "gripe")
         dao.startTransaction()
@@ -121,7 +121,6 @@ class FeedDAOTest {
         Assert.assertEquals(Accion.PATOGENO_ES_PANDEMIA.name, unicoEvento.accionQueLoDesencadena)
         Assert.assertTrue(unicoEvento.tipoEvento is Contagio)
         Assert.assertEquals(patogenoModel.tipo, unicoEvento.tipoPatogeno)
-        Assert.assertEquals(1, unicoEvento.n)
     }
 
     @Test
@@ -151,7 +150,6 @@ class FeedDAOTest {
         Assert.assertEquals(Accion.PATOGENO_ES_PANDEMIA.name, unicoEvento.accionQueLoDesencadena)
         Assert.assertTrue(unicoEvento.tipoEvento is Contagio)
         Assert.assertEquals(patogenoModel.tipo, unicoEvento.tipoPatogeno)
-        Assert.assertEquals(1, unicoEvento.n)
     }
 
     @Test
@@ -176,9 +174,8 @@ class FeedDAOTest {
         vectorService.crearVector(vectorBabilonico)
         vectorService.infectar(vectorJamaiquino, especie)
         dao.startTransaction()
-        var n = 0
         repeat(7) {
-            dao.save(Evento(n++, Contagio(), Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name, TipoPatogeno.VIRUS.name))//El mismo tipo de patogeno.
+            dao.save(Evento(Contagio(), Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name, TipoPatogeno.VIRUS.name))//El mismo tipo de patogeno.
         }
         dao.commit()
         val result = dao.feedPatogeno(TipoPatogeno.VIRUS.name)
@@ -191,16 +188,15 @@ class FeedDAOTest {
         val seis = result.get(5)
         val siete = result.get(6)
     //Esto se cambia por Date cuando decidamos el tipo de dato
-        Assert.assertEquals(7, result.size)
-        Assert.assertEquals(6, uno.n)
-        Assert.assertEquals(5, dos.n)
-        Assert.assertEquals(4, tres.n)
-        Assert.assertEquals(3, cuatro.n)
-        Assert.assertEquals(2, cinco.n)
-        //Uno de estos es el elemento del setup
-        Assert.assertEquals(1, seis.n)
-        Assert.assertEquals(0, siete.n)
 
+        Assert.assertEquals(7, result.size)
+
+        Assert.assertTrue(siete.fecha < seis.fecha)
+        Assert.assertTrue(seis.fecha < cinco.fecha)
+        Assert.assertTrue(cinco.fecha < cuatro.fecha)
+        Assert.assertTrue(cuatro.fecha < tres.fecha)
+        Assert.assertTrue(tres.fecha < dos.fecha)
+        Assert.assertTrue(dos.fecha < uno.fecha)
     }
 
     @Test
