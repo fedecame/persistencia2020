@@ -26,7 +26,10 @@ class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
         val match = Aggregates.match(//Aca falta la logica de mutacion
                 and(
                      or(
-                        eq("accionQueLoDesencadena", Accion.ESPECIE_CREADA.name),
+                        or(
+                           eq("accionQueLoDesencadena", Accion.ESPECIE_MUTADA.name),
+                           eq("accionQueLoDesencadena", Accion.ESPECIE_CREADA.name)
+                        ),
                         or(
                            eq("accionQueLoDesencadena", Accion.PATOGENO_ES_PANDEMIA.name),
                            eq("accionQueLoDesencadena", Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name)

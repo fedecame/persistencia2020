@@ -98,7 +98,7 @@ class Especie() {
         this.cantidadInfectadosParaADN -= cantADN * 5
     }
 
-    fun mutar(unaMutacion : Mutacion) {
+    fun mutar(unaMutacion : Mutacion) : Boolean {
         if (!this.puedeMutarEn(unaMutacion)) {
             throw EspecieNoCumpleRequisitosParaMutarException(this, unaMutacion)
         }
@@ -107,5 +107,6 @@ class Especie() {
         this.descontarAdn(unaMutacion.adnNecesario)
         this.desbloquearMutaciones(unaMutacion.mutacionesDesbloqueables)
         unaMutacion.mutarAtributoDeEspecie(this)
+        return this.puedeMutarEn(unaMutacion)
     }
 }
