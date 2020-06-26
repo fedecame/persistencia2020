@@ -1,5 +1,6 @@
 package ar.edu.unq.eperdemic.persistencia.dao
 
+import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
 
@@ -13,7 +14,7 @@ interface UbicacionDAO {
     //Entrega Neo4j
     fun conectar(ubicacion1: String, ubicacion2: String, tipoCamino: String)
     fun conectados(nombreDeUbicacion:String): List<Ubicacion>
-    fun mover(vector: Vector, nombreUbicacion:String)
+    fun mover(vector: Vector, nombreUbicacion:String) : List<Pair<Vector, Especie>>
     fun capacidadDeExpansion(vectorId: Long, movimientos:Int): Int
-    fun moverMasCorto(vector: Vector, ubicacion: Ubicacion)
+    fun moverMasCorto(vector: Vector, ubicacion: Ubicacion) : List<Pair<Vector, Especie>>
 }

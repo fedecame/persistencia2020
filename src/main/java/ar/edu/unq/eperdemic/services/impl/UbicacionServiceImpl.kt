@@ -1,13 +1,17 @@
 package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.estado.Infectado
+import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.modelo.evento.EventoFactory
 import ar.edu.unq.eperdemic.modelo.exception.ConectarMismaUbicacion
 import ar.edu.unq.eperdemic.modelo.exception.MoverMismaUbicacion
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
+import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jUbicacionDAO
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
@@ -85,10 +89,29 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
     }
 
     override fun moverMasCorto(vectorId: Long, nombreDeUbicacion: String) {
+        val feedService = FeedServiceImpl(FeedMongoDAO())
+        var infecciones : List<Pair<Vector, Especie>> = listOf()
         TransactionRunner.addNeo4j().addHibernate().runTrx {
             val vector = vectorDao.recuperar(vectorId.toInt())
             val ubicacion = HibernateUbicacionDao.recuperar(nombreDeUbicacion)
-            neo4jUbicacionDAO.moverMasCorto(vector, ubicacion)
+            infecciones = neo4jUbicacionDAO.moverMasCorto(vector, ubicacion)
+        }
+        // si se ejecuta esto es porque se movio y no exploto.
+        val especieDAO = HibernateEspecieDAO()
+        TransactionRunner.addHibernate().runTrx {
+            infecciones.forEach {
+                val tipoPatogenoDeLaEspecie = it.second.patogeno.tipo
+                val nombre_de_la_especie = it.second.nombre
+                val ubicacion = it.first.ubicacion
+                if (ubicacion !== null && !feedService.especieYaEstabaEnLaUbicacion(ubicacion.nombreUbicacion, tipoPatogenoDeLaEspecie, nombre_de_la_especie)) {
+                    feedService.agregarEvento(EventoFactory.eventoContagioPorPrimeraVezEnUbicacion(tipoPatogenoDeLaEspecie, ubicacion.nombreUbicacion, nombre_de_la_especie))
+                }
+//            val especieDB = especieDAO.recuperarEspecie(it.second.id!!)
+                if (especieDAO.esPandemia(it.second)) { // agregar validacion de que sea la primera vez que es pandemia
+                    feedService.agregarEvento(EventoFactory.eventoContagioPorPandemia(tipoPatogenoDeLaEspecie, nombre_de_la_especie))
+                }
+                feedService.agregarEvento(EventoFactory.eventoContagioNormal(vectorId, it.first.id!!, ubicacion?.nombreUbicacion))
+            }
         }
     }
 

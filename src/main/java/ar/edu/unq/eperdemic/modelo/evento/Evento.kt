@@ -22,7 +22,8 @@ class Evento {
    //Seguramente aca faltan todos los otros atributos de los eventos, independientemente de que se usen o no.
 
     constructor() {}
-    constructor(_tipoEvento : TipoEvento, _accion : String, _tipoPatogeno : String, _nombreEspecie : String? = null, _nombreUbicacion : String? = null) {
+    constructor(_tipoEvento : TipoEvento, _accion : String, _tipoPatogeno : String? = null, _nombreEspecie : String? = null, _nombreUbicacion : String? = null,
+                _idVectorInfectado : Long? = null, _idVectorQueInfecta : Long? = null, _ubicacionOrigen : String? = null, _ubicacionDestino : String? = null) {
         this.tipoEvento = _tipoEvento
         this.accionQueLoDesencadena = _accion
         this.tipoPatogeno = _tipoPatogeno
@@ -30,6 +31,10 @@ class Evento {
         this.ubicacionContagio = _nombreUbicacion
         this.fecha = DateTimeFormatter.ISO_INSTANT.format(Instant.now())
         this.mensaje = this.log()
+        this.idVectorinfectado = _idVectorInfectado
+        this.idVectorQueInfecta = _idVectorQueInfecta
+        this.ubicacionOrigen = _ubicacionOrigen
+        this.ubicacionDestino = _ubicacionDestino
    }
 
     fun log() : String = tipoEvento!!.log(this)

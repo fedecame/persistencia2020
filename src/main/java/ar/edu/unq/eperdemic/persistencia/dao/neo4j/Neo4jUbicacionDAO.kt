@@ -1,5 +1,6 @@
 package ar.edu.unq.eperdemic.persistencia.dao.neo4j
 
+import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.TipoCamino
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
@@ -44,8 +45,9 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
         return tempListNombres
     }
 
-    override fun mover(vector: Vector, nombreUbicacion: String) {
+    override fun mover(vector: Vector, nombreUbicacion: String) : List<Pair<Vector, Especie>> {
 //        TODO("Should not be implemented")
+        return listOf()
     }
 
     fun esAledaña(nombreDeUbicacion: String, uPosibleAledaña: String) {
@@ -110,7 +112,7 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
         return result.single().get("result").asInt()
     }
 
-    override fun moverMasCorto(vector: Vector, ubicacion: Ubicacion) {
+    override fun moverMasCorto(vector: Vector, ubicacion: Ubicacion) : List<Pair<Vector, Especie>> {
         val transaction = TransactionNeo4j.currentTransaction
         val tiposDeCaminosPosibles = vector.tipo.posiblesCaminos.map { it.name }
         val tiposDeLaRelacion = myFormatter.caminosFormateados(tiposDeCaminosPosibles)
@@ -135,10 +137,14 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
             throw UbicacionNoAlcanzable()
         }
 
-        this.moverPorUbicaciones(vector, nombreUbicaciones.drop(1))
+        return this.moverPorUbicaciones(vector, nombreUbicaciones.drop(1))
     }
 
-    private fun moverPorUbicaciones(vector: Vector, nombresDeUbicaciones: List<String>) {
-        nombresDeUbicaciones.forEach { hibernateUbicacionDAO.mover(vector, it) }
+    private fun moverPorUbicaciones(vector: Vector, nombresDeUbicaciones: List<String>) : List<Pair<Vector, Especie>> {
+        var infecciones : List<Pair<Vector, Especie>> = listOf()
+        nombresDeUbicaciones.forEach {
+            infecciones += hibernateUbicacionDAO.mover(vector, it)
+        }
+        return infecciones
     }
 }
