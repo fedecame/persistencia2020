@@ -265,7 +265,7 @@ class FeedServiceTest {
     }
 
     @Test
-    fun `mover un vector infectado a una ubicacion con un vector sano genera 3 eventos(2 arribos y 1 contagio feedVector)`() {
+    fun `mover un vector infectado a una ubicacion con un vector sano genera 3 eventos(2 arribos y 2 contagio feedVector)`() {
         val patogeno = Patogeno()
         patogeno.tipo = "virus"
         patogeno.factorContagioHumano= 1000
@@ -288,12 +288,12 @@ class FeedServiceTest {
         vectorService.crearVector(vectorSano)
         ubicacionService.mover(vectorInfectado.id!!.toInt(), kongo.nombreUbicacion)
         val eventosDelQueInfecta = feedService.feedVector(vectorInfectado.id!!)
-        Assert.assertEquals(2, eventosDelQueInfecta.size)
+        Assert.assertEquals(3, eventosDelQueInfecta.size)
         var accionesDelFeed = eventosDelQueInfecta.map{ it.accionQueLoDesencadena }
         Assert.assertTrue(accionesDelFeed.containsAll(listOf(Accion.ARRIBO.name, Accion.CONTAGIO_NORMAL.name)))
 
         val eventosDelQueEsInfectado = feedService.feedVector(vectorSano.id!!)
-        Assert.assertEquals(1, eventosDelQueEsInfectado.size)
+        Assert.assertEquals(2, eventosDelQueEsInfectado.size)
         accionesDelFeed = eventosDelQueEsInfectado.map{ it.accionQueLoDesencadena }
         Assert.assertTrue(accionesDelFeed.contains(Accion.CONTAGIO_NORMAL.name))
     }
