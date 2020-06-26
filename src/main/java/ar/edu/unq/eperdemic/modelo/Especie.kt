@@ -99,7 +99,8 @@ class Especie() {
     }
 
     fun mutar(unaMutacion : Mutacion) : Boolean {
-        if (!this.puedeMutarEn(unaMutacion)) {
+        val puedeMutar = this.puedeMutarEn(unaMutacion)
+        if (!puedeMutar) {
             throw EspecieNoCumpleRequisitosParaMutarException(this, unaMutacion)
         }
 
@@ -107,6 +108,6 @@ class Especie() {
         this.descontarAdn(unaMutacion.adnNecesario)
         this.desbloquearMutaciones(unaMutacion.mutacionesDesbloqueables)
         unaMutacion.mutarAtributoDeEspecie(this)
-        return this.puedeMutarEn(unaMutacion)
+        return puedeMutar
     }
 }
