@@ -9,6 +9,7 @@ import ar.edu.unq.eperdemic.modelo.exception.ConectarMismaUbicacion
 import ar.edu.unq.eperdemic.modelo.exception.MoverMismaUbicacion
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEstadisticasDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
@@ -24,7 +25,8 @@ import ar.edu.unq.eperdemic.utility.random.RandomMasterImpl
 
 class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionService {
     var vectorDao = HibernateVectorDAO()
-//    var vectorService: VectorService = VectorServiceImpl(vectorDao, HibernateUbicacionDAO())
+    var estadisticasDao= HibernateEstadisticasDAO()
+    var vectorService: VectorService = VectorServiceImpl(vectorDao, HibernateUbicacionDAO())
     var randomGenerator: RandomMaster = RandomMasterImpl
     var neo4jUbicacionDAO=Neo4jUbicacionDAO()
     val feedService = FeedServiceImpl(FeedMongoDAO())

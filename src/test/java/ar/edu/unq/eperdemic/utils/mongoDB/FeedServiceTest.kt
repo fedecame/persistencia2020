@@ -1,9 +1,14 @@
 package ar.edu.unq.eperdemic.utils.mongoDB
 
+import ar.edu.unq.eperdemic.estado.Infectado
+import ar.edu.unq.eperdemic.estado.Sano
+import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.evento.Accion
 import ar.edu.unq.eperdemic.modelo.evento.Evento
+import ar.edu.unq.eperdemic.modelo.evento.EventoFactory
+import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.Contagio
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
 import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
 import ar.edu.unq.eperdemic.services.*
@@ -70,6 +75,74 @@ class FeedServiceTest {
         Assert.assertEquals(1, eventosPandemia.size)
         Assert.assertTrue(unicoEventoPandemia is Evento)
         Assert.assertTrue(patogenoService.esPandemia(especie.id!!))
+    }
+
+
+    @Test
+    fun vectorInfectadoMueveAUbicacionDondeHayVectoresLosInfectaYSeDisparaEvento(){
+        var patogeno = Patogeno()
+        patogeno.tipo = ""
+        patogeno.factorContagioHumano= 1000
+        var especie1 = Especie()
+        especie1.cantidadInfectadosParaADN = 42
+        especie1.nombre = "soyUnaEspecie"
+        especie1.paisDeOrigen = "Masachuset"
+        especie1.patogeno = patogeno
+        var vector= Vector()
+        vector.agregarEspecie(especie1)
+        vector.tipo=Humano()
+        vector.estado= Infectado()
+        var vector1= Vector()
+        vector1.tipo=Humano()
+        vector1.estado= Sano()
+        var ubicacionCreada = ubicacionService.crearUbicacion("Florencio Varela")
+        vector.ubicacion=ubicacionCreada
+        vectorService.crearVector(vector)
+        var vectorCreado=vectorService.recuperarVector(1)
+        Assert.assertEquals(vectorCreado.ubicacion?.nombreUbicacion,"Florencio Varela")
+       vector1.ubicacion= ubicacionService.crearUbicacion("Quilmes")
+        vectorService.crearVector(vector1)
+        ubicacionService.conectar("Florencio Varela", "Quilmes", "Terrestre")
+        ubicacionService.conectar("Quilmes", "Florencio Varela", "Terrestre")
+        FeedServiceImpl(FeedMongoDAO()).agregarEvento(EventoFactory.eventoPorContagio("Quilmes", vector.id?.toInt()!!,vector1.id?.toInt()!!))
+        ubicacionService.mover(1,"Quilmes")
+        val result = feedService.feedUbicacion("Quilmes")
+        Assert.assertEquals(2, result.size)
+        Assert.assertEquals(result.get(0).accionQueLoDesencadena,"Vector_Contagia_Al_Mover")
+    }
+    @Test
+    fun ubicacionRecibeUnArriboYSeLanzaUnEvento() {
+        var vector1= Vector()
+        vector1.tipo=Humano()
+        vector1.estado= Sano()
+        vector1.ubicacion= ubicacionService.crearUbicacion("Florencio Varela")
+        vectorService.crearVector(vector1)
+        ubicacionService.crearUbicacion("Quilmes")
+        ubicacionService.conectar("Florencio Varela","Quilmes","Terrestre")
+        ubicacionService.mover(vector1.id?.toInt()!!,"Quilmes")
+        val result = feedService.feedUbicacion("Quilmes")
+        Assert.assertEquals(1, result.size)
+        Assert.assertEquals(result.get(0).nombreUbicacion,"Quilmes")
+    }
+    @Test
+    fun ubicacionRecibeDosArribos_SeLanzanDosEvento_ElUltimoQueSeLanzaEsElPrimero () {
+        var vector1= Vector()
+        vector1.tipo=Humano()
+        vector1.estado= Sano()
+        vector1.ubicacion= ubicacionService.crearUbicacion("Florencio Varela")
+        var vector2= Vector()
+        vector2.tipo=Humano()
+        vector2.estado= Sano()
+        vector2.ubicacion= ubicacionService.recuperarUbicacion("Florencio Varela")
+        vectorService.crearVector(vector1)
+        vectorService.crearVector(vector2)
+        ubicacionService.crearUbicacion("Quilmes")
+        ubicacionService.conectar("Florencio Varela","Quilmes","Terrestre")
+        ubicacionService.mover(vector1.id?.toInt()!!,"Quilmes")
+        ubicacionService.mover(vector2.id?.toInt()!!,"Quilmes")
+        val result = feedService.feedUbicacion("Quilmes")
+        Assert.assertEquals(2, result.size)
+        Assert.assertEquals(result.get(0).idVector,2)
     }
 
     @After

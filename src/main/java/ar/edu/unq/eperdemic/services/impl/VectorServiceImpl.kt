@@ -37,17 +37,6 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
                 feedService.agregarEvento(EventoFactory.eventoContagioNormal(vectorInfectado.id!!, it.first.id!!, ubicacion?.nombreUbicacion))
             }
         }
-
-//        //Esto hay que ponerlo en otro lado?
-//        val nombreUbicacion = vectorInfectado.ubicacion!!.nombreUbicacion
-//        val especies = vectorInfectado.especies
-//        especies.forEach {
-//            val tipoPatogenoDeLaEspecie = it.patogeno.tipo
-//            val nombre_de_la_especie = it.nombre
-//            if (!feedService.especieYaEstabaEnLaUbicacion(nombreUbicacion, tipoPatogenoDeLaEspecie, nombre_de_la_especie)) {
-//                feedService.agregarEvento(eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(tipoPatogenoDeLaEspecie, nombreUbicacion, nombre_de_la_especie))
-//            }
-//        }
     }
 
     override fun infectar(vector: Vector, especie: Especie) {
@@ -73,15 +62,6 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
                 feedService.agregarEvento(EventoFactory.eventoContagioNormal(null, infeccion.first().first.id!!, ubicacion?.nombreUbicacion))
             }
         }
-
-
-
-//        val tipoPatogenoDeLaEspecie = especie.patogeno.tipo
-//        val nombre_de_la_especie = especie.nombre
-//        val patogenoService = PatogenoServiceImpl(HibernatePatogenoDAO(), HibernateEspecieDAO())
-//        if(patogenoService.esPandemia(especie.id!!)){
-//            feedService.agregarEvento(eventoFactory.eventoContagioPorPandemia(tipoPatogenoDeLaEspecie, nombre_de_la_especie))
-//        }
     }
 
     override fun enfermedades(vectorId: Int): List<Especie> = TransactionRunner.addHibernate().runTrx { vectorDao.enfermedades(vectorId) }
