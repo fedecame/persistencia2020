@@ -14,18 +14,22 @@ abstract class TipoVector(){
         return posiblesCaminos
     }
 
-    fun contagiamePor(vectorAContagiar: Vector, tipoDelContagiador: TipoVector, especiesContagiador: List<Especie>){
+    fun contagiamePor(vectorAContagiar: Vector, tipoDelContagiador: TipoVector, especiesContagiador: List<Especie>) : List<Pair<Vector, Especie>> {
+        var vectoresYEspecies = listOf<Pair<Vector, Especie>>()
         if(this.puedeSerContagiadoPor(tipoDelContagiador)) {
             especiesContagiador.forEach{
-                especie -> this.infectameSiCorresponde(vectorAContagiar, especie)
+                especie -> vectoresYEspecies += this.infectameSiCorresponde(vectorAContagiar, especie)
             }
         }
+        return vectoresYEspecies
     }
 
-    fun infectameSiCorresponde(vectorAContagiar: Vector, especie: Especie) {
+    fun infectameSiCorresponde(vectorAContagiar: Vector, especie: Especie) : List<Pair<Vector, Especie>> {
+        var vectorYEspecie = listOf<Pair<Vector, Especie>>()
         if (this.porcentajeDeContagioExitoso(especie) >= randomGenerator.giveMeARandonNumberBeetween(1.0,100.0)) {
-            vectorAContagiar.infectarse(especie)
+            vectorYEspecie += vectorAContagiar.infectarse(especie)
         }
+        return vectorYEspecie
     }
 
     fun porcentajeDeContagioExitoso(especie: Especie): Double = randomGenerator.giveMeARandonNumberBeetween(1.0,10.0) + this.factorContagio(especie)

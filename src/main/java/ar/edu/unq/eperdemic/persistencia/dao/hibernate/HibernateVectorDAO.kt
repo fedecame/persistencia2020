@@ -2,11 +2,15 @@ package ar.edu.unq.eperdemic.persistencia.dao.hibernate
 
 import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Vector
+import ar.edu.unq.eperdemic.modelo.evento.EventoFactory
 import ar.edu.unq.eperdemic.modelo.exception.IDVectorNoEncontradoException
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
+import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
+import ar.edu.unq.eperdemic.services.impl.FeedServiceImpl
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 
 class HibernateVectorDAO :  HibernateDAO<Vector>(Vector::class.java), VectorDAO  {
+    val feedService = FeedServiceImpl(FeedMongoDAO())
 
     override fun crear(vector : Vector): Vector {
         super.guardar(vector)
@@ -40,7 +44,8 @@ class HibernateVectorDAO :  HibernateDAO<Vector>(Vector::class.java), VectorDAO 
     }
 
     override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) {
-        vectorInfectado.contagiar(vectores)
+        val infecciones: List<Pair<Vector, Especie>> = vectorInfectado.contagiar(vectores)
+
         for(vectorAContagiar in vectores){
             super.actualizar(vectorAContagiar)
         }

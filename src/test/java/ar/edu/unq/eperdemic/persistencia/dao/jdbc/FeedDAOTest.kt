@@ -38,7 +38,7 @@ class FeedDAOTest {
         patogenoService = PatogenoServiceImpl(HibernatePatogenoDAO(), HibernateEspecieDAO())
         vectorService = VectorServiceImpl(HibernateVectorDAO(), ubicacionDAO)
         hibernateData = HibernateDataService()
-        eventoFactory = EventoFactory()
+        eventoFactory = EventoFactory
 
         evento = eventoFactory.eventoContagioPorPandemia(TipoPatogeno.VIRUS.name, "gripe")
         dao.startTransaction()

@@ -11,7 +11,7 @@ class EventoFactoryTest {
 
     @Before
     fun setUp(){
-        sut = EventoFactory()
+        sut = EventoFactory
     }
 
     @Test

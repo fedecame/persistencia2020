@@ -9,12 +9,10 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
 import ar.edu.unq.eperdemic.services.VectorService
-import ar.edu.unq.eperdemic.services.runner.FeedService
+import ar.edu.unq.eperdemic.services.FeedService
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 
 class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO, var feedService : FeedService = FeedServiceImpl(FeedMongoDAO())) : VectorService {
-    private val eventoFactory = EventoFactory()
-
     override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) {
         TransactionRunner.addHibernate().runTrx {
             vectorDao.contagiar(vectorInfectado, vectores)
@@ -26,7 +24,10 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
             val tipoPatogenoDeLaEspecie = it.patogeno.tipo
             val nombre_de_la_especie = it.nombre
             if (!feedService.especieYaEstabaEnLaUbicacion(nombreUbicacion, tipoPatogenoDeLaEspecie, nombre_de_la_especie)) {
-                feedService.agregarEvento(eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(tipoPatogenoDeLaEspecie, nombreUbicacion, nombre_de_la_especie))
+                feedService.agregarEvento(EventoFactory.eventoContagioPorPrimeraVezEnUbicacion(tipoPatogenoDeLaEspecie, nombreUbicacion, nombre_de_la_especie))
+//                feedService.agregarEvento(eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(tipoPatogenoDeLaEspecie, nombreUbicacion, nombre_de_la_especie, vectorInfectado, vectores))
+            } else {
+//                feedService.agregarEvento(eventoFactory.eventoContagioNormal(tipoPatogenoDeLaEspecie, nombreUbicacion, nombre_de_la_especie, vectorInfectado, vectores))
             }
         }
     }
@@ -39,7 +40,7 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
         val nombre_de_la_especie = especie.nombre
         val patogenoService = PatogenoServiceImpl(HibernatePatogenoDAO(), HibernateEspecieDAO())
         if(patogenoService.esPandemia(especie.id!!)){
-            feedService.agregarEvento(eventoFactory.eventoContagioPorPandemia(tipoPatogenoDeLaEspecie, nombre_de_la_especie))
+            feedService.agregarEvento(EventoFactory.eventoContagioPorPandemia(tipoPatogenoDeLaEspecie, nombre_de_la_especie))
         }
     }
 
