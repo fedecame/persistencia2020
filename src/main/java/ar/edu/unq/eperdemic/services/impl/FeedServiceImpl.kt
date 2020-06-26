@@ -33,7 +33,7 @@ class FeedServiceImpl(private var feedDAO: FeedMongoDAO) : FeedService {
     }
 
     override fun especieYaEstabaEnLaUbicacion(nombreUbicacion: String, tipoPatogenoDeLaEspecie: String, nombreDeLaEspecie: String): Boolean = feedDAO.especieYaEstabaEnLaUbicacion(nombreUbicacion, tipoPatogenoDeLaEspecie, nombreDeLaEspecie)
-     fun vectorFueContagiadoAlMover(nombreUbicacion: String, idVectorInfectado:Int, idVectorAInfectar: Int): Boolean = feedDAO.vectorFueContagiadoAlMover(nombreUbicacion, idVectorInfectado, idVectorAInfectar)
+    fun vectorFueContagiadoAlMover(nombreUbicacion: String, idVectorInfectado:Int, idVectorAInfectar: Int): Boolean = feedDAO.vectorFueContagiadoAlMover(nombreUbicacion, idVectorInfectado, idVectorAInfectar)
 
 
 
