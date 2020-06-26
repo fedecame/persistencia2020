@@ -42,11 +42,14 @@ class Vector {
         this.cambiarEstado(Sano())
     }
 
-    fun infectarse(especie: Especie){
+    fun infectarse(especie: Especie) : List<Pair<Vector, Especie>> {
+        var vectorYEspecie = listOf<Pair<Vector, Especie>>()
         if (especies.find { it.id == especie.id } == null) {
             this.agregarEspecie(especie)
             tipo.agregarInfectado(especie)
+            vectorYEspecie = listOf(Pair(this, especie))
         }
+        return vectorYEspecie
     }
 
     private fun cambiarEstado(unEstado: EstadoVector) {
@@ -58,11 +61,11 @@ class Vector {
         this.cambiarEstado(Infectado())
     }
 
-    fun contagiarsePor(vectorQueContagia: Vector) {
-        tipo.contagiamePor(this, vectorQueContagia.tipo, vectorQueContagia.especies.toList())
+    fun contagiarsePor(vectorQueContagia: Vector) : List<Pair<Vector, Especie>> {
+        return tipo.contagiamePor(this, vectorQueContagia.tipo, vectorQueContagia.especies.toList())
     }
 
-    fun contagiar(vectoresAContagiar: List<Vector>) {
-        estado.contagiar(this, vectoresAContagiar)
+    fun contagiar(vectoresAContagiar: List<Vector>) : List<Pair<Vector, Especie>> { // retorna los vectores que se infectaron
+        return estado.contagiar(this, vectoresAContagiar)
     }
 }

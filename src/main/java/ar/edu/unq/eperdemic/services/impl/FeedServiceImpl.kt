@@ -2,7 +2,7 @@ package ar.edu.unq.eperdemic.services.impl
 
 import ar.edu.unq.eperdemic.modelo.evento.Evento
 import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
-import ar.edu.unq.eperdemic.services.runner.FeedService
+import ar.edu.unq.eperdemic.services.FeedService
 
 class FeedServiceImpl(private var feedDAO: FeedMongoDAO) : FeedService {
 
