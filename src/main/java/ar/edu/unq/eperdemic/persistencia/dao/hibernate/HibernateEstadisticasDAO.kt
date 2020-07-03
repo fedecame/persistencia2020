@@ -35,7 +35,7 @@ class HibernateEstadisticasDAO : EstadisticasDAO {
         val session = TransactionHibernate.currentSession
         val query = session!!.createNativeQuery(hql)
         query.setParameter("nombreUbicacion", nombreUbicacion)
-        return query.singleResult.toString()
+        return query.uniqueResultOptional().orElseGet { "" }.toString()
     }
 
     override fun especieLider(): Especie {

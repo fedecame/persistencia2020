@@ -17,11 +17,12 @@ class VectorFrontendDTOTest {
     lateinit var vectorP : Vector
     lateinit var vectorA : Vector
     lateinit var vectorI : Vector
-    lateinit var ubicacion : String
+    lateinit var ubicacion : Ubicacion
 
     @Before
     fun setUp(){
-        ubicacion = "Narnia"
+        ubicacion = Ubicacion()
+        ubicacion.nombreUbicacion = "Narnia"
         vectorDTOA = VectorFrontendDTO(VectorFrontendDTO.TipoDeVector.Animal, ubicacion)
         vectorDTOI = VectorFrontendDTO(VectorFrontendDTO.TipoDeVector.Insecto, ubicacion)
         vectorDTOP =  VectorFrontendDTO(VectorFrontendDTO.TipoDeVector.Persona, ubicacion)

@@ -1,6 +1,7 @@
 package ar.edu.unq.eperdemic.modelo
 
 import ar.edu.unq.eperdemic.modelo.exception.EspecieNoCumpleRequisitosParaMutarException
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import org.hibernate.annotations.Cascade
 import javax.persistence.*
 
@@ -12,6 +13,7 @@ class Especie() {
     var id : Int? = null
     @ManyToOne()
     @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    @JsonManagedReference
     lateinit var patogeno: Patogeno
     lateinit var nombre: String
     lateinit var paisDeOrigen: String

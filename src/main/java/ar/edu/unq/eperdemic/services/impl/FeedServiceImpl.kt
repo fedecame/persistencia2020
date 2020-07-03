@@ -26,9 +26,7 @@ class FeedServiceImpl(private var feedDAO: FeedMongoDAO) : FeedService {
     }
 
     override fun agregarEvento(evento: Evento): Evento {
-        feedDAO.startTransaction()
         feedDAO.save(evento)
-        feedDAO.commit()
         return evento
     }
 

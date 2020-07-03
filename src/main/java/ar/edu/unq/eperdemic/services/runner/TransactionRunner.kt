@@ -1,7 +1,15 @@
 package ar.edu.unq.eperdemic.services.runner
 
-object TransactionRunner{
+class TransactionRunner{
     var transactions: MutableList<Transaction> = mutableListOf()
+
+
+    companion object{
+        fun addHibernate(): TransactionRunner = TransactionRunner().addHibernate()
+
+        fun addNeo4j() : TransactionRunner = TransactionRunner().addNeo4j()
+
+    }
 
     private fun addIf(transaction: Transaction): TransactionRunner {
         if (!this.isThere(transaction)) {
@@ -27,9 +35,9 @@ object TransactionRunner{
         transactions = mutableListOf()
     }
 
-    fun addHibernate(): TransactionRunner = this.addIf(TransactionHibernate)
+    fun addHibernate(): TransactionRunner = this.addIf(TransactionHibernate())
 
-    fun addNeo4j() : TransactionRunner = this.addIf(TransactionNeo4j)
+    fun addNeo4j() : TransactionRunner = this.addIf(TransactionNeo4j())
 
     fun <T> runTrx(bloque: () -> T): T {
         try {
@@ -38,6 +46,7 @@ object TransactionRunner{
             this.commit()
             return resultado
         } catch (e: RuntimeException) {
+            e.printStackTrace()
             this.rollback()
             throw e
         } finally {

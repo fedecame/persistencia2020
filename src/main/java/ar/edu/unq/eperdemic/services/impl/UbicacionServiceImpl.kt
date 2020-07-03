@@ -143,30 +143,37 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
         TransactionRunner.addNeo4j().addHibernate().runTrx {
             vector = vectorDao.recuperar(vectorId.toInt())
             val ubicacion = HibernateUbicacionDao.recuperar(nombreDeUbicacion)
-            parInfeccionesUbicaciones = neo4jUbicacionDAO.moverMasCorto(vector, ubicacion)
-        }
-        // si se ejecuta esto es porque se movio y no exploto.
-        val especieDAO = HibernateEspecieDAO()
-        TransactionRunner.addHibernate().runTrx {
-            parInfeccionesUbicaciones.first.forEach {
-                val tipoPatogenoDeLaEspecie = it.second.patogeno.tipo
-                val nombre_de_la_especie = it.second.nombre
-                val ubicacion = it.first.ubicacion
-                if (ubicacion !== null && !feedService.especieYaEstabaEnLaUbicacion(ubicacion.nombreUbicacion, tipoPatogenoDeLaEspecie, nombre_de_la_especie)) {
-                    feedService.agregarEvento(EventoFactory.eventoContagioPorPrimeraVezEnUbicacion(tipoPatogenoDeLaEspecie, ubicacion.nombreUbicacion, nombre_de_la_especie))
-                }
-//            val especieDB = especieDAO.recuperarEspecie(it.second.id!!)
-                if (especieDAO.esPandemia(it.second)) { // agregar validacion de que sea la primera vez que es pandemia
-                    feedService.agregarEvento(EventoFactory.eventoContagioPorPandemia(tipoPatogenoDeLaEspecie, nombre_de_la_especie))
-                }
-                feedService.agregarEvento(EventoFactory.eventoContagioNormal(vectorId, it.first.id!!, ubicacion?.nombreUbicacion))
+            if(ubicacion.nombreUbicacion != nombreDeUbicacion){
+                parInfeccionesUbicaciones = neo4jUbicacionDAO.moverMasCorto(vector, ubicacion)
             }
         }
-        var ubicacionOrigenActual = vector.ubicacion!!.nombreUbicacion
-        parInfeccionesUbicaciones.second.forEach {
-            feedService.agregarEvento(EventoFactory.eventoArribo(vectorId, ubicacionOrigenActual, it.nombreUbicacion))
-            ubicacionOrigenActual = it.nombreUbicacion
+
+        if(vector.ubicacion?.nombreUbicacion != nombreDeUbicacion) {
+            // si se ejecuta esto es porque se movio y no exploto.
+            val especieDAO = HibernateEspecieDAO()
+            TransactionRunner.addHibernate().runTrx {
+                parInfeccionesUbicaciones.first.forEach {
+                    val tipoPatogenoDeLaEspecie = it.second.patogeno.tipo
+                    val nombre_de_la_especie = it.second.nombre
+                    val ubicacion = it.first.ubicacion
+                    if (ubicacion !== null && !feedService.especieYaEstabaEnLaUbicacion(ubicacion.nombreUbicacion, tipoPatogenoDeLaEspecie, nombre_de_la_especie)) {
+                        feedService.agregarEvento(EventoFactory.eventoContagioPorPrimeraVezEnUbicacion(tipoPatogenoDeLaEspecie, ubicacion.nombreUbicacion, nombre_de_la_especie))
+                    }
+//            val especieDB = especieDAO.recuperarEspecie(it.second.id!!)
+                    if (especieDAO.esPandemia(it.second)) { // agregar validacion de que sea la primera vez que es pandemia
+                        feedService.agregarEvento(EventoFactory.eventoContagioPorPandemia(tipoPatogenoDeLaEspecie, nombre_de_la_especie))
+                    }
+                    feedService.agregarEvento(EventoFactory.eventoContagioNormal(vectorId, it.first.id!!, ubicacion?.nombreUbicacion))
+                }
+            }
+            var ubicacionOrigenActual = vector.ubicacion!!.nombreUbicacion
+            parInfeccionesUbicaciones.second.forEach {
+                feedService.agregarEvento(EventoFactory.eventoArribo(vectorId, ubicacionOrigenActual, it.nombreUbicacion))
+                ubicacionOrigenActual = it.nombreUbicacion
+            }
+
         }
+
     }
 
     override fun capacidadDeExpansion(vectorId: Long, movimientos: Int): Int {

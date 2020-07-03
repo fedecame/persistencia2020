@@ -20,20 +20,18 @@ class EstadisticasServiceImpl(private var estadisticasDAO: EstadisticasDAO) : Es
 
     override fun lideres(): MutableList<Especie> = TransactionRunner.addHibernate().runTrx { estadisticasDAO.lideres() }
 
-    override fun reporteDeContagios(nombreUbicacion: String): ReporteDeContagios = ReporteDeContagios(this.vectoresPresentes(nombreUbicacion), this.vectoresInfectados(nombreUbicacion), this.especieQueInfectaAMasVectoresEn(nombreUbicacion))
+    override fun reporteDeContagios(nombreUbicacion: String): ReporteDeContagios {
+        return TransactionRunner.addHibernate().runTrx {
+            ReporteDeContagios(this.vectoresPresentes(nombreUbicacion), this.vectoresInfectados(nombreUbicacion), this.especieQueInfectaAMasVectoresEn(nombreUbicacion))
+        }
+    }
 
-    private fun vectoresPresentes(nombreUbicacion: String): Int = TransactionRunner.addHibernate().runTrx { estadisticasDAO.vectoresPresentes(nombreUbicacion) }
+    private fun vectoresPresentes(nombreUbicacion: String): Int = estadisticasDAO.vectoresPresentes(nombreUbicacion)
 
-    private fun vectoresInfectados(nombreUbicacion: String): Int = TransactionRunner.addHibernate().runTrx { estadisticasDAO.vectoresInfectados(nombreUbicacion) }
+    private fun vectoresInfectados(nombreUbicacion: String): Int = estadisticasDAO.vectoresInfectados(nombreUbicacion)
 
     private fun especieQueInfectaAMasVectoresEn(nombreUbicacion: String): String {
-        var res: String = ""
-        try {
-            TransactionRunner.addHibernate().runTrx { res = estadisticasDAO.especieQueInfectaAMasVectoresEn(nombreUbicacion) }
-        } catch (e: NoResultException) {
-            res = ""
-        }
-        return res
+        return estadisticasDAO.especieQueInfectaAMasVectoresEn(nombreUbicacion)
     }
 }
 

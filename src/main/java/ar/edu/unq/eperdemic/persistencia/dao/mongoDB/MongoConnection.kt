@@ -15,7 +15,7 @@ import org.bson.codecs.pojo.PojoCodecProvider
  *
  * This singleton ensures that only one instance of MongoClient ever exists
  */
-class MongoConnection {
+object MongoConnection {
     var client:MongoClient
     var dataBase: MongoDatabase
     var session:ClientSession? = null
@@ -39,7 +39,7 @@ class MongoConnection {
         closeSession()
     }
 
-    protected fun closeSession(){
+    fun closeSession(){
         session?.close()
         session = null
     }

@@ -131,11 +131,11 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
         ))
 
         lateinit var nombreUbicaciones: List<String>
-        try {
-            nombreUbicaciones = caminoMasCorto.single().get("p").asPath().nodes().map { it.get("nombre").toString().drop(1).dropLast(1) }
-        } catch (err: Throwable) {
-            throw UbicacionNoAlcanzable()
-        }
+try {
+    nombreUbicaciones = caminoMasCorto.single().get("p").asPath().nodes().map { it.get("nombre").toString().drop(1).dropLast(1) }
+} catch (err: Throwable) {
+    throw UbicacionNoAlcanzable()
+}
 
         return this.moverPorUbicaciones(vector, nombreUbicaciones.drop(1))
     }

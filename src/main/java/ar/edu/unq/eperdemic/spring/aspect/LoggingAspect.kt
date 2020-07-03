@@ -1,8 +1,10 @@
 package ar.edu.unq.eperdemic.spring.aspect
 
+import org.aspectj.lang.JoinPoint
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
+import org.aspectj.lang.annotation.Before
 import org.aspectj.lang.reflect.MethodSignature
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -29,9 +31,9 @@ class LoggingAspect {
     // in order for the real method to be called
 
     //    @Around("@annotation(LogEntryAndArguments)")
-    @Around("execution(public * ar.edu.unq.eperdemic.spring.controllers.*.*(..)))")
+    @Before("execution(public * ar.edu.unq.eperdemic.spring.controllers.*.*(..)))")
     @Throws(Throwable::class)
-    fun logEntryAndArguementsAnnotation(proceedingJoinPoint: ProceedingJoinPoint): Any {
+    fun logEntryAndArguementsAnnotation(proceedingJoinPoint: JoinPoint) {
 
         val userName = currentUsername
         val method = getMethod(proceedingJoinPoint)
@@ -39,10 +41,10 @@ class LoggingAspect {
         val arguments = getArguments(proceedingJoinPoint)
 
         LOGGER.info("///////// \n  user {} called {}  at {}  \n with arguments: \n {} \n /////////", userName, method, timeStamp, arguments)
-        return proceedingJoinPoint.proceed()
+//        if (proceedingJoinPoint.proceed() != null) {return proceedingJoinPoint.proceed()} else {return null}
     }
 
-    private fun getArguments(proceedingJoinPoint: ProceedingJoinPoint): String {
+    private fun getArguments(proceedingJoinPoint: JoinPoint): String {
         val sb = StringBuilder()
 
         asList<Any>(*proceedingJoinPoint.args).stream().forEach { argument -> sb.append(" $argument") }
@@ -50,7 +52,7 @@ class LoggingAspect {
         return sb.toString()
     }
 
-    private fun getMethod(proceedingJoinPoint: ProceedingJoinPoint): String {
+    private fun getMethod(proceedingJoinPoint: JoinPoint): String {
         val methodSignature = proceedingJoinPoint.signature as MethodSignature
         return methodSignature.method.toString()
     }

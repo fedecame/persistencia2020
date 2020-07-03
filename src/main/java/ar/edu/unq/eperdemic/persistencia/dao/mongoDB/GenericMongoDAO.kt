@@ -7,7 +7,7 @@ import org.bson.conversions.Bson
 
 open class GenericMongoDAO<T>(entityType: Class<T>) {
 
-    protected var connection: MongoConnection = MongoConnection()
+    protected var connection: MongoConnection = MongoConnection
     protected var collection:MongoCollection<T>
 
     init {
@@ -72,15 +72,15 @@ open class GenericMongoDAO<T>(entityType: Class<T>) {
     }
 
     fun startTransaction(){
-        connection.startTransaction()
+//        connection.startTransaction()
     }
 
     fun commit(){
-        connection.commitTransaction()
+//        connection.commitTransaction()
     }
 
     fun rollack(){
-        connection.rollbackTransaction()
+//        connection.rollbackTransaction()
     }
 
 }

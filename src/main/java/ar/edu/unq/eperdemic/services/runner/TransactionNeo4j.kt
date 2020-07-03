@@ -3,39 +3,48 @@ package ar.edu.unq.eperdemic.services.runner
 import org.neo4j.driver.Session
 
 
-object TransactionNeo4j: Transaction {
-    private var transaction : org.neo4j.driver.Transaction? =null
-    private var session: Session? = null
+class TransactionNeo4j: Transaction {
 
-    val currentTransaction: org.neo4j.driver.Transaction
-        get() {
-            if(transaction == null) {
-                throw RuntimeException("No hay ninguna transaction en el contexto")
+    var session = ThreadLocal<org.neo4j.driver.Session>()
+
+    companion object {
+        private val CONTEXTO = ThreadLocal<org.neo4j.driver.Transaction>()
+
+
+        val currentTransaction: org.neo4j.driver.Transaction
+            get() {
+                return CONTEXTO.get() ?: throw RuntimeException("No hay ninguna session en el contexto")
+
             }
-            return transaction!!
-        }
-
-
-    override fun start() {
-        session=Neo4jSessionFactoryProvider.instance.createSession()
-        transaction= session!!.beginTransaction()
     }
 
+    override fun start() {
+        if (noHaySessionAbierta()) {
+            session.set(Neo4jSessionFactoryProvider.instance.createSession())
+            val transaction = session.get().beginTransaction()
+            CONTEXTO.set(transaction)
+        }
+
+    }
+
+    private fun noHaySessionAbierta() = CONTEXTO.get() == null
+
+
     override fun commit() {
-        transaction?.commit()
-        session?.close()
-        this.nullVar()
+        CONTEXTO.get().commit()
+        close()
     }
 
     override fun rollback() {
-        transaction?.rollback()
-        session?.close()
-        this.nullVar()
+        CONTEXTO.get()?.rollback()
+        close()
     }
 
-    private fun nullVar(){
-        session = null
-        transaction = null
+    fun close() {
+        CONTEXTO.get()?.close()
+        session.get()?.close()
+        session.set(null)
+        CONTEXTO.set(null)
     }
 }
 

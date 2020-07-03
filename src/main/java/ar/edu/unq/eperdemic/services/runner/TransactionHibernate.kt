@@ -2,37 +2,44 @@ package ar.edu.unq.eperdemic.services.runner
 
 import org.hibernate.Session
 
-object TransactionHibernate: Transaction{
-    private var transaction: org.hibernate.Transaction? = null
+class TransactionHibernate: Transaction{
 
-    private var session: Session? = null
-    val currentSession: Session
-        get() {
-            if (session == null) {
-                throw RuntimeException("No hay ninguna session en el contexto")
+
+    private var transaction = ThreadLocal<org.hibernate.Transaction>()
+
+    companion object {
+        private val CONTEXTO = ThreadLocal<Session>()
+
+
+        val currentSession: Session
+            get() {
+                return CONTEXTO.get() ?: throw RuntimeException("No hay ninguna session en el contexto")
             }
-            return session!!
-        }
-
-    override fun start() {
-        session = HibernateSessionFactoryProvider.instance.createSession()
-        transaction = session!!.beginTransaction()
     }
 
+    override fun start() {
+        if (noHaySessionAbierta()) {
+            val session = HibernateSessionFactoryProvider.instance.createSession()
+            CONTEXTO.set(session)
+            transaction.set(session?.beginTransaction())
+        }
+    }
+
+    private fun noHaySessionAbierta() = CONTEXTO.get() == null
+
     override fun commit() {
-        transaction?.commit()
-        session?.close()
-        this.nullVar()
+        transaction.get()?.commit()
+        close()
     }
 
     override fun rollback() {
-        transaction?.rollback()
-        session?.close()
-        this.nullVar()
+        transaction.get()?.rollback()
+        close()
     }
 
-    private fun nullVar(){
-        session = null
-        transaction = null
+    fun close() {
+        CONTEXTO.get()?.close()
+        transaction.set(null)
+        CONTEXTO.set(null)
     }
 }

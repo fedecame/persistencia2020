@@ -8,7 +8,7 @@ import ar.edu.unq.eperdemic.tipo.Insecto
 import ar.edu.unq.eperdemic.tipo.TipoVector
 
 class VectorFrontendDTO(val tipoDeVector : TipoDeVector,
-                        val nombreDeUbicacionPresente: String) {
+                        val ubicacion: Ubicacion) {
 
     enum class TipoDeVector {
         Persona, Insecto, Animal
@@ -16,9 +16,6 @@ class VectorFrontendDTO(val tipoDeVector : TipoDeVector,
 
     fun aModelo() : Vector {
         val vector = Vector()
-        val ubicacion = Ubicacion()
-        ubicacion.nombreUbicacion = nombreDeUbicacionPresente
-        ubicacion.agregarVector(vector)
         vector.ubicacion =  ubicacion
         vector.tipo = this.aTipoModel()
         return vector
