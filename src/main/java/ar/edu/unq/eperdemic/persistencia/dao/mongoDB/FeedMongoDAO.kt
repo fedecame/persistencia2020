@@ -14,8 +14,6 @@ import com.mongodb.client.model.Indexes
 
 class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
 
-    //Faltaria poder recordar por un Id determinado?
-
     fun getByTipoPatogeno(tipo: String): List<Evento?> = findEq("tipoPatogeno", tipo)
 
     fun getByTipoEvento(tipoEvento: TipoEvento): List<Evento?> = findEq("tipoEvento", tipoEvento)

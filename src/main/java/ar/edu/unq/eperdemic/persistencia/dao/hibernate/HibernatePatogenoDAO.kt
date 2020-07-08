@@ -4,7 +4,6 @@ import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.exception.PatogenoNotFoundRunTimeException
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.services.runner.TransactionHibernate
-import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 
 class HibernatePatogenoDAO  : HibernateDAO<Patogeno>(Patogeno::class.java), PatogenoDAO {
 

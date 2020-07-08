@@ -14,10 +14,7 @@ import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
-import ar.edu.unq.eperdemic.services.HibernateDataService
-import ar.edu.unq.eperdemic.services.PatogenoService
-import ar.edu.unq.eperdemic.services.UbicacionService
-import ar.edu.unq.eperdemic.services.VectorService
+import ar.edu.unq.eperdemic.services.*
 import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
@@ -279,6 +276,6 @@ class PatogenoServiceTest {
 
     @After
     fun eliminarTodo(){
-        hibernateData.eliminarTodo()
+        MegalodonService().eliminarTodo()
     }
 }

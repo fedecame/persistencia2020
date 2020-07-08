@@ -15,7 +15,6 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEstadisticasDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
-import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jDataDAO
 import ar.edu.unq.eperdemic.services.HibernateDataService
 import ar.edu.unq.eperdemic.services.Neo4jDataService
 import ar.edu.unq.eperdemic.services.UbicacionService
@@ -255,7 +254,16 @@ class EstadisticasDAOTest {
         Assert.assertEquals("Paperas", res)
     }
 
+    @Test
+    fun cuandoUnaUbicacionTieneDosInfeccionesConLaMismaCantidadDeInfectadosSiempreSeRetornaElPrimero(){
+        this.eliminarTodo()
 
+    }
+
+    @Test
+    fun cuandoUnaUbicacionTieneDosInfeccionesQueSeLlamanIgual(){
+        //Que mierda pasa aca?
+    }
 
     @After
     fun eliminarTodo(){

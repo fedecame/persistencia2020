@@ -25,8 +25,6 @@ import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import java.time.Instant
-import java.time.format.DateTimeFormatter
 
 class PruebaDeConceptoTest {
     lateinit var dao : FeedMongoDAO

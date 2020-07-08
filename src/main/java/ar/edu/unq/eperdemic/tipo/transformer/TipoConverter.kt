@@ -4,7 +4,6 @@ import ar.edu.unq.eperdemic.tipo.Animal
 import ar.edu.unq.eperdemic.tipo.Humano
 import ar.edu.unq.eperdemic.tipo.Insecto
 import ar.edu.unq.eperdemic.tipo.TipoVector
-import ar.edu.unq.eperdemic.utility.Converter
 import javax.persistence.AttributeConverter
 
 //Cuando funcione el converter : class TipoConverter : Converter<TipoVector>(TipoDelivery(mutableListOf(Animal(), Humano(), Insecto())))

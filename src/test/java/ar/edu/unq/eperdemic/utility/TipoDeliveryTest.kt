@@ -1,9 +1,7 @@
 package ar.edu.unq.eperdemic.utility
 
 import ar.edu.unq.eperdemic.estado.transformer.EstadoDelivery
-import ar.edu.unq.eperdemic.modelo.exception.ClaveRepetidaDeEstadoException
 import ar.edu.unq.eperdemic.modelo.exception.ClaveRepetidaDeTipoException
-import ar.edu.unq.eperdemic.modelo.exception.EstadoNoEncontradoException
 import ar.edu.unq.eperdemic.modelo.exception.TipoNoEncontradoException
 import ar.edu.unq.eperdemic.tipo.Animal
 import ar.edu.unq.eperdemic.tipo.Humano
