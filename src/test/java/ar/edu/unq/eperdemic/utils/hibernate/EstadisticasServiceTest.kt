@@ -503,7 +503,6 @@ class EstadisticasServiceTest {
 
     @After
     fun eliminarTodo(){
-        hibernateData.eliminarTodo()
-        dataDaoNeo4j.eliminarTodo()
+        MegalodonService().eliminarTodo()
     }
 }

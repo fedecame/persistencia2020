@@ -16,6 +16,7 @@ import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.HibernateDataService
+import ar.edu.unq.eperdemic.services.MegalodonService
 import ar.edu.unq.eperdemic.services.Neo4jDataService
 import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
 import ar.edu.unq.eperdemic.services.VectorService
@@ -415,7 +416,6 @@ class UbicacionServiceTest {
 
     @After
     fun eliminarTodo(){
-        hibernateData.eliminarTodo()
-        neo4jData.eliminarTodo()
+        MegalodonService().eliminarTodo()
     }
 }

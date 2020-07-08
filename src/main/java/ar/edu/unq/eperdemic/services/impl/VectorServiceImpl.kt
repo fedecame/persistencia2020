@@ -6,7 +6,6 @@ import ar.edu.unq.eperdemic.modelo.evento.EventoFactory
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
 import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.FeedService
