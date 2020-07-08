@@ -13,7 +13,6 @@ class FeedServiceImpl(private var feedDAO: FeedMongoDAO) : FeedService {
     override fun feedVector(vectorId: Long): List<Evento> = feedDAO.feedVector(vectorId)
 
     override fun feedUbicacion(nombreDeUbicacion: String): List<Evento> {
-    //         var conectados= mutableListOf<String>(nombreDeUbicacion,"Florencio Varela")
         lateinit var conectados : List<String>
         TransactionRunner.addNeo4j().runTrx {
             conectados = neo4jUbicacionDAO.conectados(nombreDeUbicacion).map { it.nombreUbicacion }
@@ -30,10 +29,6 @@ class FeedServiceImpl(private var feedDAO: FeedMongoDAO) : FeedService {
     }
 
     override fun especieYaEstabaEnLaUbicacion(nombreUbicacion: String, tipoPatogenoDeLaEspecie: String, nombreDeLaEspecie: String): Boolean = feedDAO.especieYaEstabaEnLaUbicacion(nombreUbicacion, tipoPatogenoDeLaEspecie, nombreDeLaEspecie)
-    fun vectorFueContagiadoAlMover(nombreUbicacion: String, idVectorInfectado:Int, idVectorAInfectar: Int): Boolean = feedDAO.vectorFueContagiadoAlMover(nombreUbicacion, idVectorInfectado, idVectorAInfectar)
-
-
-
-
-
+    override fun vectorFueContagiadoAlMover(nombreUbicacion: String, idVectorInfectado:Int, idVectorAInfectar: Int): Boolean = feedDAO.vectorFueContagiadoAlMover(nombreUbicacion, idVectorInfectado, idVectorAInfectar)
+    override fun especieYaTieneEventoPorPandemia(tipoPatogenoDeLaEspecie: String, nombreEspecie : String) : Boolean = feedDAO.especieYaTieneEventoPorPandemia(tipoPatogenoDeLaEspecie, nombreEspecie)
 }

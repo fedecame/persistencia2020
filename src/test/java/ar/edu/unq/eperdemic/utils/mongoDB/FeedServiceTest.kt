@@ -455,6 +455,11 @@ class FeedServiceTest {
         Assert.assertEquals(Accion.CONTAGIO_NORMAL.name, eventosFeedVector.first().accionQueLoDesencadena)
     }
 
+    @Test
+    fun alVolverseUnaEspeciePandemiaNoSeGeneranEventosDePandemiasRepetidosCuandoContagia(){
+
+    }
+
     @After
     fun dropAll() {
         MegalodonService().eliminarTodo()

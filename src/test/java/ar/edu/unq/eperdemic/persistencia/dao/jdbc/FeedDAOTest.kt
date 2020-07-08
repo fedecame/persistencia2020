@@ -272,7 +272,7 @@ class FeedDAOTest {
     @Test
     fun cuandoNoExisteUnEventoDePandemiaParaLaEspecieDeUnPantogenoDadoElMensajeEspecieYaEsPandemiaDelFeedDAODevuelveFalse(){
         this.dropAll()
-        Assert.assertFalse(dao.especieYaEsPandemia("un patogeno", "una especie"))
+        Assert.assertFalse(dao.especieYaTieneEventoPorPandemia("un patogeno", "una especie"))
     }
 
     @Test
@@ -296,7 +296,7 @@ class FeedDAOTest {
         vectorService.infectar(vectorJamaiquino, especie)
         vectorService.infectar(vectorBabilonico, especie)
         Assert.assertTrue(patogenoService.esPandemia(especie.id!!))
-        Assert.assertTrue(dao.especieYaEsPandemia(patogenoModel.tipo, "gripe"))
+        Assert.assertTrue(dao.especieYaTieneEventoPorPandemia(patogenoModel.tipo, "gripe"))
     }
 
     @After
