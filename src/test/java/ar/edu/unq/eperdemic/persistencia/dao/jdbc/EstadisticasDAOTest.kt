@@ -11,14 +11,12 @@ import ar.edu.unq.eperdemic.persistencia.dao.DataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.EstadisticasDAO
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEstadisticasDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
 import ar.edu.unq.eperdemic.services.HibernateDataService
 import ar.edu.unq.eperdemic.services.Neo4jDataService
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
+import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
@@ -47,7 +45,7 @@ class EstadisticasDAOTest {
     lateinit var ubicacion1 : Ubicacion
     lateinit var ubicacion2 : Ubicacion
     lateinit var patogeno : Patogeno
-    var dataDaoNeo4j=Neo4jDataService()
+
     @Before
     fun setUp(){
         this.eliminarTodo()
@@ -79,21 +77,8 @@ class EstadisticasDAOTest {
         ubicacion1 = ubicacionService.crearUbicacion("Mar del Plata")
         vector.ubicacion = ubicacion0
         vectorService.crearVector(vector)
-        //dataDaoNeo4j.datosParaEstadisticaService()
         ubicacionService.conectar(ubicacion1.nombreUbicacion,ubicacion0.nombreUbicacion,"Terrestre")
     }
-
-//    private fun crearNConEstadoEn(cant : Int, estado : EstadoVector, ubicacion : String){
-//        repeat(cant){
-//            var vectorInfectado = Vector()
-//            vectorInfectado.tipo = tipo
-//            vectorInfectado.estado = estado
-//            vectorInfectado.ubicacion = ubicacionService.recuperarUbicacion(ubicacion)
-//            vectorInfectado.agregarEspecie(especie)
-//            vectorService.crearVector(vectorInfectado)
-//            ubicacionService.mover(vectorInfectado.id!!.toInt(), ubicacion)
-//        }
-//    }
 
     private fun crearNConEstadoEn(cant : Int, estado : EstadoVector, ubicacion : String){
         val ubicacionModelo = ubicacionService.recuperarUbicacion(ubicacion)
@@ -255,14 +240,37 @@ class EstadisticasDAOTest {
     }
 
     @Test
-    fun cuandoUnaUbicacionTieneDosInfeccionesConLaMismaCantidadDeInfectadosSiempreSeRetornaElPrimero(){
+    fun cuandoUnaUbicacionTieneDosInfeccionesConLaMismaCantidadDeInfectadosSiempreSeRetornaElPrimeroOrdenadoAlfabeticamente(){
         this.eliminarTodo()
-
+        val ubicacionVirgen = ubicacionService.crearUbicacion("St. Mary")
+        val patogenoService = PatogenoServiceImpl(HibernatePatogenoDAO(), HibernateEspecieDAO())
+        val virusModel = Patogeno()
+        virusModel.tipo = "Virus"
+        patogenoService.crearPatogeno(virusModel)
+        val gripe = patogenoService.agregarEspecie(virusModel.id!!, "Algo", "Narnia")
+        val paperas = patogenoService.agregarEspecie(virusModel.id!!,"Algo3", "NismanLandia")
+        val vectorAlfa = Vector()
+        val vectorBeta = Vector()
+        vectorAlfa.tipo = Insecto()
+        vectorBeta.tipo = Animal()
+        vectorAlfa.ubicacion = ubicacionVirgen
+        vectorBeta.ubicacion = ubicacionVirgen
+        vectorService.crearVector(vectorAlfa)
+        vectorService.crearVector(vectorBeta)
+        vectorService.infectar(vectorAlfa, gripe)
+        vectorService.infectar(vectorAlfa, paperas)
+        vectorService.infectar(vectorBeta, gripe)
+        vectorService.infectar(vectorBeta, paperas)
+        var res = null
+        Assert.assertEquals("Algo", TransactionRunner.addHibernate().runTrx {estadisticasDAO.especieQueInfectaAMasVectoresEn("St. Mary")})
     }
 
     @Test
     fun cuandoUnaUbicacionTieneDosInfeccionesQueSeLlamanIgual(){
         //Que mierda pasa aca?
+        this.eliminarTodo()
+        val ubicacion = ubicacionService.crearUbicacion("Jamaica")
+
     }
 
     @After
