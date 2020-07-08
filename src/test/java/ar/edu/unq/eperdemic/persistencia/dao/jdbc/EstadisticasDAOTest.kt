@@ -261,16 +261,32 @@ class EstadisticasDAOTest {
         vectorService.infectar(vectorAlfa, paperas)
         vectorService.infectar(vectorBeta, gripe)
         vectorService.infectar(vectorBeta, paperas)
-        var res = null
         Assert.assertEquals("Algo", TransactionRunner.addHibernate().runTrx {estadisticasDAO.especieQueInfectaAMasVectoresEn("St. Mary")})
     }
 
     @Test
-    fun cuandoUnaUbicacionTieneDosInfeccionesQueSeLlamanIgual(){
-        //Que mierda pasa aca?
-        this.eliminarTodo()
-        val ubicacion = ubicacionService.crearUbicacion("Jamaica")
-
+    fun cuandoUnaUbicacionTieneDosInfeccionesQueSeLlamanIgualLaCantidadSigueContabilizandoleParaUnoSolo(){
+        val ubicacionVirgen = ubicacionService.crearUbicacion("St. Mary")
+        val patogenoService = PatogenoServiceImpl(HibernatePatogenoDAO(), HibernateEspecieDAO())
+        val virusModel = Patogeno()
+        virusModel.tipo = "Virus"
+        patogenoService.crearPatogeno(virusModel)
+        val gripe = patogenoService.agregarEspecie(virusModel.id!!, "Algo", "Narnia")
+        val paperas = patogenoService.agregarEspecie(virusModel.id!!,"Algo", "NismanLandia")
+        val vectorAlfa = Vector()
+        val vectorBeta = Vector()
+        vectorAlfa.tipo = Insecto()
+        vectorBeta.tipo = Animal()
+        vectorAlfa.ubicacion = ubicacionVirgen
+        vectorBeta.ubicacion = ubicacionVirgen
+        vectorService.crearVector(vectorAlfa)
+        vectorService.crearVector(vectorBeta)
+        vectorService.infectar(vectorAlfa, gripe)
+        vectorService.infectar(vectorAlfa, paperas)
+        vectorService.infectar(vectorBeta, gripe)
+        vectorService.infectar(vectorBeta, paperas)
+        Assert.assertEquals("Algo", TransactionRunner.addHibernate().runTrx {estadisticasDAO.especieQueInfectaAMasVectoresEn("St. Mary")})
+        Assert.assertEquals(2, TransactionRunner.addHibernate().runTrx {estadisticasDAO.vectoresInfectados("St. Mary")})
     }
 
     @After
