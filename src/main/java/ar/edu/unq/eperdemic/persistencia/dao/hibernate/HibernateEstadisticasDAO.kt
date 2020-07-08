@@ -1,13 +1,9 @@
 package ar.edu.unq.eperdemic.persistencia.dao.hibernate
 
 import ar.edu.unq.eperdemic.estado.Infectado
-import ar.edu.unq.eperdemic.estado.Sano
 import ar.edu.unq.eperdemic.modelo.Especie
-import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.persistencia.dao.EstadisticasDAO
 import ar.edu.unq.eperdemic.services.runner.TransactionHibernate
-import ar.edu.unq.eperdemic.services.runner.TransactionRunner
-import ar.edu.unq.eperdemic.tipo.Humano
 
 class HibernateEstadisticasDAO : EstadisticasDAO {
 
@@ -35,7 +31,7 @@ class HibernateEstadisticasDAO : EstadisticasDAO {
         val session = TransactionHibernate.currentSession
         val query = session!!.createNativeQuery(hql)
         query.setParameter("nombreUbicacion", nombreUbicacion)
-        return query.singleResult.toString()
+        return query.uniqueResultOptional().orElse("").toString()
     }
 
     override fun especieLider(): Especie {
