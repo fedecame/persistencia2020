@@ -206,18 +206,20 @@ class EstadisticasDAOTest {
         Assert.assertEquals("Algo", res)
     }
 
-    @Test(expected= NoResultException::class)
+    @Test
     fun  elNombreDeLaEspecieMasInfecciosaArrojaUnaExcepcionCuandoNoQueHayNingunaEspecieEnLaUbicacion(){
-        TransactionRunner.addHibernate().runTrx {
+        var noEspecie = TransactionRunner.addHibernate().runTrx {
             estadisticasDAO.especieQueInfectaAMasVectoresEn("Mar del Plata")
         }
+        Assert.assertEquals("", noEspecie)
     }
 
-    @Test(expected= NoResultException::class)
-    fun  elEstadisticasDAOArrojaUnaExcepcionCuandoLaUbicacionNoExiste(){
-        TransactionRunner.addHibernate().runTrx {
+    @Test
+    fun elEstadisticasDAOArrojaUnaExcepcionCuandoLaUbicacionNoExiste(){
+        var noEspecie = TransactionRunner.addHibernate().runTrx {
             estadisticasDAO.especieQueInfectaAMasVectoresEn("The twilight zone")
         }
+        Assert.assertEquals("", noEspecie)
     }
 
     @Test

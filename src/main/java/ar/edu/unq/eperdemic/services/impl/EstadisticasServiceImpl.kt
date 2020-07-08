@@ -26,15 +26,9 @@ class EstadisticasServiceImpl(private var estadisticasDAO: EstadisticasDAO) : Es
 
     private fun vectoresInfectados(nombreUbicacion: String): Int = TransactionRunner.addHibernate().runTrx { estadisticasDAO.vectoresInfectados(nombreUbicacion) }
 
-    private fun especieQueInfectaAMasVectoresEn(nombreUbicacion: String): String {
-        var res: String = ""
-        try {
-            TransactionRunner.addHibernate().runTrx { res = estadisticasDAO.especieQueInfectaAMasVectoresEn(nombreUbicacion) }
-        } catch (e: NoResultException) {
-            res = ""
-        }
-        return res
-    }
+    private fun especieQueInfectaAMasVectoresEn(nombreUbicacion: String): String =
+            TransactionRunner.addHibernate().runTrx { return@runTrx estadisticasDAO.especieQueInfectaAMasVectoresEn(nombreUbicacion) }
+
 }
 
 
