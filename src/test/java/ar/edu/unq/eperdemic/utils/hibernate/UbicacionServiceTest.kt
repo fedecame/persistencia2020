@@ -62,6 +62,9 @@ class UbicacionServiceTest {
         ubicacionCreada = ubicacionService.crearUbicacion("Florencio Varela")
         ubicacionCreada1 = ubicacionService.crearUbicacion("Berazategui")
         ubicacionCreada2 = ubicacionService.crearUbicacion("Saavedra")
+        ubicacionCreada2 = ubicacionService.crearUbicacion("Quilmes")
+        ubicacionCreada2 = ubicacionService.crearUbicacion("Sarandi")
+
         ubicacionCreada3 = ubicacionService.crearUbicacion("Don Bosco")
         randomGeneratorMock = Mockito.mock(RandomMaster::class.java)
         ubicacionService.randomGenerator = randomGeneratorMock
@@ -121,15 +124,17 @@ class UbicacionServiceTest {
     fun testBerazateguiEsElConectadoConVarela(){
         ubicacionService.conectar("Florencio Varela","Berazategui","Terrestre")
         val listConectados =ubicacionService.conectados("Florencio Varela")
-        Assert.assertEquals(1,listConectados.size)
-        Assert.assertEquals("Berazategui",listConectados.get(0).nombreUbicacion)
+        Assert.assertEquals("Berazategui",listConectados.get(1).nombreUbicacion)
     }
 
     @Test
     fun  testVarelaSeConectaConBerazategui(){
         ubicacionService.conectar("Florencio Varela","Berazategui","Terrestre")
         val listConectados =ubicacionService.conectados("Florencio Varela")
-        Assert.assertEquals(1, listConectados.size)
+        var ubicacionRecuperada= ubicacionService.recuperarUbicacion("Berazategui")
+       // Assert.assertEquals(1, listConectados.size)
+        Assert.assertTrue(listConectados.filter { ubicacion->ubicacion.nombreUbicacion=="Berazategui" }.size==1)
+
     }
 
     @Test
@@ -143,13 +148,13 @@ class UbicacionServiceTest {
 
     @Test
     fun creacionDeUbicacion() {
-        val ubicacion2Creada= ubicacionService.crearUbicacion("Quilmes")
+        val ubicacion2Creada= ubicacionService.recuperarUbicacion("Quilmes")
         Assert.assertEquals("Quilmes", ubicacion2Creada.nombreUbicacion)
         Assert.assertEquals("Quilmes", ubicacionService.recuperarUbicacion("Quilmes").nombreUbicacion)
     }
 
     @Test
-    fun verificacionDeVectorAlojado() {
+    fun sverificacionDeVectorAlojado() {
         vector.ubicacion=ubicacionCreada
         vectorService.crearVector(vector)
         Assert.assertEquals(vectorService.recuperarVector(1).ubicacion?.nombreUbicacion,"Florencio Varela")
@@ -161,7 +166,7 @@ class UbicacionServiceTest {
         vectorService.crearVector(vector)
         var vectorCreado=vectorService.recuperarVector(1)
         Assert.assertEquals(vectorCreado.ubicacion?.nombreUbicacion,"Florencio Varela")
-        ubicacionService.crearUbicacion("Quilmes")
+        ubicacionService.recuperarUbicacion("Quilmes")
         ubicacionService.conectar("Florencio Varela", "Quilmes", "Terrestre")
         ubicacionService.mover(1,"Quilmes")
         var vectorActualizado=vectorService.recuperarVector(1)
@@ -172,7 +177,7 @@ class UbicacionServiceTest {
     fun seMueveAUbicacionQueNoExiste(){
         vector.ubicacion=ubicacionCreada
         vectorService.crearVector(vector)
-        ubicacionService.mover(1,"Sarandi")
+        ubicacionService.mover(1,"Almagro")
     }
 
     @Test(expected = MoverMismaUbicacion::class)
@@ -209,7 +214,7 @@ class UbicacionServiceTest {
         vector.ubicacion=ubicacionCreada
         vectorService.crearVector(vector)
         var  ubicacionCreadaActualizada=ubicacionService.recuperarUbicacion("Florencio Varela")
-        ubicacionCreada1 = ubicacionService.crearUbicacion("Quilmes")
+        ubicacionCreada1 = ubicacionService.recuperarUbicacion("Quilmes")
         Assert.assertEquals(ubicacionCreadaActualizada.vectores.size,1)
         ubicacionService.conectar("Florencio Varela", "Quilmes", "Terrestre")
         ubicacionService.mover(vector.id!!.toInt(),"Quilmes")

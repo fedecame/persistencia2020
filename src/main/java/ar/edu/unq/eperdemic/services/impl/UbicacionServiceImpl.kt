@@ -41,8 +41,13 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
         if (ubicacion1 == ubicacion2) {
             throw ConectarMismaUbicacion()
         }
+        var ubicacionUno= recuperarUbicacion(ubicacion1)
+        var ubicacionDos= recuperarUbicacion(ubicacion2)
+
+
         TransactionRunner.addNeo4j().runTrx {
-            neo4jUbicacionDAO.conectar(ubicacion1, ubicacion2, tipoCamino)
+           // neo4jUbicacionDAO.conectar(ubicacion1, ubicacion2, tipoCamino)
+            neo4jUbicacionDAO.conectar(ubicacionUno,ubicacionDos,tipoCamino)
         }
     }
 

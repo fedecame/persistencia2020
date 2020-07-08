@@ -24,9 +24,20 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
     var hibernateUbicacionDAO = HibernateUbicacionDAO()
     var myFormatter : MyFormat = MyFormatter()
 
-    override fun conectar(ubicacion1: String, ubicacion2: String, tipoCamino: String) {
+     fun conectar(ubicacion1: Ubicacion, ubicacion2: Ubicacion, tipoCamino: String) {
+
         val transaction = TransactionNeo4j.currentTransaction
-        val query = """Match(ubicacionUno:Ubicacion {nombre:"$ubicacion1"}),(ubicacionDos:Ubicacion{nombre:"$ubicacion2"}) MERGE (ubicacionUno)-[c:$tipoCamino]->(ubicacionDos)"""
+        val query = """Match(ubicacionUno:Ubicacion {nombre:"${ubicacion1.nombreUbicacion}"}),(ubicacionDos:Ubicacion{nombre:"${ubicacion2.nombreUbicacion}"}) MERGE (ubicacionUno)-[c:$tipoCamino]->(ubicacionDos)"""
+        transaction.run(query)
+    }
+
+
+
+
+    override fun conectar(ubicacion1: String, ubicacion2: String, tipoCamino: String) {
+
+        val transaction = TransactionNeo4j.currentTransaction
+        val query = """Match(ubicacionUno:Ubicacion {nombre:"${ubicacion1}"}),(ubicacionDos:Ubicacion{nombre:"${ubicacion2}"}) MERGE (ubicacionUno)-[c:$tipoCamino]->(ubicacionDos)"""
         transaction.run(query)
     }
 
