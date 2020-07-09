@@ -234,7 +234,7 @@ class FeedDAOTest {
     fun alConsultarSiUnaEspecieYaEstabaEnLaUbicacionCuandoEstaYaTeniaUNEventoDeContagioPorPrimeraVezEnLaUbicacionDaTrue() {
         this.dropAll()
         dao.startTransaction()
-        val evento = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(TipoPatogeno.VIRUS.name, "Jamaica", "gripe")
+        val evento = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(TipoPatogeno.VIRUS.name, "Jamaica", "gripe", 0.toLong())
         dao.save(evento)
         dao.commit()
         Assert.assertTrue(dao.especieYaEstabaEnLaUbicacion("Jamaica", TipoPatogeno.VIRUS.name, "gripe"))
@@ -254,10 +254,10 @@ class FeedDAOTest {
     fun alConsultarSiUnaEspecieYaEstabaEnLaUbicacionCuandoEstaYaTeniaVariosEventosDeContagioPorPrimeraVezPeroDeOtrasEspeciesEnLaUbicacionDaFalse() {
         this.dropAll()
         dao.startTransaction()
-        val evento0 = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(TipoPatogeno.VIRUS.name, "New York, New York tararara", "gripe")
+        val evento0 = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(TipoPatogeno.VIRUS.name, "New York, New York tararara", "gripe", 0.toLong())
         val evento1 = eventoFactory.eventoContagioPorPandemia(TipoPatogeno.VIRUS.name, "Jamaica")
-        val evento2 = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(TipoPatogeno.HONGO.name, "Jamaica", "gripe")
-        val evento3 = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(TipoPatogeno.VIRUS.name, "Jamaica", "sarampion")
+        val evento2 = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(TipoPatogeno.HONGO.name, "Jamaica", "gripe", 0.toLong())
+        val evento3 = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(TipoPatogeno.VIRUS.name, "Jamaica", "sarampion", 0.toLong())
         val eventos = listOf(evento0, evento1, evento2, evento3)
         eventos.forEach { dao.save(it) }
         dao.commit()

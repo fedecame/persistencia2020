@@ -290,7 +290,7 @@ class FeedServiceTest {
         Assert.assertTrue(accionesDelFeed.containsAll(listOf(Accion.ARRIBO.name, Accion.CONTAGIO_NORMAL.name)))
 
         val eventosDelQueEsInfectado = feedService.feedVector(vectorSano.id!!)
-        Assert.assertEquals(2, eventosDelQueEsInfectado.size)
+        Assert.assertEquals(3, eventosDelQueEsInfectado.size)
         accionesDelFeed = eventosDelQueEsInfectado.map{ it.accionQueLoDesencadena }
         Assert.assertTrue(accionesDelFeed.contains(Accion.CONTAGIO_NORMAL.name))
     }
@@ -313,7 +313,7 @@ class FeedServiceTest {
         Assert.assertEquals(3, eventosDePatogeno.size)
         val eventosDeContagio = feedService.feedVector(vector.id!!)
         Assert.assertEquals(1, eventosDeContagio.size)
-        Assert.assertEquals(Accion.CONTAGIO_NORMAL.name, eventosDeContagio.first().accionQueLoDesencadena)
+        Assert.assertEquals(Accion.PATOGENO_CONTAGIA_1RA_VEZ_EN_UBICACION.name, eventosDeContagio.first().accionQueLoDesencadena)
     }
 
     @Test

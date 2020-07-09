@@ -87,7 +87,7 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
 
 
                 if (ubicacion !== null && !feedService.especieYaEstabaEnLaUbicacion(ubicacion.nombreUbicacion, tipoPatogenoDeLaEspecie, nombre_de_la_especie)) {
-                    feedService.agregarEvento(EventoFactory.eventoContagioPorPrimeraVezEnUbicacion(tipoPatogenoDeLaEspecie, ubicacion.nombreUbicacion, nombre_de_la_especie))
+                    feedService.agregarEvento(EventoFactory.eventoContagioPorPrimeraVezEnUbicacion(tipoPatogenoDeLaEspecie, ubicacion.nombreUbicacion, nombre_de_la_especie, it.first.id!!))
                 }
 //            val especieDB = especieDAO.recuperarEspecie(it.second.id!!)
                 if (especieDAO.esPandemia(it.second)) { // agregar validacion de que sea la primera vez que es pandemia
@@ -128,7 +128,7 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
                 val nombre_de_la_especie = it.second.nombre
                 val ubicacion = it.first.ubicacion
                 if (ubicacion !== null && !feedService.especieYaEstabaEnLaUbicacion(ubicacion.nombreUbicacion, tipoPatogenoDeLaEspecie, nombre_de_la_especie)) {
-                    feedService.agregarEvento(EventoFactory.eventoContagioPorPrimeraVezEnUbicacion(tipoPatogenoDeLaEspecie, ubicacion.nombreUbicacion, nombre_de_la_especie))
+                    feedService.agregarEvento(EventoFactory.eventoContagioPorPrimeraVezEnUbicacion(tipoPatogenoDeLaEspecie, ubicacion.nombreUbicacion, nombre_de_la_especie, it.first.id!!))
                 }
 //            val especieDB = especieDAO.recuperarEspecie(it.second.id!!)
                 if (especieDAO.esPandemia(it.second)) { // agregar validacion de que sea la primera vez que es pandemia
@@ -155,7 +155,7 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
                 val nombre_de_la_especie = it.second.nombre
                 val ubicacion = it.first.ubicacion
                 if (ubicacion !== null && !feedService.especieYaEstabaEnLaUbicacion(ubicacion.nombreUbicacion, tipoPatogenoDeLaEspecie, nombre_de_la_especie)) {
-                    feedService.agregarEvento(EventoFactory.eventoContagioPorPrimeraVezEnUbicacion(tipoPatogenoDeLaEspecie, ubicacion.nombreUbicacion, nombre_de_la_especie))
+                    feedService.agregarEvento(EventoFactory.eventoContagioPorPrimeraVezEnUbicacion(tipoPatogenoDeLaEspecie, ubicacion.nombreUbicacion, nombre_de_la_especie, it.first.id!!))
                 }
 //            val especieDB = especieDAO.recuperarEspecie(it.second.id!!)
                 if (especieDAO.esPandemia(it.second)) { // agregar validacion de que sea la primera vez que es pandemia
