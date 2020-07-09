@@ -467,6 +467,10 @@ class FeedServiceTest {
         vectorJamaiquino.ubicacion = jamaica
         vectorJamaiquino.tipo = Humano()
         val vectorBabilonico = Vector()
+        val result1 = feedService.feedPatogeno(patogenoModel.tipo)
+        val eventosPandemia1 = result1.filter { it.accionQueLoDesencadena == Accion.PATOGENO_ES_PANDEMIA.name }
+        Assert.assertEquals(1, result1.size)
+        Assert.assertEquals(0, eventosPandemia1.size)
         vectorBabilonico.ubicacion = babilonia
         vectorBabilonico.tipo= Humano()
         Assert.assertFalse(dao.especieYaTieneEventoPorPandemia(especie.patogeno.tipo, especie.nombre))
