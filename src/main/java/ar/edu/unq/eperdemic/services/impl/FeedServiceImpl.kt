@@ -17,14 +17,11 @@ class FeedServiceImpl(private var feedDAO: FeedMongoDAO) : FeedService {
         TransactionRunner.addNeo4j().runTrx {
             conectados = neo4jUbicacionDAO.conectados(nombreDeUbicacion).map { it.nombreUbicacion }
         }
-
         return feedDAO.feedUbicacion(nombreDeUbicacion, conectados)
     }
 
     override fun agregarEvento(evento: Evento): Evento {
-        feedDAO.startTransaction()
         feedDAO.save(evento)
-        feedDAO.commit()
         return evento
     }
 

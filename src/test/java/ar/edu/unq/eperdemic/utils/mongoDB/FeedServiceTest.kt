@@ -8,6 +8,7 @@ import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.evento.Accion
 import ar.edu.unq.eperdemic.modelo.evento.Evento
+import ar.edu.unq.eperdemic.modelo.evento.tipoEvento.TipoPatogeno
 import ar.edu.unq.eperdemic.modelo.tipoMutacion.MutacionFactorContagioInsecto
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
 import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
@@ -460,6 +461,7 @@ class FeedServiceTest {
         this.dropAll()
         val jamaica = ubicacionService.crearUbicacion("Jamaica")
         val babilonia = ubicacionService.crearUbicacion("Babilonia")
+        ubicacionService.crearUbicacion("chipre")
         val patogenoModel = Patogeno()
         patogenoModel.tipo = "virus"
         val especie = patogenoService.agregarEspecie(patogenoService.crearPatogeno(patogenoModel), "gripe", "Narnia")
@@ -486,19 +488,62 @@ class FeedServiceTest {
         Assert.assertEquals(1, eventosPandemia.size)
         Assert.assertEquals(Accion.PATOGENO_ES_PANDEMIA.name, unicoEventoPandemia.accionQueLoDesencadena)
         Assert.assertTrue(dao.especieYaTieneEventoPorPandemia(especie.patogeno.tipo, especie.nombre))
+
+        val otroVectorJamaiquino = Vector()
+        otroVectorJamaiquino.ubicacion = jamaica
+        otroVectorJamaiquino.tipo = Humano()
+
+        val otroVectorBabilonico = Vector()
+        otroVectorBabilonico.ubicacion = babilonia
+        otroVectorBabilonico.tipo = Humano()
+
+        vectorService.crearVector(otroVectorJamaiquino)
+        vectorService.crearVector(otroVectorBabilonico)
+        vectorService.infectar(otroVectorJamaiquino, especie)
+        vectorService.infectar(otroVectorBabilonico, especie)
+        vectorService.contagiar(otroVectorJamaiquino, listOf(otroVectorBabilonico))
+        vectorService.contagiar(otroVectorBabilonico, listOf(otroVectorJamaiquino))
+
         vectorService.contagiar(vectorBabilonico, listOf(vectorJamaiquino))
         vectorService.contagiar(vectorJamaiquino, listOf(vectorBabilonico))
         vectorService.infectar(vectorJamaiquino, especie)
         vectorService.infectar(vectorBabilonico, especie)
 
         val result2 = feedService.feedPatogeno(patogenoModel.tipo)
-        val eventosPandemia2 = result.filter { it.accionQueLoDesencadena == Accion.PATOGENO_ES_PANDEMIA.name }
+        val eventosPandemia2 = result2.filter { it.accionQueLoDesencadena == Accion.PATOGENO_ES_PANDEMIA.name }
         val unicoEventoPandemia2 = eventosPandemia.get(0)
         Assert.assertEquals(4, result2.size)
         Assert.assertEquals(1, eventosPandemia2.size)
         Assert.assertEquals(Accion.PATOGENO_ES_PANDEMIA.name, unicoEventoPandemia2.accionQueLoDesencadena)
         Assert.assertTrue(dao.especieYaTieneEventoPorPandemia(especie.patogeno.tipo, especie.nombre))
+        Assert.assertTrue(feedService.especieYaTieneEventoPorPandemia(especie.patogeno.tipo, especie.nombre))
+    }
 
+    @Test
+    fun `subfuncion responde si ya hay eventos de pandemia para persistidos para un tipo de patogeno y especie dado`(){
+        val patogenoModel = Patogeno()
+        patogenoModel.tipo = "virus"
+        val especie = patogenoService.agregarEspecie(patogenoService.crearPatogeno(patogenoModel), "gripe", "Narnia")
+        Assert.assertFalse(feedService.especieYaTieneEventoPorPandemia(TipoPatogeno.VIRUS.name, especie.nombre))
+        val jamaica = ubicacionService.crearUbicacion("Jamaica")
+        val babilonia = ubicacionService.crearUbicacion("Babilonia")
+        val vectorJamaiquino = Vector()
+        vectorJamaiquino.ubicacion = jamaica
+        vectorJamaiquino.tipo = Humano()
+        val vectorBabilonico = Vector()
+        val result1 = feedService.feedPatogeno(patogenoModel.tipo)
+        val eventosPandemia1 = result1.filter { it.accionQueLoDesencadena == Accion.PATOGENO_ES_PANDEMIA.name }
+        Assert.assertEquals(1, result1.size)
+        Assert.assertEquals(0, eventosPandemia1.size)
+        vectorBabilonico.ubicacion = babilonia
+        vectorBabilonico.tipo= Humano()
+        Assert.assertFalse(dao.especieYaTieneEventoPorPandemia(especie.patogeno.tipo, especie.nombre))
+        vectorService.crearVector(vectorJamaiquino)
+        vectorService.crearVector(vectorBabilonico)
+        vectorService.infectar(vectorJamaiquino, especie)
+        vectorService.infectar(vectorBabilonico, especie)
+
+        Assert.assertTrue(feedService.especieYaTieneEventoPorPandemia(especie.patogeno.tipo, especie.nombre))
     }
 
     @After

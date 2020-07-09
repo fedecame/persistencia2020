@@ -299,10 +299,11 @@ class FeedDAOTest {
         this.dropAll()
         val jamaica = ubicacionService.crearUbicacion("Jamaica")
         Assert.assertFalse(dao.especieYaTieneEventoPorPandemia(TipoPatogeno.VIRUS.name, "gripe"))
-        val eventoPorPandemia = eventoFactory.eventoContagioPorPandemia(TipoPatogeno.VIRUS.name, "Jamaica")
-        dao.startTransaction()
+        val eventoPorPandemia = eventoFactory.eventoContagioPorPandemia(TipoPatogeno.VIRUS.name, "gripe")
+
         dao.save(eventoPorPandemia)
-        dao.commit()
+
+        Assert.assertTrue(dao.especieYaTieneEventoPorPandemia(TipoPatogeno.VIRUS.name, "gripe"))
         val res1 = dao.feedPatogeno(TipoPatogeno.VIRUS.name)
         val eventosPandemia1 = res1.filter{it.accionQueLoDesencadena == Accion.PATOGENO_ES_PANDEMIA.name}
         Assert.assertEquals(1, eventosPandemia1.size)
@@ -325,8 +326,23 @@ class FeedDAOTest {
         vectorService.contagiar(vector2, listOf(vector1))
         Assert.assertTrue(dao.especieYaTieneEventoPorPandemia(TipoPatogeno.VIRUS.name, "gripe"))
         val res2 = dao.feedPatogeno(TipoPatogeno.VIRUS.name)
-        val eventosPandemia = res2.filter{it.accionQueLoDesencadena == Accion.PATOGENO_ES_PANDEMIA.name}
-        Assert.assertEquals(1, eventosPandemia.size)
+        val eventosPandemia2 = res2.filter{it.accionQueLoDesencadena == Accion.PATOGENO_ES_PANDEMIA.name}
+        Assert.assertEquals(1, eventosPandemia2.size)
+    }
+
+    @Test
+    fun `subfuncion responde si ya hay eventos de pandemia para persistidos para un tipo de patogeno y especie dado`(){
+        val patogenoModel = Patogeno()
+        patogenoModel.tipo = "virus"
+        val especie = patogenoService.agregarEspecie(patogenoService.crearPatogeno(patogenoModel), "gripe", "Narnia")
+        Assert.assertFalse(dao.especieYaTieneEventoPorPandemia(especie.patogeno.tipo, especie.nombre))
+        val eventoPorPandemia = eventoFactory.eventoContagioPorPandemia(especie.patogeno.tipo, especie.nombre)
+        dao.startTransaction()
+        dao.save(eventoPorPandemia)
+        dao.commit()
+        dao.startTransaction()
+        Assert.assertTrue(dao.especieYaTieneEventoPorPandemia(especie.patogeno.tipo, especie.nombre))
+        dao.commit()
     }
 
     @After

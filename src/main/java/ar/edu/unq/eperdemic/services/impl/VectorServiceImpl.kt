@@ -31,7 +31,7 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
                 if (especieDAO.esPandemia(it.second) && !feedService.especieYaTieneEventoPorPandemia(tipoPatogenoDeLaEspecie, nombre_de_la_especie)) {
                     feedService.agregarEvento(EventoFactory.eventoContagioPorPandemia(tipoPatogenoDeLaEspecie, nombre_de_la_especie))
                 }
-                if (ubicacion !== null && !feedService.especieYaEstabaEnLaUbicacion(ubicacion.nombreUbicacion, tipoPatogenoDeLaEspecie, nombre_de_la_especie)) {
+                if (!feedService.especieYaEstabaEnLaUbicacion(ubicacion!!.nombreUbicacion, tipoPatogenoDeLaEspecie, nombre_de_la_especie)) {
                     feedService.agregarEvento(EventoFactory.eventoContagioPorPrimeraVezEnUbicacion(tipoPatogenoDeLaEspecie, ubicacion.nombreUbicacion, nombre_de_la_especie, it.first.id!!))
                 } else {
                     feedService.agregarEvento(EventoFactory.eventoContagioNormal(vectorInfectado, it.first.id!!, ubicacion?.nombreUbicacion))
@@ -41,7 +41,7 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
     }
 
     override fun infectar(vector: Vector, especie: Especie) {
-        var infeccion : List<Pair<Vector, Especie>> = listOf()
+        lateinit var infeccion : List<Pair<Vector, Especie>>
         TransactionRunner.addHibernate().runTrx {
             val especieDB = HibernateEspecieDAO().recuperarEspecie(especie.id!!)
             infeccion = vectorDao.infectar(vector,especieDB)
