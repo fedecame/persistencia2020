@@ -93,7 +93,7 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
                 if (especieDAO.esPandemia(it.second)) { // agregar validacion de que sea la primera vez que es pandemia
                     feedService.agregarEvento(EventoFactory.eventoContagioPorPandemia(tipoPatogenoDeLaEspecie, nombre_de_la_especie))
                 }
-                feedService.agregarEvento(EventoFactory.eventoContagioNormal(vectorId.toLong(), it.first.id!!, ubicacion?.nombreUbicacion))
+                feedService.agregarEvento(EventoFactory.eventoContagioNormal(vectorId.toLong(), it.first.id!!, ubicacion?.nombreUbicacion, nombre_de_la_especie))
             }
             feedService.agregarEvento(EventoFactory.eventoArribo(vectorId.toLong(), ubicacionInicial, nombreUbicacion))
 
@@ -134,7 +134,7 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
                 if (especieDAO.esPandemia(it.second)) { // agregar validacion de que sea la primera vez que es pandemia
                     feedService.agregarEvento(EventoFactory.eventoContagioPorPandemia(tipoPatogenoDeLaEspecie, nombre_de_la_especie))
                 }
-                feedService.agregarEvento(EventoFactory.eventoContagioNormal(vectorInfectadoAleatorio.id!!, it.first.id!!, ubicacion?.nombreUbicacion))
+                feedService.agregarEvento(EventoFactory.eventoContagioNormal(vectorInfectadoAleatorio.id!!, it.first.id!!, ubicacion?.nombreUbicacion, nombre_de_la_especie))
             }
         }
     }
@@ -161,7 +161,7 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
                 if (especieDAO.esPandemia(it.second)) { // agregar validacion de que sea la primera vez que es pandemia
                     feedService.agregarEvento(EventoFactory.eventoContagioPorPandemia(tipoPatogenoDeLaEspecie, nombre_de_la_especie))
                 }
-                feedService.agregarEvento(EventoFactory.eventoContagioNormal(vectorId, it.first.id!!, ubicacion?.nombreUbicacion))
+                feedService.agregarEvento(EventoFactory.eventoContagioNormal(vectorId, it.first.id!!, ubicacion?.nombreUbicacion, nombre_de_la_especie))
             }
         }
         var ubicacionOrigenActual = vector.ubicacion!!.nombreUbicacion

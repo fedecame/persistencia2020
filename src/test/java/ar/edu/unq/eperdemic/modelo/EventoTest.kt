@@ -49,7 +49,7 @@ class EventoTest {
 
     @Test
     fun elLogDelEventoDeContagioPorPandemiaDelPatogenoEsElIndicado() {
-        Assert.assertEquals("El patogeno BACTERIA se volvio pandemia", eventoPandemia.log())
+        Assert.assertEquals("El patogeno BACTERIA se volvio pandemia con la especie Gripe", eventoPandemia.log())
     }
 
     @Test

@@ -462,7 +462,7 @@ class FeedServiceTest {
         val babilonia = ubicacionService.crearUbicacion("Babilonia")
         ubicacionService.crearUbicacion("chipre")
         val patogenoModel = Patogeno()
-        patogenoModel.tipo = "virus"
+        patogenoModel.tipo = TipoPatogeno.VIRUS.name
         val especie = patogenoService.agregarEspecie(patogenoService.crearPatogeno(patogenoModel), "gripe", "Narnia")
         val vectorJamaiquino = Vector()
         vectorJamaiquino.ubicacion = jamaica
@@ -480,7 +480,7 @@ class FeedServiceTest {
         vectorService.infectar(vectorJamaiquino, especie)
         vectorService.infectar(vectorBabilonico, especie)
 
-        val result = feedService.feedPatogeno(patogenoModel.tipo)
+        val result = feedService.feedPatogeno(especie.patogeno.tipo)
         val eventosPandemia = result.filter { it.accionQueLoDesencadena == Accion.PATOGENO_ES_PANDEMIA.name }
         val unicoEventoPandemia = eventosPandemia.get(0)
         Assert.assertEquals(4, result.size)
