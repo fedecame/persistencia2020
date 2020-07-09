@@ -31,10 +31,12 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
                 if (ubicacion !== null && !feedService.especieYaEstabaEnLaUbicacion(ubicacion.nombreUbicacion, tipoPatogenoDeLaEspecie, nombre_de_la_especie)) {
                     feedService.agregarEvento(EventoFactory.eventoContagioPorPrimeraVezEnUbicacion(tipoPatogenoDeLaEspecie, ubicacion.nombreUbicacion, nombre_de_la_especie))
                 }
-                if (especieDAO.esPandemia(it.second)) {
+                else {
+                        feedService.agregarEvento(EventoFactory.eventoContagioNormal(vectorInfectado, it.first.id!!, ubicacion?.nombreUbicacion))
+                }
+                if (especieDAO.esPandemia(it.second) && !feedService.especieYaTieneEventoPorPandemia(tipoPatogenoDeLaEspecie, nombre_de_la_especie)) {
                     feedService.agregarEvento(EventoFactory.eventoContagioPorPandemia(tipoPatogenoDeLaEspecie, nombre_de_la_especie))
                 }
-                feedService.agregarEvento(EventoFactory.eventoContagioNormal(vectorInfectado, it.first.id!!, ubicacion?.nombreUbicacion))
             }
         }
     }

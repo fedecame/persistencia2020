@@ -110,7 +110,6 @@ class FeedServiceTest {
 
     @Test
     fun alBuscarLosEventosDeContagioDeUnPatogenoTieneCuatroResultadosCuandoElPatogenoSoloSeVolvioPandemiaUnaUnicaVez(){
-        //Una especie se vuelve pandemia se encuentra presenta en mas de la mitad de las locaciones
         val jamaica = ubicacionService.crearUbicacion("Jamaica")
         val babilonia = ubicacionService.crearUbicacion("Babilonia")
         ubicacionService.crearUbicacion("NismanLandia")
@@ -451,13 +450,36 @@ class FeedServiceTest {
 
         vectorService.contagiar(vectorInfectado, listOf(insecto1, insecto2, insecto3))
         val eventosFeedVector = feedService.feedVector(vectorInfectado.id!!)
-        Assert.assertEquals(3, eventosFeedVector.size)
+        Assert.assertEquals(2, eventosFeedVector.size)
         Assert.assertEquals(Accion.CONTAGIO_NORMAL.name, eventosFeedVector.first().accionQueLoDesencadena)
     }
 
     @Test
-    fun alVolverseUnaEspeciePandemiaNoSeGeneranEventosDePandemiasRepetidosCuandoContagia(){
+    fun `Al volverse una Pandemia una especie no se generan eventos de Pandemias repetidos cuando esta contagia a un vector`(){
+        this.dropAll()
+        val jamaica = ubicacionService.crearUbicacion("Jamaica")
+        val babilonia = ubicacionService.crearUbicacion("Babilonia")
+        val patogenoModel = Patogeno()
+        patogenoModel.tipo = "virus"
+        val especie = patogenoService.agregarEspecie(patogenoService.crearPatogeno(patogenoModel), "gripe", "Narnia")
+        val vectorJamaiquino = Vector()
+        vectorJamaiquino.ubicacion = jamaica
+        vectorJamaiquino.tipo = Humano()
+        val vectorBabilonico = Vector()
+        vectorBabilonico.ubicacion = babilonia
+        vectorBabilonico.tipo= Humano()
+        vectorService.crearVector(vectorJamaiquino)
+        vectorService.crearVector(vectorBabilonico)
+        vectorService.infectar(vectorJamaiquino, especie)
+        vectorService.infectar(vectorBabilonico, especie)
 
+        val result = feedService.feedPatogeno(patogenoModel.tipo)
+        val eventosPandemia = result.filter { it.accionQueLoDesencadena == Accion.PATOGENO_ES_PANDEMIA.name }
+        val unicoEventoPandemia = eventosPandemia.get(0)
+        Assert.assertEquals(4, result.size)
+        Assert.assertEquals(1, eventosPandemia.size)
+        Assert.assertEquals(Accion.PATOGENO_ES_PANDEMIA.name, unicoEventoPandemia.accionQueLoDesencadena)
+        Assert.assertTrue(dao.especieYaTieneEventoPorPandemia(especie.patogeno.tipo, especie.nombre))
     }
 
     @After

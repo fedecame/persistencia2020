@@ -206,7 +206,6 @@ class FeedDAOTest {
         }
         dao.commit()
         val result = dao.feedPatogeno(TipoPatogeno.VIRUS.name)
-        //PosicionElemento = evento
         val uno = result.get(0)
         val dos = result.get(1)
         val tres = result.get(2)
@@ -297,6 +296,18 @@ class FeedDAOTest {
         vectorService.infectar(vectorBabilonico, especie)
         Assert.assertTrue(patogenoService.esPandemia(especie.id!!))
         Assert.assertTrue(dao.especieYaTieneEventoPorPandemia(patogenoModel.tipo, "gripe"))
+    }
+
+    @Test
+    fun `Al tener un evento Por Pandemia de una especie no se generan eventos de Pandemias repetidos cuando esta contagia a un vector`(){
+        this.dropAll()
+        Assert.assertFalse(dao.especieYaTieneEventoPorPandemia(TipoPatogeno.VIRUS.name, "gripe"))
+        val eventoPorPandemia = eventoFactory.eventoContagioPorPandemia(TipoPatogeno.VIRUS.name, "Jamaica")
+        dao.startTransaction()
+        dao.save(eventoPorPandemia)
+        dao.commit()
+
+
     }
 
     @After
