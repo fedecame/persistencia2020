@@ -28,7 +28,7 @@ class EventoFactoryTest {
 
     @Test
     fun eventoFactoryDevuelveUnEventoConsistenteAlRecibirElMensajeEventoContagioPorPrimeraVezEnUbicacion(){
-        val evento = sut.eventoContagioPorPrimeraVezEnUbicacion("algo", "un nombre de ubicacion", "un nombre de especie")
+        val evento = sut.eventoContagioPorPrimeraVezEnUbicacion("algo", "un nombre de ubicacion", "un nombre de especie", 0.toLong())
         Assert.assertNotNull(evento)
         Assert.assertTrue(evento.tipoEvento is Contagio)
         Assert.assertEquals("algo", evento.tipoPatogeno)

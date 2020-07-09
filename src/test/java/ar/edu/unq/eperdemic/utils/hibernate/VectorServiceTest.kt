@@ -97,13 +97,20 @@ class VectorServiceTest {
         vector2.estado = estado
         vector2.ubicacion = ubicacionService.crearUbicacion("Saavedra")
         vectorService.crearVector(vector2)
-        val vectoresAContagiar : MutableList<Vector> = mutableListOf()
-        vectoresAContagiar.add(vector2)
-
+        val vectoresAContagiar : MutableList<Vector> = mutableListOf(vector2)
+        val patogenoModel = Patogeno()
+        patogenoModel.tipo = "Virus"
+        patogenoModel.factorContagioHumano = 100000
+        val patogenoService = PatogenoServiceImpl(HibernatePatogenoDAO(), HibernateEspecieDAO())
+        patogenoService.crearPatogeno(patogenoModel)
+        val especiePersistida = patogenoService.agregarEspecie(patogenoModel.id!!, "gripe", "China")
+        val res0 = vectorService.recuperarVector(vector2.id!!.toInt())
+        Assert.assertEquals(0,res0.especies.size)
+        vectorService.infectar(vector1, especiePersistida)
         vectorService.contagiar(vector1,vectoresAContagiar)
-        val res = vectorService.recuperarVector(vector2.id!!.toInt())
+        val res1 = vectorService.recuperarVector(vector2.id!!.toInt())
 
-        Assert.assertEquals(1,res.especies.size)
+        Assert.assertEquals(1,res1.especies.size)
 
     }
 
@@ -215,9 +222,7 @@ class VectorServiceTest {
         otroPatogeno.tipo = "VIRUS"
         otroPatogeno.cantidadDeEspecies = 1
         patogenoService.crearPatogeno(otroPatogeno)
-//        val especie2 = otroPatogeno.crearEspecie("un nombrecito", "Tailandia")
         val especie2 = patogenoService.agregarEspecie(otroPatogeno.id!!, "un nombrecito", "Tailandia")
-//        especie2.patogeno = otroPatogeno
         val recuperado = vectorService.recuperarVector(1)
         vectorService.infectar(recuperado,especie2)
         val recupInfectado = vectorService.recuperarVector(1)
