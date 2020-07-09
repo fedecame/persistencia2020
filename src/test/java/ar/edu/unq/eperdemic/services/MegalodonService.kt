@@ -5,7 +5,7 @@ import ar.edu.unq.eperdemic.utils.DataService
 import ar.edu.unq.eperdemic.utils.jdbc.DataServiceJDBC
 
 class MegalodonService : DataService {
-    private val dataServices : List<DataService> =  mutableListOf(HibernateDataService(), MongoDBDataService() , Neo4jDataService(), DataServiceJDBC(JDBCPatogenoDAO()))
+    private val dataServices : List<DataService> =  mutableListOf(HibernateDataService(), MongoDBDataService(), Neo4jDataService(), DataServiceJDBC(JDBCPatogenoDAO()))
 
     override fun crearSetDeDatosIniciales() {
         dataServices.forEach { it.crearSetDeDatosIniciales() }

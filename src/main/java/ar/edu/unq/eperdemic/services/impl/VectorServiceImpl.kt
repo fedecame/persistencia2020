@@ -28,19 +28,20 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
                 val tipoPatogenoDeLaEspecie = it.second.patogeno.tipo
                 val nombre_de_la_especie = it.second.nombre
                 val ubicacion = it.first.ubicacion
-                if (ubicacion !== null && !feedService.especieYaEstabaEnLaUbicacion(ubicacion.nombreUbicacion, tipoPatogenoDeLaEspecie, nombre_de_la_especie)) {
-                    feedService.agregarEvento(EventoFactory.eventoContagioPorPrimeraVezEnUbicacion(tipoPatogenoDeLaEspecie, ubicacion.nombreUbicacion, nombre_de_la_especie))
-                }
-                if (especieDAO.esPandemia(it.second)) {
+                if (especieDAO.esPandemia(it.second) && !feedService.especieYaTieneEventoPorPandemia(tipoPatogenoDeLaEspecie, nombre_de_la_especie)) {
                     feedService.agregarEvento(EventoFactory.eventoContagioPorPandemia(tipoPatogenoDeLaEspecie, nombre_de_la_especie))
                 }
-                feedService.agregarEvento(EventoFactory.eventoContagioNormal(vectorInfectado, it.first.id!!, ubicacion?.nombreUbicacion))
+                if (!feedService.especieYaEstabaEnLaUbicacion(ubicacion!!.nombreUbicacion, tipoPatogenoDeLaEspecie, nombre_de_la_especie)) {
+                    feedService.agregarEvento(EventoFactory.eventoContagioPorPrimeraVezEnUbicacion(tipoPatogenoDeLaEspecie, ubicacion.nombreUbicacion, nombre_de_la_especie, it.first.id!!))
+                } else {
+                    feedService.agregarEvento(EventoFactory.eventoContagioNormal(vectorInfectado, it.first.id!!, ubicacion?.nombreUbicacion, nombre_de_la_especie))
+                }
             }
         }
     }
 
     override fun infectar(vector: Vector, especie: Especie) {
-        var infeccion : List<Pair<Vector, Especie>> = listOf()
+        lateinit var infeccion : List<Pair<Vector, Especie>>
         TransactionRunner.addHibernate().runTrx {
             val especieDB = HibernateEspecieDAO().recuperarEspecie(especie.id!!)
             infeccion = vectorDao.infectar(vector,especieDB)

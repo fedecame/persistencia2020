@@ -144,7 +144,7 @@ class FeedDAOTest {
         val result = dao.feedPatogeno(TipoPatogeno.VIRUS.name)
         val pivote = dao.getByTipoPatogeno(TipoPatogeno.VIRUS.name)
         Assert.assertEquals(4, result.size)
-        val unicoEvento = result.get(0)
+        val unicoEvento = result.filter{it.accionQueLoDesencadena == Accion.PATOGENO_ES_PANDEMIA.name}.get(0)
         Assert.assertEquals(Accion.PATOGENO_ES_PANDEMIA.name, unicoEvento.accionQueLoDesencadena)
         Assert.assertTrue(unicoEvento.tipoEvento is Contagio)
         Assert.assertEquals(patogenoModel.tipo, unicoEvento.tipoPatogeno)
@@ -173,10 +173,6 @@ class FeedDAOTest {
         Assert.assertTrue(patogenoService.esPandemia(especie.id!!))
         val result = dao.feedPatogeno(TipoPatogeno.VIRUS.name)
         Assert.assertEquals(4, result.size)
-        val unicoEvento = result.get(0)
-        Assert.assertEquals(Accion.PATOGENO_ES_PANDEMIA.name, unicoEvento.accionQueLoDesencadena)
-        Assert.assertTrue(unicoEvento.tipoEvento is Contagio)
-        Assert.assertEquals(patogenoModel.tipo, unicoEvento.tipoPatogeno)
     }
 
     @Test
@@ -206,7 +202,6 @@ class FeedDAOTest {
         }
         dao.commit()
         val result = dao.feedPatogeno(TipoPatogeno.VIRUS.name)
-        //PosicionElemento = evento
         val uno = result.get(0)
         val dos = result.get(1)
         val tres = result.get(2)
@@ -239,7 +234,7 @@ class FeedDAOTest {
     fun alConsultarSiUnaEspecieYaEstabaEnLaUbicacionCuandoEstaYaTeniaUNEventoDeContagioPorPrimeraVezEnLaUbicacionDaTrue() {
         this.dropAll()
         dao.startTransaction()
-        val evento = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(TipoPatogeno.VIRUS.name, "Jamaica", "gripe")
+        val evento = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(TipoPatogeno.VIRUS.name, "Jamaica", "gripe", 0.toLong())
         dao.save(evento)
         dao.commit()
         Assert.assertTrue(dao.especieYaEstabaEnLaUbicacion("Jamaica", TipoPatogeno.VIRUS.name, "gripe"))
@@ -259,10 +254,10 @@ class FeedDAOTest {
     fun alConsultarSiUnaEspecieYaEstabaEnLaUbicacionCuandoEstaYaTeniaVariosEventosDeContagioPorPrimeraVezPeroDeOtrasEspeciesEnLaUbicacionDaFalse() {
         this.dropAll()
         dao.startTransaction()
-        val evento0 = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(TipoPatogeno.VIRUS.name, "New York, New York tararara", "gripe")
+        val evento0 = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(TipoPatogeno.VIRUS.name, "New York, New York tararara", "gripe", 0.toLong())
         val evento1 = eventoFactory.eventoContagioPorPandemia(TipoPatogeno.VIRUS.name, "Jamaica")
-        val evento2 = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(TipoPatogeno.HONGO.name, "Jamaica", "gripe")
-        val evento3 = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(TipoPatogeno.VIRUS.name, "Jamaica", "sarampion")
+        val evento2 = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(TipoPatogeno.HONGO.name, "Jamaica", "gripe", 0.toLong())
+        val evento3 = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(TipoPatogeno.VIRUS.name, "Jamaica", "sarampion", 0.toLong())
         val eventos = listOf(evento0, evento1, evento2, evento3)
         eventos.forEach { dao.save(it) }
         dao.commit()
@@ -272,7 +267,7 @@ class FeedDAOTest {
     @Test
     fun cuandoNoExisteUnEventoDePandemiaParaLaEspecieDeUnPantogenoDadoElMensajeEspecieYaEsPandemiaDelFeedDAODevuelveFalse(){
         this.dropAll()
-        Assert.assertFalse(dao.especieYaEsPandemia("un patogeno", "una especie"))
+        Assert.assertFalse(dao.especieYaTieneEventoPorPandemia("un patogeno", "una especie"))
     }
 
     @Test
@@ -296,7 +291,58 @@ class FeedDAOTest {
         vectorService.infectar(vectorJamaiquino, especie)
         vectorService.infectar(vectorBabilonico, especie)
         Assert.assertTrue(patogenoService.esPandemia(especie.id!!))
-        Assert.assertTrue(dao.especieYaEsPandemia(patogenoModel.tipo, "gripe"))
+        Assert.assertTrue(dao.especieYaTieneEventoPorPandemia(patogenoModel.tipo, "gripe"))
+    }
+
+    @Test
+    fun `Al tener un evento Por Pandemia de una especie no se generan eventos de Pandemias repetidos cuando esta contagia a un vector`(){
+        this.dropAll()
+        val jamaica = ubicacionService.crearUbicacion("Jamaica")
+        Assert.assertFalse(dao.especieYaTieneEventoPorPandemia(TipoPatogeno.VIRUS.name, "gripe"))
+        val eventoPorPandemia = eventoFactory.eventoContagioPorPandemia(TipoPatogeno.VIRUS.name, "gripe")
+
+        dao.save(eventoPorPandemia)
+
+        Assert.assertTrue(dao.especieYaTieneEventoPorPandemia(TipoPatogeno.VIRUS.name, "gripe"))
+        val res1 = dao.feedPatogeno(TipoPatogeno.VIRUS.name)
+        val eventosPandemia1 = res1.filter{it.accionQueLoDesencadena == Accion.PATOGENO_ES_PANDEMIA.name}
+        Assert.assertEquals(1, eventosPandemia1.size)
+        val patogenoModel = Patogeno()
+        patogenoModel.factorContagioHumano = 1000000
+        patogenoModel.tipo = TipoPatogeno.VIRUS.name
+        patogenoService.crearPatogeno(patogenoModel)
+        val especieAct = patogenoService.agregarEspecie(patogenoModel.id!!, "gripe", "Jamaica")
+        val vector1 = Vector()
+        vector1.ubicacion = jamaica
+        vector1.tipo = Humano()
+        val vector2 = Vector()
+        vector2.ubicacion = jamaica
+        vector2.tipo = Humano()
+        vectorService.crearVector(vector1)
+        vectorService.crearVector(vector2)
+        vectorService.infectar(vector1, especieAct)
+        vectorService.infectar(vector2, especieAct)
+        vectorService.contagiar(vector1, listOf(vector2))
+        vectorService.contagiar(vector2, listOf(vector1))
+        Assert.assertTrue(dao.especieYaTieneEventoPorPandemia(TipoPatogeno.VIRUS.name, "gripe"))
+        val res2 = dao.feedPatogeno(TipoPatogeno.VIRUS.name)
+        val eventosPandemia2 = res2.filter{it.accionQueLoDesencadena == Accion.PATOGENO_ES_PANDEMIA.name}
+        Assert.assertEquals(1, eventosPandemia2.size)
+    }
+
+    @Test
+    fun `subfuncion responde si ya hay eventos de pandemia para persistidos para un tipo de patogeno y especie dado`(){
+        val patogenoModel = Patogeno()
+        patogenoModel.tipo = "virus"
+        val especie = patogenoService.agregarEspecie(patogenoService.crearPatogeno(patogenoModel), "gripe", "Narnia")
+        Assert.assertFalse(dao.especieYaTieneEventoPorPandemia(especie.patogeno.tipo, especie.nombre))
+        val eventoPorPandemia = eventoFactory.eventoContagioPorPandemia(especie.patogeno.tipo, especie.nombre)
+        dao.startTransaction()
+        dao.save(eventoPorPandemia)
+        dao.commit()
+        dao.startTransaction()
+        Assert.assertTrue(dao.especieYaTieneEventoPorPandemia(especie.patogeno.tipo, especie.nombre))
+        dao.commit()
     }
 
     @After

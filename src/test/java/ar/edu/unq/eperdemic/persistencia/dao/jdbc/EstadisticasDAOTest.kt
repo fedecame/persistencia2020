@@ -258,8 +258,8 @@ class EstadisticasDAOTest {
         vectorService.crearVector(vectorAlfa)
         vectorService.crearVector(vectorBeta)
         vectorService.infectar(vectorAlfa, gripe)
-        vectorService.infectar(vectorAlfa, paperas)
         vectorService.infectar(vectorBeta, gripe)
+        vectorService.infectar(vectorAlfa, paperas)
         vectorService.infectar(vectorBeta, paperas)
         Assert.assertEquals("Algo", TransactionRunner.addHibernate().runTrx {estadisticasDAO.especieQueInfectaAMasVectoresEn("St. Mary")})
     }
@@ -271,8 +271,8 @@ class EstadisticasDAOTest {
         val virusModel = Patogeno()
         virusModel.tipo = "Virus"
         patogenoService.crearPatogeno(virusModel)
-        val gripe = patogenoService.agregarEspecie(virusModel.id!!, "Algo", "Narnia")
-        val paperas = patogenoService.agregarEspecie(virusModel.id!!,"Algo", "NismanLandia")
+        val malaria = patogenoService.agregarEspecie(virusModel.id!!, "malaria", "Narnia")
+        val dengue = patogenoService.agregarEspecie(virusModel.id!!,"malaria", "NismanLandia")
         val vectorAlfa = Vector()
         val vectorBeta = Vector()
         vectorAlfa.tipo = Insecto()
@@ -281,11 +281,11 @@ class EstadisticasDAOTest {
         vectorBeta.ubicacion = ubicacionVirgen
         vectorService.crearVector(vectorAlfa)
         vectorService.crearVector(vectorBeta)
-        vectorService.infectar(vectorAlfa, gripe)
-        vectorService.infectar(vectorAlfa, paperas)
-        vectorService.infectar(vectorBeta, gripe)
-        vectorService.infectar(vectorBeta, paperas)
-        Assert.assertEquals("Algo", TransactionRunner.addHibernate().runTrx {estadisticasDAO.especieQueInfectaAMasVectoresEn("St. Mary")})
+        vectorService.infectar(vectorAlfa, malaria)
+        vectorService.infectar(vectorAlfa, dengue)
+        vectorService.infectar(vectorBeta, malaria)
+        vectorService.infectar(vectorBeta, dengue)
+        Assert.assertEquals("malaria", TransactionRunner.addHibernate().runTrx {estadisticasDAO.especieQueInfectaAMasVectoresEn("St. Mary")})
         Assert.assertEquals(2, TransactionRunner.addHibernate().runTrx {estadisticasDAO.vectoresInfectados("St. Mary")})
     }
 
