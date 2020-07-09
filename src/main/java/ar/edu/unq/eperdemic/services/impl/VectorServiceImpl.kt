@@ -17,9 +17,8 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
         var infecciones: List<Pair<Vector, Especie>> = listOf()
         TransactionRunner.addHibernate().runTrx {
             infecciones = vectorDao.contagiar(vectorInfectado, vectores)
-            this.fastForwardFeed(infecciones, vectorInfectado.id)
         }
-
+        this.fastForwardFeed(infecciones, vectorInfectado.id)
     }
 
     fun fastForwardFeed(infecciones: List<Pair<Vector, Especie>>, vectorInfectado: Long? = null){

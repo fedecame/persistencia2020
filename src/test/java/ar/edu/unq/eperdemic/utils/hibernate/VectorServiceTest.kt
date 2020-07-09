@@ -104,11 +104,13 @@ class VectorServiceTest {
         val patogenoService = PatogenoServiceImpl(HibernatePatogenoDAO(), HibernateEspecieDAO())
         patogenoService.crearPatogeno(patogenoModel)
         val especiePersistida = patogenoService.agregarEspecie(patogenoModel.id!!, "gripe", "China")
+        val res0 = vectorService.recuperarVector(vector2.id!!.toInt())
+        Assert.assertEquals(0,res0.especies.size)
         vectorService.infectar(vector1, especiePersistida)
         vectorService.contagiar(vector1,vectoresAContagiar)
-        val res = vectorService.recuperarVector(vector2.id!!.toInt())
+        val res1 = vectorService.recuperarVector(vector2.id!!.toInt())
 
-        Assert.assertEquals(1,res.especies.size)
+        Assert.assertEquals(1,res1.especies.size)
 
     }
 
