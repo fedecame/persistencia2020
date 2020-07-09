@@ -469,6 +469,7 @@ class FeedServiceTest {
         val vectorBabilonico = Vector()
         vectorBabilonico.ubicacion = babilonia
         vectorBabilonico.tipo= Humano()
+        Assert.assertFalse(dao.especieYaTieneEventoPorPandemia(especie.patogeno.tipo, especie.nombre))
         vectorService.crearVector(vectorJamaiquino)
         vectorService.crearVector(vectorBabilonico)
         vectorService.infectar(vectorJamaiquino, especie)
@@ -481,6 +482,19 @@ class FeedServiceTest {
         Assert.assertEquals(1, eventosPandemia.size)
         Assert.assertEquals(Accion.PATOGENO_ES_PANDEMIA.name, unicoEventoPandemia.accionQueLoDesencadena)
         Assert.assertTrue(dao.especieYaTieneEventoPorPandemia(especie.patogeno.tipo, especie.nombre))
+        vectorService.contagiar(vectorBabilonico, listOf(vectorJamaiquino))
+        vectorService.contagiar(vectorJamaiquino, listOf(vectorBabilonico))
+        vectorService.infectar(vectorJamaiquino, especie)
+        vectorService.infectar(vectorBabilonico, especie)
+
+        val result2 = feedService.feedPatogeno(patogenoModel.tipo)
+        val eventosPandemia2 = result.filter { it.accionQueLoDesencadena == Accion.PATOGENO_ES_PANDEMIA.name }
+        val unicoEventoPandemia2 = eventosPandemia.get(0)
+        Assert.assertEquals(4, result2.size)
+        Assert.assertEquals(1, eventosPandemia2.size)
+        Assert.assertEquals(Accion.PATOGENO_ES_PANDEMIA.name, unicoEventoPandemia2.accionQueLoDesencadena)
+        Assert.assertTrue(dao.especieYaTieneEventoPorPandemia(especie.patogeno.tipo, especie.nombre))
+
     }
 
     @After
