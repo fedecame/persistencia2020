@@ -32,16 +32,20 @@ object TransactionRunner{
     fun addNeo4j() : TransactionRunner = this.addIf(TransactionNeo4j)
 
     fun <T> runTrx(bloque: () -> T): T {
-        try {
-            this.start()
-            val resultado = bloque()
-            this.commit()
-            return resultado
-        } catch (e: RuntimeException) {
-            this.rollback()
-            throw e
-        } finally {
-            this.clear()
+        if (transactions.any { it.hasSession() }) {
+            return bloque()
+        } else {
+            try {
+                this.start()
+                val resultado = bloque()
+                this.commit()
+                return resultado
+            } catch (e: RuntimeException) {
+                this.rollback()
+                throw e
+            } finally {
+                this.clear()
+            }
         }
     }
 }
