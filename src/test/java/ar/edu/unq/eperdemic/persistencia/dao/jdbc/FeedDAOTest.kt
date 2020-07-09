@@ -144,7 +144,7 @@ class FeedDAOTest {
         val result = dao.feedPatogeno(TipoPatogeno.VIRUS.name)
         val pivote = dao.getByTipoPatogeno(TipoPatogeno.VIRUS.name)
         Assert.assertEquals(4, result.size)
-        val unicoEvento = result.get(0)
+        val unicoEvento = result.filter{it.accionQueLoDesencadena == Accion.PATOGENO_ES_PANDEMIA.name}.get(0)
         Assert.assertEquals(Accion.PATOGENO_ES_PANDEMIA.name, unicoEvento.accionQueLoDesencadena)
         Assert.assertTrue(unicoEvento.tipoEvento is Contagio)
         Assert.assertEquals(patogenoModel.tipo, unicoEvento.tipoPatogeno)
@@ -173,10 +173,6 @@ class FeedDAOTest {
         Assert.assertTrue(patogenoService.esPandemia(especie.id!!))
         val result = dao.feedPatogeno(TipoPatogeno.VIRUS.name)
         Assert.assertEquals(4, result.size)
-        val unicoEvento = result.get(0)
-        Assert.assertEquals(Accion.PATOGENO_ES_PANDEMIA.name, unicoEvento.accionQueLoDesencadena)
-        Assert.assertTrue(unicoEvento.tipoEvento is Contagio)
-        Assert.assertEquals(patogenoModel.tipo, unicoEvento.tipoPatogeno)
     }
 
     @Test

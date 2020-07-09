@@ -309,7 +309,8 @@ class FeedServiceTest {
         vector.ubicacion = ubicacionService.crearUbicacion("guadalajara")
         vectorService.crearVector(vector)
         vectorService.infectar(vector, especie)
-
+        val eventosDePatogeno = feedService.feedPatogeno(especie.patogeno.tipo)
+        Assert.assertEquals(3, eventosDePatogeno.size)
         val eventosDeContagio = feedService.feedVector(vector.id!!)
         Assert.assertEquals(1, eventosDeContagio.size)
         Assert.assertEquals(Accion.CONTAGIO_NORMAL.name, eventosDeContagio.first().accionQueLoDesencadena)
