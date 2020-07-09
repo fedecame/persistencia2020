@@ -458,7 +458,6 @@ class FeedServiceTest {
 
     @Test
     fun `Al volverse una Pandemia una especie no se generan eventos de Pandemias repetidos cuando esta contagia a un vector`(){
-        this.dropAll()
         val jamaica = ubicacionService.crearUbicacion("Jamaica")
         val babilonia = ubicacionService.crearUbicacion("Babilonia")
         ubicacionService.crearUbicacion("chipre")
@@ -469,7 +468,7 @@ class FeedServiceTest {
         vectorJamaiquino.ubicacion = jamaica
         vectorJamaiquino.tipo = Humano()
         val vectorBabilonico = Vector()
-        val result1 = feedService.feedPatogeno(patogenoModel.tipo)
+        val result1 = feedService.feedPatogeno(especie.patogeno.tipo)
         val eventosPandemia1 = result1.filter { it.accionQueLoDesencadena == Accion.PATOGENO_ES_PANDEMIA.name }
         Assert.assertEquals(1, result1.size)
         Assert.assertEquals(0, eventosPandemia1.size)
@@ -504,17 +503,10 @@ class FeedServiceTest {
         vectorService.contagiar(otroVectorJamaiquino, listOf(otroVectorBabilonico))
         vectorService.contagiar(otroVectorBabilonico, listOf(otroVectorJamaiquino))
 
-        vectorService.contagiar(vectorBabilonico, listOf(vectorJamaiquino))
-        vectorService.contagiar(vectorJamaiquino, listOf(vectorBabilonico))
-        vectorService.infectar(vectorJamaiquino, especie)
-        vectorService.infectar(vectorBabilonico, especie)
-
-        val result2 = feedService.feedPatogeno(patogenoModel.tipo)
+        val result2 = feedService.feedPatogeno(especie.patogeno.tipo)
         val eventosPandemia2 = result2.filter { it.accionQueLoDesencadena == Accion.PATOGENO_ES_PANDEMIA.name }
-        val unicoEventoPandemia2 = eventosPandemia.get(0)
-        Assert.assertEquals(4, result2.size)
+        Assert.assertEquals(8, result2.size)
         Assert.assertEquals(1, eventosPandemia2.size)
-        Assert.assertEquals(Accion.PATOGENO_ES_PANDEMIA.name, unicoEventoPandemia2.accionQueLoDesencadena)
         Assert.assertTrue(dao.especieYaTieneEventoPorPandemia(especie.patogeno.tipo, especie.nombre))
         Assert.assertTrue(feedService.especieYaTieneEventoPorPandemia(especie.patogeno.tipo, especie.nombre))
     }
