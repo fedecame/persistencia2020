@@ -66,6 +66,7 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
     override fun mover(vectorId: Int, nombreUbicacion: String) {
         lateinit var ubicacionInicial : String
         lateinit var infeccionYUbicacion : Pair<List<Pair<Vector, Especie>>, List<Ubicacion>>
+        val especieDAO = HibernateEspecieDAO()
         TransactionRunner.addHibernate().addNeo4j().runTrx {
             HibernateUbicacionDao.recuperar(nombreUbicacion) // Valida que exista la ubicacion en la base de datos
             val vector = vectorDao.recuperar(vectorId)
@@ -76,10 +77,8 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
             neo4jUbicacionDAO.esAledaña(ubicacionInicial, nombreUbicacion) // Cambiar el nombre del mensaje
             neo4jUbicacionDAO.noEsCapazDeMoverPorCamino(vector, nombreUbicacion) // Cambiar el nombre del mensaje
             infeccionYUbicacion = HibernateUbicacionDao.mover(vector, nombreUbicacion)
-        }
-        // si se ejecuta esto es porque se movio y no exploto.
-        val especieDAO = HibernateEspecieDAO()
-        TransactionRunner.addHibernate().runTrx {
+            // si se ejecuta esto es porque se movio y no exploto.
+
             infeccionYUbicacion.first.forEach {
                 val tipoPatogenoDeLaEspecie = it.second.patogeno.tipo
                 val nombre_de_la_especie = it.second.nombre
@@ -117,12 +116,9 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
         val vectoresAContagiar = ubicacion.vectores.filter { vector -> vector.id != vectorInfectadoAleatorio.id }
 
         var infecciones: List<Pair<Vector, Especie>> = listOf()
-        TransactionRunner.addHibernate().runTrx {
-            infecciones = vectorDao.contagiar(vectorInfectadoAleatorio, vectoresAContagiar)
-        }
-
         val especieDAO = HibernateEspecieDAO()
         TransactionRunner.addHibernate().runTrx {
+            infecciones = vectorDao.contagiar(vectorInfectadoAleatorio, vectoresAContagiar)
             infecciones.forEach {
                 val tipoPatogenoDeLaEspecie = it.second.patogeno.tipo
                 val nombre_de_la_especie = it.second.nombre
@@ -142,14 +138,13 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
     override fun moverMasCorto(vectorId: Long, nombreDeUbicacion: String) {
         var parInfeccionesUbicaciones : Pair<List<Pair<Vector, Especie>>, List<Ubicacion>> = Pair(listOf(), listOf())
         lateinit var vector : Vector
+        val especieDAO = HibernateEspecieDAO()
         TransactionRunner.addNeo4j().addHibernate().runTrx {
             vector = vectorDao.recuperar(vectorId.toInt())
             val ubicacion = HibernateUbicacionDao.recuperar(nombreDeUbicacion)
             parInfeccionesUbicaciones = neo4jUbicacionDAO.moverMasCorto(vector, ubicacion)
-        }
-        // si se ejecuta esto es porque se movio y no exploto.
-        val especieDAO = HibernateEspecieDAO()
-        TransactionRunner.addHibernate().runTrx {
+            // si se ejecuta esto es porque se movio y no exploto.
+
             parInfeccionesUbicaciones.first.forEach {
                 val tipoPatogenoDeLaEspecie = it.second.patogeno.tipo
                 val nombre_de_la_especie = it.second.nombre
