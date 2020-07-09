@@ -4,8 +4,8 @@ import org.hibernate.Session
 
 object TransactionHibernate: Transaction{
     private var transaction: org.hibernate.Transaction? = null
-
     private var session: Session? = null
+
     val currentSession: Session
         get() {
             if (session == null) {
@@ -13,6 +13,10 @@ object TransactionHibernate: Transaction{
             }
             return session!!
         }
+
+    override fun hasSession(): Boolean {
+        return session != null
+    }
 
     override fun start() {
         session = HibernateSessionFactoryProvider.instance.createSession()
