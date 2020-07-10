@@ -14,12 +14,15 @@ import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO, var feedService : FeedService = FeedServiceImpl(FeedMongoDAO())) : VectorService {
 
     override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) {
-        var infecciones: List<Pair<Vector, Especie>> = listOf()
+        val infecciones: List<Pair<Vector, Especie>> = vectorInfectado.contagiar(vectores)
         TransactionRunner.addHibernate().runTrx {
-            infecciones = vectorDao.contagiar(vectorInfectado, vectores)
+            for (vectorAContagiar in vectores) {
+                vectorDao.actualizar(vectorAContagiar)
+            }
         }
         this.fastForwardFeed(infecciones, vectorInfectado.id)
     }
+
 
     fun fastForwardFeed(infecciones: List<Pair<Vector, Especie>>, vectorInfectado: Long? = null){
         val especieDAO = HibernateEspecieDAO()
