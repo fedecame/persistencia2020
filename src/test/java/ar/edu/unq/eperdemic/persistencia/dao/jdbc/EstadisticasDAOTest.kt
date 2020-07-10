@@ -247,8 +247,8 @@ class EstadisticasDAOTest {
         val virusModel = Patogeno()
         virusModel.tipo = "Virus"
         patogenoService.crearPatogeno(virusModel)
-        val gripe = patogenoService.agregarEspecie(virusModel.id!!, "Algo", "Narnia")
-        val paperas = patogenoService.agregarEspecie(virusModel.id!!,"Algo3", "NismanLandia")
+        val gripe = patogenoService.agregarEspecie(virusModel.id!!, "Alga", "Narnia")
+        val paperas = patogenoService.agregarEspecie(virusModel.id!!,"Algo", "NismanLandia")
         val vectorAlfa = Vector()
         val vectorBeta = Vector()
         vectorAlfa.tipo = Insecto()
@@ -261,7 +261,7 @@ class EstadisticasDAOTest {
         vectorService.infectar(vectorBeta, gripe)
         vectorService.infectar(vectorAlfa, paperas)
         vectorService.infectar(vectorBeta, paperas)
-        Assert.assertEquals("Algo", TransactionRunner.addHibernate().runTrx {estadisticasDAO.especieQueInfectaAMasVectoresEn("St. Mary")})
+        Assert.assertEquals("Alga", TransactionRunner.addHibernate().runTrx {estadisticasDAO.especieQueInfectaAMasVectoresEn("St. Mary")})
     }
 
     @Test
