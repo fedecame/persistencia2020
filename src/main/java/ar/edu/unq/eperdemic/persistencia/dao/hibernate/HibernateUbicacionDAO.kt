@@ -52,7 +52,7 @@ class HibernateUbicacionDAO : HibernateDAO<Ubicacion>(Ubicacion::class.java), Ub
             ubicacionOrigen.vectores.removeIf { it.id != null && it.id == vector.id }
             this.actualizar(ubicacionOrigen)
         }
-        val infecciones = HibernateVectorDAO().contagiar(vector, ubicacionNueva.vectores.toList()) // contagio a todos los vectores de la ubicacion nueva
+        val infecciones = vector.contagiar(ubicacionNueva.vectores.toList()) // contagio a todos los vectores de la ubicacion nueva
         vector.ubicacion = ubicacionNueva // asigno Ubicacion de Vector
         ubicacionNueva.vectores.add(vector) // agrego el vector a la nueva ubicacion
         this.actualizar(ubicacionNueva)

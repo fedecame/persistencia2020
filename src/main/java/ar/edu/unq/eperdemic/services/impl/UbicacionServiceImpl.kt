@@ -118,7 +118,8 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
         var infecciones: List<Pair<Vector, Especie>> = listOf()
         val especieDAO = HibernateEspecieDAO()
         TransactionRunner.addHibernate().runTrx {
-            infecciones = vectorDao.contagiar(vectorInfectadoAleatorio, vectoresAContagiar)
+            infecciones = vectorInfectadoAleatorio.contagiar(vectoresAContagiar)
+            vectoresAContagiar.forEach{vectorDao.actualizar(it)}
             infecciones.forEach {
                 val tipoPatogenoDeLaEspecie = it.second.patogeno.tipo
                 val nombre_de_la_especie = it.second.nombre
