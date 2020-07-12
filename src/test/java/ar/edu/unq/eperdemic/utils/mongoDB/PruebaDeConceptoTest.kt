@@ -25,8 +25,6 @@ import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import java.time.Instant
-import java.time.format.DateTimeFormatter
 
 class PruebaDeConceptoTest {
     lateinit var dao : FeedMongoDAO
@@ -218,7 +216,7 @@ class PruebaDeConceptoTest {
         this.dropAll()
         dao.startTransaction()
         val evento0 = eventoFactory.eventoContagioPorPandemia("un tipo", "una especie")
-        val evento1 = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion("otro tipo", "Un lugar lejano", "una especie")
+        val evento1 = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion("otro tipo", "Un lugar lejano", "una especie", 0.toLong())
         dao.save(evento0)
         dao.commit()
         dao.startTransaction()

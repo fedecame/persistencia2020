@@ -8,7 +8,6 @@ import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
 import ar.edu.unq.eperdemic.services.FeedService
 import ar.edu.unq.eperdemic.services.impl.FeedServiceImpl
 import ar.edu.unq.eperdemic.services.runner.TransactionHibernate
-import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 
 class HibernateEspecieDAO : HibernateDAO<Especie>(Especie::class.java), EspecieDAO {
     val feedService : FeedService = FeedServiceImpl(FeedMongoDAO())

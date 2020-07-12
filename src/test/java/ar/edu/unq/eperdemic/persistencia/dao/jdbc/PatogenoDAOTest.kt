@@ -3,6 +3,7 @@ package ar.edu.unq.eperdemic.persistencia.dao.jdbc
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.exception.PatogenoNotFoundRunTimeException
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
+import ar.edu.unq.eperdemic.services.MegalodonService
 import ar.edu.unq.eperdemic.utils.DataService
 import ar.edu.unq.eperdemic.utils.jdbc.DataServiceJDBC
 import org.junit.After
@@ -150,6 +151,6 @@ class PatogenoDAOTest{
 
     @After
     fun eliminarModelo() {
-        dataService.eliminarTodo()
+        MegalodonService().eliminarTodo()
     }
 }

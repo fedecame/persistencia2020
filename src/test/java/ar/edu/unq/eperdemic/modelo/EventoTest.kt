@@ -23,7 +23,7 @@ class EventoTest {
     fun setUp() {
         eventoFactory = EventoFactory
         eventoPandemia = eventoFactory.eventoContagioPorPandemia(TipoPatogeno.BACTERIA.name, "Gripe")
-        eventoPrimeraVez = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(TipoPatogeno.HONGO.name, "alguna ubicacion", "algun nombre de especie")
+        eventoPrimeraVez = eventoFactory.eventoContagioPorPrimeraVezEnUbicacion(TipoPatogeno.HONGO.name, "alguna ubicacion", "algun nombre de especie", 0.toLong())
         eventoSeCreaEspecie = eventoFactory.eventoEspecieCreada(TipoPatogeno.BACTERIA.name, "Corona" )
         eventoSeMutaEspecie = eventoFactory.eventoEspecieDePatogenoMuta(TipoPatogeno.BACTERIA.name, "fiebreDisco")
     }
@@ -49,7 +49,7 @@ class EventoTest {
 
     @Test
     fun elLogDelEventoDeContagioPorPandemiaDelPatogenoEsElIndicado() {
-        Assert.assertEquals("El patogeno BACTERIA se volvio pandemia", eventoPandemia.log())
+        Assert.assertEquals("El patogeno BACTERIA se volvio pandemia con la especie Gripe", eventoPandemia.log())
     }
 
     @Test

@@ -227,6 +227,7 @@ class EstadisticasServiceTest {
         Assert.assertEquals(3, reporte.vectoresInfecatods)
     }
 
+    //VER ESTO! A VECES DA ALGO Y OTRAS ALGO3
     @Test
     fun  laEspecieMasInfecciosaEsLaUnicaEspecieQueHayEnQuilmesYEsAlgo(){
         val reporte = estadisticasService.reporteDeContagios("Quilmes")
@@ -503,7 +504,6 @@ class EstadisticasServiceTest {
 
     @After
     fun eliminarTodo(){
-        hibernateData.eliminarTodo()
-        dataDaoNeo4j.eliminarTodo()
+        MegalodonService().eliminarTodo()
     }
 }

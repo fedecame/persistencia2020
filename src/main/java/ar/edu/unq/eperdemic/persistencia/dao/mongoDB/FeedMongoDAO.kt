@@ -14,15 +14,11 @@ import com.mongodb.client.model.Indexes
 
 class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
 
-    //Faltaria poder recordar por un Id determinado?
-
     fun getByTipoPatogeno(tipo: String): List<Evento?> = findEq("tipoPatogeno", tipo)
 
     fun getByTipoEvento(tipoEvento: TipoEvento): List<Evento?> = findEq("tipoEvento", tipoEvento)
 
     override fun feedPatogeno(tipoPatogeno : String) : List<Evento>{
-        //Me fijo que: Dado un evento, ese evento
-        //      ((Haya sido generado por una Accion de Pandemia **O** Por Contagio por Primera vez) **Y** (Sea del tipo de patogeno dado))
         val match = Aggregates.match(//Aca falta la logica de mutacion
                 and(
                      or(
@@ -69,13 +65,6 @@ class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
         return aggregate(listOf(match,lista,ordenados), Evento::class.java)
     }
 
-//     override fun feedUbicacion(nombreUbicacion: String): List<Evento> {
-////val match= Aggregates.match(Filters.eq("eventos.tipoEvento","Arribo"))
-//        val match= this.findEq("nombreUbicacion",nombreUbicacion)
-//        return match
-//    }
-
-    //Cambiar de lugar el crear evento de infectar a contagiar y cambiar para que contagiar o mutar tire excepcion y hau que catchearlo
     override fun especieYaEstabaEnLaUbicacion(nombreUbicacion: String, tipoPatogenoDeLaEspecie: String, nombreEspecie : String): Boolean =
             find(and
                     (and
@@ -85,15 +74,13 @@ class FeedMongoDAO : GenericMongoDAO<Evento>(Evento::class.java), FeedDAO {
                          (eq("tipoPatogeno", tipoPatogenoDeLaEspecie),
                          eq("nombreEspecie", nombreEspecie))))).isNotEmpty()
 
-    //Cambiar de lugar el crear evento de infectar a contagiar y cambiar para que contagiar o mutar tire excepcion y hau que catchearlo
-    override fun especieYaEsPandemia(tipoPatogenoDeLaEspecie: String, nombreEspecie : String): Boolean =
+    override fun especieYaTieneEventoPorPandemia(tipoPatogenoDeLaEspecie: String, nombreEspecie : String): Boolean =
             find(and(
                     eq("accionQueLoDesencadena", Accion.PATOGENO_ES_PANDEMIA.name),
                     (and
                     (eq("tipoPatogeno", tipoPatogenoDeLaEspecie),
                             eq("nombreEspecie", nombreEspecie))))).isNotEmpty()
 
-    //Si existe un evento de contagio por primera vez en ubicacion, entonces es unico o bien, no existeimimkkkk
     fun vectorFueContagiadoAlMover(_nombreUbicacion:String, _idVectorInfectado:Int, _idVectorAInfectar:Int):Boolean=
         find(and
         (and

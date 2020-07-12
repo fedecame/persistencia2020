@@ -9,5 +9,6 @@ interface FeedService {
     fun feedUbicacion(nombreDeUbicacion: String): List<Evento>
     fun agregarEvento(eventoContagioPorPandemia: Evento) : Evento
     fun especieYaEstabaEnLaUbicacion(nombreUbicacion: String, tipoPatogenoDeLaEspecie: String, nombreDeLaEspecie: String): Boolean
-
+    fun vectorFueContagiadoAlMover(nombreUbicacion: String, idVectorInfectado:Int, idVectorAInfectar: Int): Boolean
+    fun especieYaTieneEventoPorPandemia(tipoPatogenoDeLaEspecie: String, nombreEspecie : String) : Boolean
 }

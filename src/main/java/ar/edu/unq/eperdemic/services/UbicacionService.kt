@@ -1,7 +1,6 @@
 package ar.edu.unq.eperdemic.services
 
 import ar.edu.unq.eperdemic.modelo.Ubicacion
-import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 
 interface UbicacionService {
 

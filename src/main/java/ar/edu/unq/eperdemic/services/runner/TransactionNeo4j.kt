@@ -2,7 +2,6 @@ package ar.edu.unq.eperdemic.services.runner
 
 import org.neo4j.driver.Session
 
-
 object TransactionNeo4j: Transaction {
     private var transaction : org.neo4j.driver.Transaction? =null
     private var session: Session? = null
@@ -15,6 +14,9 @@ object TransactionNeo4j: Transaction {
             return transaction!!
         }
 
+    override fun hasSession(): Boolean {
+        return session != null
+    }
 
     override fun start() {
         session=Neo4jSessionFactoryProvider.instance.createSession()

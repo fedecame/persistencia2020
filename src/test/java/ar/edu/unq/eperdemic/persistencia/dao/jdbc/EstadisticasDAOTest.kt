@@ -11,15 +11,12 @@ import ar.edu.unq.eperdemic.persistencia.dao.DataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.EstadisticasDAO
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEstadisticasDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
-import ar.edu.unq.eperdemic.persistencia.dao.neo4j.Neo4jDataDAO
+import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
 import ar.edu.unq.eperdemic.services.HibernateDataService
 import ar.edu.unq.eperdemic.services.Neo4jDataService
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
+import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
 import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
@@ -48,7 +45,7 @@ class EstadisticasDAOTest {
     lateinit var ubicacion1 : Ubicacion
     lateinit var ubicacion2 : Ubicacion
     lateinit var patogeno : Patogeno
-    var dataDaoNeo4j=Neo4jDataService()
+
     @Before
     fun setUp(){
         this.eliminarTodo()
@@ -80,21 +77,8 @@ class EstadisticasDAOTest {
         ubicacion1 = ubicacionService.crearUbicacion("Mar del Plata")
         vector.ubicacion = ubicacion0
         vectorService.crearVector(vector)
-        //dataDaoNeo4j.datosParaEstadisticaService()
         ubicacionService.conectar(ubicacion1.nombreUbicacion,ubicacion0.nombreUbicacion,"Terrestre")
     }
-
-//    private fun crearNConEstadoEn(cant : Int, estado : EstadoVector, ubicacion : String){
-//        repeat(cant){
-//            var vectorInfectado = Vector()
-//            vectorInfectado.tipo = tipo
-//            vectorInfectado.estado = estado
-//            vectorInfectado.ubicacion = ubicacionService.recuperarUbicacion(ubicacion)
-//            vectorInfectado.agregarEspecie(especie)
-//            vectorService.crearVector(vectorInfectado)
-//            ubicacionService.mover(vectorInfectado.id!!.toInt(), ubicacion)
-//        }
-//    }
 
     private fun crearNConEstadoEn(cant : Int, estado : EstadoVector, ubicacion : String){
         val ubicacionModelo = ubicacionService.recuperarUbicacion(ubicacion)
@@ -206,18 +190,20 @@ class EstadisticasDAOTest {
         Assert.assertEquals("Algo", res)
     }
 
-    @Test(expected= NoResultException::class)
+    @Test
     fun  elNombreDeLaEspecieMasInfecciosaArrojaUnaExcepcionCuandoNoQueHayNingunaEspecieEnLaUbicacion(){
-        TransactionRunner.addHibernate().runTrx {
+        var noEspecie = TransactionRunner.addHibernate().runTrx {
             estadisticasDAO.especieQueInfectaAMasVectoresEn("Mar del Plata")
         }
+        Assert.assertEquals("", noEspecie)
     }
 
-    @Test(expected= NoResultException::class)
-    fun  elEstadisticasDAOArrojaUnaExcepcionCuandoLaUbicacionNoExiste(){
-        TransactionRunner.addHibernate().runTrx {
+    @Test
+    fun elEstadisticasDAOArrojaUnaExcepcionCuandoLaUbicacionNoExiste(){
+        var noEspecie = TransactionRunner.addHibernate().runTrx {
             estadisticasDAO.especieQueInfectaAMasVectoresEn("The twilight zone")
         }
+        Assert.assertEquals("", noEspecie)
     }
 
     @Test
@@ -253,7 +239,55 @@ class EstadisticasDAOTest {
         Assert.assertEquals("Paperas", res)
     }
 
+    @Test
+    fun cuandoUnaUbicacionTieneDosInfeccionesConLaMismaCantidadDeInfectadosSiempreSeRetornaElPrimeroOrdenadoAlfabeticamente(){
+        this.eliminarTodo()
+        val ubicacionVirgen = ubicacionService.crearUbicacion("St. Mary")
+        val patogenoService = PatogenoServiceImpl(HibernatePatogenoDAO(), HibernateEspecieDAO())
+        val virusModel = Patogeno()
+        virusModel.tipo = "Virus"
+        patogenoService.crearPatogeno(virusModel)
+        val gripe = patogenoService.agregarEspecie(virusModel.id!!, "Alga", "Narnia")
+        val paperas = patogenoService.agregarEspecie(virusModel.id!!,"Algo", "NismanLandia")
+        val vectorAlfa = Vector()
+        val vectorBeta = Vector()
+        vectorAlfa.tipo = Insecto()
+        vectorBeta.tipo = Animal()
+        vectorAlfa.ubicacion = ubicacionVirgen
+        vectorBeta.ubicacion = ubicacionVirgen
+        vectorService.crearVector(vectorAlfa)
+        vectorService.crearVector(vectorBeta)
+        vectorService.infectar(vectorAlfa, gripe)
+        vectorService.infectar(vectorBeta, gripe)
+        vectorService.infectar(vectorAlfa, paperas)
+        vectorService.infectar(vectorBeta, paperas)
+        Assert.assertEquals("Alga", TransactionRunner.addHibernate().runTrx {estadisticasDAO.especieQueInfectaAMasVectoresEn("St. Mary")})
+    }
 
+    @Test
+    fun cuandoUnaUbicacionTieneDosInfeccionesQueSeLlamanIgualLaCantidadSigueContabilizandoleParaUnoSolo(){
+        val ubicacionVirgen = ubicacionService.crearUbicacion("St. Mary")
+        val patogenoService = PatogenoServiceImpl(HibernatePatogenoDAO(), HibernateEspecieDAO())
+        val virusModel = Patogeno()
+        virusModel.tipo = "Virus"
+        patogenoService.crearPatogeno(virusModel)
+        val malaria = patogenoService.agregarEspecie(virusModel.id!!, "malaria", "Narnia")
+        val dengue = patogenoService.agregarEspecie(virusModel.id!!,"malaria", "NismanLandia")
+        val vectorAlfa = Vector()
+        val vectorBeta = Vector()
+        vectorAlfa.tipo = Insecto()
+        vectorBeta.tipo = Animal()
+        vectorAlfa.ubicacion = ubicacionVirgen
+        vectorBeta.ubicacion = ubicacionVirgen
+        vectorService.crearVector(vectorAlfa)
+        vectorService.crearVector(vectorBeta)
+        vectorService.infectar(vectorAlfa, malaria)
+        vectorService.infectar(vectorAlfa, dengue)
+        vectorService.infectar(vectorBeta, malaria)
+        vectorService.infectar(vectorBeta, dengue)
+        Assert.assertEquals("malaria", TransactionRunner.addHibernate().runTrx {estadisticasDAO.especieQueInfectaAMasVectoresEn("St. Mary")})
+        Assert.assertEquals(2, TransactionRunner.addHibernate().runTrx {estadisticasDAO.vectoresInfectados("St. Mary")})
+    }
 
     @After
     fun eliminarTodo(){

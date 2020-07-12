@@ -10,16 +10,14 @@ import ar.edu.unq.eperdemic.modelo.tipoMutacion.*
 import ar.edu.unq.eperdemic.persistencia.dao.EspecieDAO
 import ar.edu.unq.eperdemic.persistencia.dao.MutacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.PatogenoDAO
-import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateDataDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateMutacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernatePatogenoDAO
-import ar.edu.unq.eperdemic.services.HibernateDataService
+import ar.edu.unq.eperdemic.services.MegalodonService
 import ar.edu.unq.eperdemic.services.MutacionService
 import ar.edu.unq.eperdemic.services.PatogenoService
 import ar.edu.unq.eperdemic.services.impl.MutacionServiceImpl
 import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
-import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -40,11 +38,9 @@ class MutacionServiceTest {
     lateinit var patogenoDAO: PatogenoDAO
     lateinit var especieDAO: EspecieDAO
     lateinit var mutacionDAO: MutacionDAO
-    lateinit var hibernateData : HibernateDataService
 
     @Before
     fun setUp(){
-        hibernateData = HibernateDataService()
         patogenoDAO = HibernatePatogenoDAO()
         especieDAO = HibernateEspecieDAO()
         patogenoService = PatogenoServiceImpl(patogenoDAO, especieDAO)
@@ -244,6 +240,6 @@ class MutacionServiceTest {
 
     @After
     fun eliminarTodo(){
-        hibernateData.eliminarTodo()
+        MegalodonService().eliminarTodo()
     }
 }
