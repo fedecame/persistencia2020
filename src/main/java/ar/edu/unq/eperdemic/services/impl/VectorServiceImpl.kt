@@ -1,8 +1,11 @@
 package ar.edu.unq.eperdemic.services.impl
 
+import ar.edu.unq.eperdemic.modelo.Antidoto
 import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.evento.EventoFactory
+import ar.edu.unq.eperdemic.modelo.exception.AnalisisDeSangreImposibleHacer
+import ar.edu.unq.eperdemic.persistencia.dao.Redis.RedisDao
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
@@ -11,8 +14,11 @@ import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
 import ar.edu.unq.eperdemic.services.VectorService
 import ar.edu.unq.eperdemic.services.FeedService
 import ar.edu.unq.eperdemic.services.runner.TransactionRunner
+import io.lettuce.core.KeyValue
 
 class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO, var feedService : FeedService = FeedServiceImpl(FeedMongoDAO())) : VectorService {
+    var redisDao= RedisDao()
+    var especieDAO=HibernateEspecieDAO()
 
     override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) {
         var infecciones: List<Pair<Vector, Especie>> = listOf()
@@ -45,6 +51,8 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
         TransactionRunner.addHibernate().runTrx {
             val especieDB = HibernateEspecieDAO().recuperarEspecie(especie.id!!)
             infeccion = vectorDao.infectar(vector,especieDB)
+
+
         }
         this.fastForwardFeed(infeccion)
     }
@@ -57,6 +65,26 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
     }
 
     override fun recuperarVector(vectorID: Int): Vector = TransactionRunner.addHibernate().runTrx { vectorDao.recuperar(vectorID) }
+
+
+    fun irAlMedico(vector:Vector,especie: Especie){
+        var  nombreAntidoto =redisDao.coneccion.syncCommands.hget("Especie:Covic-18","antidoto")
+           if(nombreAntidoto.isNullOrEmpty()){
+               throw AnalisisDeSangreImposibleHacer()
+           }
+            else{
+            tomarAntidoto(nombreAntidoto,especie,vector)
+        }
+    }
+    fun tomarAntidoto(antidoto: String,especie: Especie,vector:Vector){
+        if(redisDao.coneccion.syncCommands.hget("Especie:"+especie.nombre,"antidoto")==antidoto){
+            vector.recuperarseDeUnaEnfermedad(especie)
+            TransactionRunner.addHibernate().runTrx {
+                vectorDao.actualizar(vector)
+            }
+            }
+    }
+
 
     override fun borrarVector(vectorId: Int) {
         TransactionRunner.addHibernate().runTrx {

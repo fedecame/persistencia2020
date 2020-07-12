@@ -40,7 +40,6 @@ class HibernateVectorDAO :  HibernateDAO<Vector>(Vector::class.java), VectorDAO 
         val _vector = this.recuperar(vector.id)
         val infeccion : List<Pair<Vector, Especie>> = _vector.infectarse(especie)
         super.actualizar(_vector)
-
         return infeccion
     }
 
