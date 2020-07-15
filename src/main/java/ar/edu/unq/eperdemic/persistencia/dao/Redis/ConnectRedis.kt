@@ -8,20 +8,8 @@ import io.lettuce.core.api.sync.RedisCommands
 import java.util.*
 
 class ConnectRedis {
-
-
     var  redisClient:RedisClient= RedisClient.create("redis://@localhost:6379/0");
     var connection : StatefulRedisConnection<String, String> = redisClient.connect();
     var syncCommands : RedisCommands<String, String> = connection.sync();
-
-    fun consoleComando(key:String, value:String)=syncCommands;
-
-    fun tiempoQueLeQuedaDeEnfermo(vector:Vector, especie: Especie){
-
-
-
-    }
-
-
 
 }
