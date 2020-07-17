@@ -2,8 +2,6 @@ package ar.edu.unq.eperdemic.persistencia.dao.Redis
 
 import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Vector
-import com.sun.org.apache.xpath.internal.operations.Bool
-import org.neo4j.ogm.cypher.BooleanOperator
 import java.util.HashMap
 
 class RedisADNDao {
