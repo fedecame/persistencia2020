@@ -49,8 +49,7 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
         val tempListNombres = result.list { record: Record ->
             val ubicacion = record.get(0)
             val _nombre = ubicacion.get("nombre").asString()
-            val ubicacionTemp = Ubicacion()
-            ubicacionTemp.nombreUbicacion = _nombre
+            val ubicacionTemp = hibernateUbicacionDAO.recuperar(_nombre)
             ubicacionTemp
         }
         return tempListNombres
