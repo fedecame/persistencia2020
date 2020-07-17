@@ -32,12 +32,10 @@ class HibernateVectorDAO :  HibernateDAO<Vector>(Vector::class.java), VectorDAO 
         return res.toList()
     }
 
-    override fun infectar(vector: Vector, especie: Especie) : List<Pair<Vector, Especie>> {
-        val _vector = this.recuperar(vector.id)
-        val infeccion : List<Pair<Vector, Especie>> = _vector.infectarse(especie)
-        super.actualizar(_vector)
-        return infeccion
+    override fun infectar(vector: Vector, especie: Especie): List<Pair<Vector, Especie>> {
+        TODO("Not yet implemented")
     }
+
 
     /*
     override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) : List<Pair<Vector, Especie>> {

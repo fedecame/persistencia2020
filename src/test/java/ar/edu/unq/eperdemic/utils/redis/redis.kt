@@ -6,6 +6,7 @@ import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Patogeno
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.exception.AnalisisDeSangreImposibleHacer
+import ar.edu.unq.eperdemic.persistencia.dao.Redis.ConnectRedis
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.*
 import ar.edu.unq.eperdemic.persistencia.dao.mongoDB.FeedMongoDAO
 import ar.edu.unq.eperdemic.services.MegalodonService
@@ -17,6 +18,7 @@ import ar.edu.unq.eperdemic.tipo.Humano
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import org.springframework.boot.autoconfigure.cache.CacheProperties
 import kotlin.properties.Delegates
 
 class redis {
@@ -71,5 +73,14 @@ fun setUp(){
         Assert.assertTrue(vectorCurado.estado.javaClass== Sano().javaClass)
 
     }
+
+  /*  @Test
+    fun Scrip(){
+        var script='local val = "Hola IBM Cloud" return val'
+        var redisDAO=ConnectRedis()
+        redisDAO.syncCommands.eval(script, o)
+    }
+*/
+
 }
 

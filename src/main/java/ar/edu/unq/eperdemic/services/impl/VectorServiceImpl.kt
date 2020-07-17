@@ -54,10 +54,12 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
         lateinit var infeccion : List<Pair<Vector, Especie>>
         TransactionRunner.addHibernate().runTrx {
             val especieDB = HibernateEspecieDAO().recuperarEspecie(especie.id!!)
-            infeccion = vectorDao.infectar(vector,especieDB)
+            val _vector = vectorDao.recuperar(vector.id?.toInt()!!)
+            infeccion  = _vector.infectarse(especieDB)
+            vectorDao.actualizar(_vector)
+
             //crear adn de infeccion
             redisADNDao.incorporarADNDeEspecie(vector,especie)
-
         }
         this.fastForwardFeed(infeccion)
     }
@@ -75,6 +77,8 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
 
     fun irAlMedico(vector:Vector,especie: Especie){
        var nombreEspecie=redisADNDao.darAdnDeEspecie(vector)
+
+
         if(redisADNDao.existeAdn(vector)){
                throw AnalisisDeSangreImposibleHacer()
            }
