@@ -227,7 +227,6 @@ class EstadisticasServiceTest {
         Assert.assertEquals(3, reporte.vectoresInfecatods)
     }
 
-    //VER ESTO! A VECES DA ALGO Y OTRAS ALGO3
     @Test
     fun  laEspecieMasInfecciosaEsLaUnicaEspecieQueHayEnQuilmesYEsAlgo(){
         val reporte = estadisticasService.reporteDeContagios("Quilmes")
@@ -253,7 +252,7 @@ class EstadisticasServiceTest {
         especie2.nombre = "Algo2"
         especie2.paisDeOrigen = "Alemania"
         especie3.cantidadInfectadosParaADN = 42
-        especie3.nombre = "Algo3"
+        especie3.nombre = "Blgo"
         especie3.paisDeOrigen = "Alemania"
 
         val ubicacionFinal = ubicacionService.crearUbicacion("Maeame")

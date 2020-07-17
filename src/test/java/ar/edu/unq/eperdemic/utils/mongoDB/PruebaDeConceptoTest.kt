@@ -54,9 +54,7 @@ class PruebaDeConceptoTest {
     @Test
     fun `prueba de concepto - Test commit`(){
         this.dropAll()
-        dao.startTransaction()
         dao.save(evento)
-        dao.commit()
         val resultado0 = dao.getByTipoPatogeno(evento.tipoPatogeno!!)
         Assert.assertEquals(1, resultado0.size)
     }
