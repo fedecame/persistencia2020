@@ -49,7 +49,7 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
     }
 
     override fun conectados(nombreDeUbicacion: String): List<Ubicacion> {
-        return TransactionRunner.addNeo4j().runTrx {
+        return TransactionRunner.addNeo4j().addHibernate().runTrx {
             neo4jUbicacionDAO.conectados(nombreDeUbicacion)
         }
     }

@@ -14,7 +14,7 @@ class FeedServiceImpl(private var feedDAO: FeedMongoDAO) : FeedService {
 
     override fun feedUbicacion(nombreDeUbicacion: String): List<Evento> {
         lateinit var conectados : List<String>
-        TransactionRunner.addNeo4j().runTrx {
+        TransactionRunner.addNeo4j().addHibernate().runTrx {
             conectados = neo4jUbicacionDAO.conectados(nombreDeUbicacion).map { it.nombreUbicacion }
         }
         return feedDAO.feedUbicacion(nombreDeUbicacion, conectados)
