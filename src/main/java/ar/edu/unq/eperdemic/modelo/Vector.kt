@@ -42,6 +42,15 @@ class Vector {
         this.cambiarEstado(Sano())
     }
 
+
+    fun recuperarseDeUnaEnfermedad(especie:Especie){
+        especies.removeIf { e->e.nombre==especie.nombre }
+        if(especies.isEmpty()){
+        recuperarse()
+        }
+
+    }
+
     fun infectarse(especie: Especie) : List<Pair<Vector, Especie>> {
         var vectorYEspecie = listOf<Pair<Vector, Especie>>()
         if (especies.find { it.id == especie.id } == null) {

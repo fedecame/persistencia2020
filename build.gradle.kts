@@ -23,6 +23,8 @@ repositories {
     mavenCentral()
 }
 dependencies {
+    implementation( "io.lettuce:lettuce-core:5.3.1.RELEASE")
+
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
