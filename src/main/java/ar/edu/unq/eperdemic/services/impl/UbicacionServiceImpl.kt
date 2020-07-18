@@ -64,19 +64,20 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
     }
 
     override fun mover(vectorId: Int, nombreUbicacion: String) {
-        lateinit var ubicacionInicial : String
+        lateinit var nombreUbicacionInicial : String
         lateinit var infeccionYUbicacion : Pair<List<Pair<Vector, Especie>>, List<Ubicacion>>
         val especieDAO = HibernateEspecieDAO()
         TransactionRunner.addHibernate().addNeo4j().runTrx {
-            HibernateUbicacionDao.recuperar(nombreUbicacion) // Valida que exista la ubicacion en la base de datos
+            val ubicacionNueva = HibernateUbicacionDao.recuperar(nombreUbicacion) // Valida que exista la ubicacion en la base de datos
             val vector = vectorDao.recuperar(vectorId)
-            ubicacionInicial = vector.ubicacion!!.nombreUbicacion
-            if (ubicacionInicial == nombreUbicacion) {
+            val ubicacionOrigen = vector.ubicacion!! // recupero la ubicacion original
+            nombreUbicacionInicial = ubicacionOrigen.nombreUbicacion
+            if (nombreUbicacionInicial == nombreUbicacion) {
                 throw MoverMismaUbicacion()
             }
-            neo4jUbicacionDAO.esAledaña(ubicacionInicial, nombreUbicacion) // Cambiar el nombre del mensaje
+            neo4jUbicacionDAO.esAledaña(nombreUbicacionInicial, nombreUbicacion) // Cambiar el nombre del mensaje
             neo4jUbicacionDAO.noEsCapazDeMoverPorCamino(vector, nombreUbicacion) // Cambiar el nombre del mensaje
-            infeccionYUbicacion = HibernateUbicacionDao.mover(vector, nombreUbicacion)
+            infeccionYUbicacion = this.moverSubTarea(vector, ubicacionNueva)
             // si se ejecuta esto es porque se movio y no exploto.
 
             infeccionYUbicacion.first.forEach {
@@ -94,7 +95,7 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
                 }
                 feedService.agregarEvento(EventoFactory.eventoContagioNormal(vectorId.toLong(), it.first.id!!, ubicacion?.nombreUbicacion, nombre_de_la_especie))
             }
-            feedService.agregarEvento(EventoFactory.eventoArribo(vectorId.toLong(), ubicacionInicial, nombreUbicacion))
+            feedService.agregarEvento(EventoFactory.eventoArribo(vectorId.toLong(), nombreUbicacionInicial, nombreUbicacion))
 
             var vectoresEnUbicacion= HibernateUbicacionDao.recuperar(nombreUbicacion).vectores
             vectoresEnUbicacion.forEach { v->if( FeedServiceImpl(FeedMongoDAO()).vectorFueContagiadoAlMover(nombreUbicacion,vectorId,v.id?.toInt()!!))
@@ -102,6 +103,16 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
             }
         }
 
+    }
+    fun moverSubTarea(vector: Vector, ubicacionNueva: Ubicacion) : Pair<List<Pair<Vector, Especie>>, List<Ubicacion>> {
+        val ubicacionOrigen = HibernateUbicacionDao.recuperar(vector.ubicacion!!.nombreUbicacion)
+        ubicacionOrigen.vectores.removeIf { it.id != null && it.id == vector.id } // remuevo el vector que se mueve de la ubicacion de origen
+        HibernateUbicacionDao.actualizar(ubicacionOrigen)
+        val infecciones = vector.contagiar(ubicacionNueva.vectores.toList()) // contagio a todos los vectores de la ubicacion nueva
+        vector.ubicacion = ubicacionNueva // asigno Ubicacion de Vector
+        ubicacionNueva.vectores.add(vector) // agrego el vector a la nueva ubicacion
+        HibernateUbicacionDao.actualizar(ubicacionNueva)
+        return Pair(infecciones, listOf(ubicacionNueva))
     }
 
     override fun expandir(nombreUbicacion: String) {
@@ -143,7 +154,8 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
         TransactionRunner.addNeo4j().addHibernate().runTrx {
             vector = vectorDao.recuperar(vectorId.toInt())
             val ubicacion = HibernateUbicacionDao.recuperar(nombreDeUbicacion)
-            parInfeccionesUbicaciones = neo4jUbicacionDAO.moverMasCorto(vector, ubicacion)
+            val nombresDeUbicaciones = neo4jUbicacionDAO.moverMasCorto(vector, ubicacion)
+            parInfeccionesUbicaciones = this.moverMasCortoSubtarea(vector, nombresDeUbicaciones)
             // si se ejecuta esto es porque se movio y no exploto.
 
             parInfeccionesUbicaciones.first.forEach {
@@ -167,12 +179,18 @@ class UbicacionServiceImpl(var HibernateUbicacionDao: UbicacionDAO) : UbicacionS
         }
     }
 
+    fun moverMasCortoSubtarea(vector: Vector, nombresDeUbicaciones: List<String>) : Pair<List<Pair<Vector, Especie>>, List<Ubicacion>> {
+        var infecciones : List<Pair<Vector, Especie>> = listOf()
+        var ubicaciones : List<Ubicacion> = listOf()
+        nombresDeUbicaciones.forEach {
+            val infeccionesUbicaciones = this.moverSubTarea(vector, HibernateUbicacionDao.recuperar(it))
+            infecciones += infeccionesUbicaciones.first
+            ubicaciones += infeccionesUbicaciones.second
+        }
+        return Pair(infecciones, ubicaciones)
+    }
+
     override fun capacidadDeExpansion(vectorId: Long, movimientos: Int): Int {
         return TransactionRunner.addHibernate().addNeo4j().runTrx {  neo4jUbicacionDAO.capacidadDeExpansion(vectorId, movimientos) }
     }
-
-
-
-
-
 }

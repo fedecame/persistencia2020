@@ -233,18 +233,18 @@ class UbicacionNeo4jTest {
             Mockito.doReturn(ezpeletaSpy).`when`(hibernateUbicacionDAOSpy).recuperar(nombreEzpeletaSpy)
             Mockito.doReturn(mordorSpy).`when`(hibernateUbicacionDAOSpy).recuperar(nombreMordorSpy)
         }
-
-        ubicacionService.moverMasCorto(vectorSpy.id!!, mordorSpy.nombreUbicacion)
+        val ubicacionServiceSpy = Mockito.spy(ubicacionService)
+        ubicacionServiceSpy.moverMasCorto(vectorSpy.id!!, mordorSpy.nombreUbicacion)
 
         Mockito.verify(vectorSpy, Mockito.times(1)).ubicacion = babiloniaSpy
         Mockito.verify(vectorSpy, Mockito.times(1)).ubicacion = ezpeletaSpy
         Mockito.verify(vectorSpy, Mockito.times(1)).ubicacion = mordorSpy
         Mockito.verify(vectorSpy, Mockito.times(3)).ubicacion = Mockito.any(Ubicacion::class.java)
 
-        Mockito.verify(hibernateUbicacionDAOSpy, Mockito.times(1)).mover(vectorSpy, nombreBabiloniaSpy)
-        Mockito.verify(hibernateUbicacionDAOSpy, Mockito.times(1)).mover(vectorSpy, nombreEzpeletaSpy)
-        Mockito.verify(hibernateUbicacionDAOSpy, Mockito.times(1)).mover(vectorSpy, nombreMordorSpy)
-        Mockito.verify(hibernateUbicacionDAOSpy, Mockito.times(3)).mover(any(Vector::class.java), Mockito.anyString())
+        Mockito.verify(ubicacionServiceSpy, Mockito.times(1)).moverSubTarea(vectorSpy, babiloniaSpy)
+        Mockito.verify(ubicacionServiceSpy, Mockito.times(1)).moverSubTarea(vectorSpy, ezpeletaSpy)
+        Mockito.verify(ubicacionServiceSpy, Mockito.times(1)).moverSubTarea(vectorSpy, mordorSpy)
+        Mockito.verify(ubicacionServiceSpy, Mockito.times(3)).moverSubTarea(any(Vector::class.java), any(Ubicacion::class.java))
 
         //verifico que el vector termina en mordor
         Assert.assertEquals(mordorSpy.nombreUbicacion, vectorSpy.ubicacion!!.nombreUbicacion)
@@ -320,15 +320,16 @@ class UbicacionNeo4jTest {
             Mockito.doReturn(babiloniaSpy).`when`(hibernateUbicacionDAOSpy).recuperar(nombreBabiloniaSpy)
         }
 
-        ubicacionService.moverMasCorto(vectorInsectoSpy.id!!, babiloniaSpy.nombreUbicacion)
+        val ubicacionServiceSpy = Mockito.spy(ubicacionService)
+        ubicacionServiceSpy.moverMasCorto(vectorInsectoSpy.id!!, babiloniaSpy.nombreUbicacion)
 
         Mockito.verify(vectorInsectoSpy, Mockito.times(1)).ubicacion = quilmesSpy
         Mockito.verify(vectorInsectoSpy, Mockito.times(1)).ubicacion = babiloniaSpy
         Mockito.verify(vectorInsectoSpy, Mockito.times(2)).ubicacion = Mockito.any(Ubicacion::class.java)
 
-        Mockito.verify(hibernateUbicacionDAOSpy, Mockito.times(1)).mover(vectorInsectoSpy, nombreQuilmesSpy)
-        Mockito.verify(hibernateUbicacionDAOSpy, Mockito.times(1)).mover(vectorInsectoSpy, nombreBabiloniaSpy)
-        Mockito.verify(hibernateUbicacionDAOSpy, Mockito.times(2)).mover(any(Vector::class.java), Mockito.anyString())
+        Mockito.verify(ubicacionServiceSpy, Mockito.times(1)).moverSubTarea(vectorInsectoSpy, quilmesSpy)
+        Mockito.verify(ubicacionServiceSpy, Mockito.times(1)).moverSubTarea(vectorInsectoSpy, babiloniaSpy)
+        Mockito.verify(ubicacionServiceSpy, Mockito.times(2)).moverSubTarea(any(Vector::class.java), any(Ubicacion::class.java))
 
         //verifico que el vector termina en babilonia
         Assert.assertEquals(babiloniaSpy.nombreUbicacion, vectorInsectoSpy.ubicacion!!.nombreUbicacion)
@@ -403,15 +404,16 @@ class UbicacionNeo4jTest {
             Mockito.doReturn(babiloniaSpy).`when`(hibernateUbicacionDAOSpy).recuperar(nombreBabiloniaSpy)
         }
 
-        ubicacionService.moverMasCorto(vectorAnimalSpy.id!!, babiloniaSpy.nombreUbicacion)
+        val ubicacionServiceSpy = Mockito.spy(ubicacionService)
+        ubicacionServiceSpy.moverMasCorto(vectorAnimalSpy.id!!, babiloniaSpy.nombreUbicacion)
 
         Mockito.verify(vectorAnimalSpy, Mockito.times(1)).ubicacion = zionSpy
         Mockito.verify(vectorAnimalSpy, Mockito.times(1)).ubicacion = babiloniaSpy
         Mockito.verify(vectorAnimalSpy, Mockito.times(2)).ubicacion = Mockito.any(Ubicacion::class.java)
 
-        Mockito.verify(hibernateUbicacionDAOSpy, Mockito.times(1)).mover(vectorAnimalSpy, nombreZionSpy)
-        Mockito.verify(hibernateUbicacionDAOSpy, Mockito.times(1)).mover(vectorAnimalSpy, nombreBabiloniaSpy)
-        Mockito.verify(hibernateUbicacionDAOSpy, Mockito.times(2)).mover(any(Vector::class.java), Mockito.anyString())
+        Mockito.verify(ubicacionServiceSpy, Mockito.times(1)).moverSubTarea(vectorAnimalSpy, zionSpy)
+        Mockito.verify(ubicacionServiceSpy, Mockito.times(1)).moverSubTarea(vectorAnimalSpy, babiloniaSpy)
+        Mockito.verify(ubicacionServiceSpy, Mockito.times(2)).moverSubTarea(any(Vector::class.java), any(Ubicacion::class.java))
 
         //verifico que el vector termina en babilonia
         Assert.assertEquals(babiloniaSpy.nombreUbicacion, vectorAnimalSpy.ubicacion!!.nombreUbicacion)
