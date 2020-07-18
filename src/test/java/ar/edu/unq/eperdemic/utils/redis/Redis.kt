@@ -9,10 +9,7 @@ import ar.edu.unq.eperdemic.services.MegalodonService
 import ar.edu.unq.eperdemic.services.PatogenoService
 import ar.edu.unq.eperdemic.services.UbicacionService
 import ar.edu.unq.eperdemic.services.VectorService
-import ar.edu.unq.eperdemic.services.impl.FeedServiceImpl
-import ar.edu.unq.eperdemic.services.impl.PatogenoServiceImpl
-import ar.edu.unq.eperdemic.services.impl.UbicacionServiceImpl
-import ar.edu.unq.eperdemic.services.impl.VectorServiceImpl
+import ar.edu.unq.eperdemic.services.impl.*
 import ar.edu.unq.eperdemic.tipo.Humano
 import org.junit.After
 import org.junit.Assert
@@ -20,7 +17,7 @@ import org.junit.Before
 import org.junit.Test
 
 class Redis {
-
+    lateinit var  antidotoServiceImpl: AntidotoServiceImpl
     lateinit var vectorServiceImpl : VectorService
     lateinit var ubicacionServiceImpl : UbicacionService
     lateinit var patogenoService : PatogenoService
@@ -32,19 +29,22 @@ class Redis {
 
     @Before
     fun setUp(){
+        antidotoServiceImpl=AntidotoServiceImpl()
         vectorServiceImpl=VectorServiceImpl(HibernateVectorDAO(),HibernateUbicacionDAO(),FeedServiceImpl(FeedMongoDAO()))
         ubicacionServiceImpl=UbicacionServiceImpl(HibernateUbicacionDAO())
         patogenoService=PatogenoServiceImpl(HibernatePatogenoDAO(),HibernateEspecieDAO())
         patogeno=Patogeno()
         patogeno.tipo="Bacteria"
         vector= Vector()
-        antidoto = Antidoto("quedateEnCasa")
         florencioVarela= ubicacionServiceImpl.crearUbicacion("Florencio Varela")
         vector.ubicacion=florencioVarela
         vector.tipo= Humano()
         patogenoService.crearPatogeno(patogeno);
         especieCreada= patogenoService.agregarEspecie(patogeno.id!!, "Covid-19", "China")
+        antidoto = Antidoto("quedateEnCasa",especieCreada)
+
         vectorServiceImpl.crearVector(vector)
+        antidotoServiceImpl.CrearAntidoto(antidoto)
     }
 
     @Test(expected = AnalisisDeSangreImposibleHacer::class)
