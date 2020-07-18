@@ -22,5 +22,9 @@ class RedisADNDao {
         return darAdnDeEspecie(vector).isNullOrEmpty()
     }
 
+    fun deleteAll(){
+        connectRedis
+    }
+
 
 }

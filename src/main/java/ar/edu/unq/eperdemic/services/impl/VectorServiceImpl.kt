@@ -73,9 +73,7 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
 
     override fun recuperarVector(vectorID: Int): Vector = TransactionRunner.addHibernate().runTrx { vectorDao.recuperar(vectorID) }
 
-
-
-    fun irAlMedico(vector:Vector,especie: Especie){
+    override fun irAlMedico(vector:Vector,especie: Especie){
        var nombreEspecie=redisADNDao.darAdnDeEspecie(vector)
 
 
@@ -87,13 +85,14 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
             tomarAntidoto(nombreAntidoto,especie,vector)
         }
     }
+
     fun tomarAntidoto(antidoto: String,especie: Especie,vector:Vector){
         if(antidotoServiceImpl.getNombreAntido(especie)==antidoto){
             vector.recuperarseDeUnaEnfermedad(especie)
             TransactionRunner.addHibernate().runTrx {
                 vectorDao.actualizar(vector)
             }
-            }
+        }
     }
     override fun borrarVector(vectorId: Int) {
         TransactionRunner.addHibernate().runTrx {
