@@ -1,7 +1,5 @@
 package ar.edu.unq.eperdemic.persistencia.dao.neo4j
 
-import ar.edu.unq.eperdemic.modelo.Especie
-import ar.edu.unq.eperdemic.modelo.TipoCamino
 import ar.edu.unq.eperdemic.modelo.Ubicacion
 import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.exception.CaminoNoSoportado
@@ -12,12 +10,8 @@ import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateUbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateVectorDAO
 import ar.edu.unq.eperdemic.services.runner.TransactionNeo4j
-import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 import org.neo4j.driver.Values
-import net.bytebuddy.dynamic.scaffold.TypeWriter
 import org.neo4j.driver.Record
-import org.neo4j.driver.Value
-
 
 class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
     val vectorDao = HibernateVectorDAO()
@@ -53,11 +47,6 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
             ubicacionTemp
         }
         return tempListNombres
-    }
-
-    override fun mover(vector: Vector, nombreUbicacion: String) : Pair<List<Pair<Vector, Especie>>, List<Ubicacion>> {
-//        TODO("Should not be implemented")
-        return Pair(listOf(), listOf())
     }
 
     fun esAledaña(nombreDeUbicacion: String, uPosibleAledaña: String) {
@@ -122,7 +111,7 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
         return result.single().get("result").asInt()
     }
 
-    override fun moverMasCorto(vector: Vector, ubicacion: Ubicacion) : Pair<List<Pair<Vector, Especie>>, List<Ubicacion>> {
+    override fun moverMasCorto(vector: Vector, ubicacion: Ubicacion) : List<String> {
         val transaction = TransactionNeo4j.currentTransaction
         val tiposDeCaminosPosibles = vector.tipo.posiblesCaminos.map { it.name }
         val tiposDeLaRelacion = myFormatter.caminosFormateados(tiposDeCaminosPosibles)
@@ -141,23 +130,12 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
         ))
 
         lateinit var nombreUbicaciones: List<String>
-        try {
+        if (caminoMasCorto.hasNext()) {
             nombreUbicaciones = caminoMasCorto.single().get("p").asPath().nodes().map { it.get("nombre").toString().drop(1).dropLast(1) }
-        } catch (err: Throwable) {
+        } else {
             throw UbicacionNoAlcanzable()
         }
 
-        return this.moverPorUbicaciones(vector, nombreUbicaciones.drop(1))
-    }
-
-    private fun moverPorUbicaciones(vector: Vector, nombresDeUbicaciones: List<String>) : Pair<List<Pair<Vector, Especie>>, List<Ubicacion>> {
-        var infecciones : List<Pair<Vector, Especie>> = listOf()
-        var ubicaciones : List<Ubicacion> = listOf()
-        nombresDeUbicaciones.forEach {
-            val infeccionesUbicaciones = hibernateUbicacionDAO.mover(vector, it)
-            infecciones += infeccionesUbicaciones.first
-            ubicaciones += infeccionesUbicaciones.second
-        }
-        return Pair(infecciones, ubicaciones)
+        return nombreUbicaciones.drop(1)
     }
 }
