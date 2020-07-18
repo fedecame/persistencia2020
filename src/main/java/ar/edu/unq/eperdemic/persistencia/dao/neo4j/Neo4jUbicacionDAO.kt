@@ -130,9 +130,9 @@ class Neo4jUbicacionDAO : Neo4jDataDAO(), UbicacionDAO {
         ))
 
         lateinit var nombreUbicaciones: List<String>
-        try {
+        if (caminoMasCorto.hasNext()) {
             nombreUbicaciones = caminoMasCorto.single().get("p").asPath().nodes().map { it.get("nombre").toString().drop(1).dropLast(1) }
-        } catch (err: Throwable) {
+        } else {
             throw UbicacionNoAlcanzable()
         }
 
