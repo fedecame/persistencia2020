@@ -8,7 +8,6 @@ class RedisAntidotoDao {
     fun crearAntidoto(nombreAntidoto:String, nombreEspecie:String){
         val map: MutableMap<String, String> = HashMap()
         map["antidoto"] = nombreAntidoto
-
         connectRedis.syncCommands.hmset("Especie:$nombreEspecie",map)
     }
     fun getNombre(nombreEspecie:String):String{

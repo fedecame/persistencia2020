@@ -81,10 +81,15 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
                throw AnalisisDeSangreImposibleHacer()
            }
             else{
-            var nombreAntidoto=antidotoServiceImpl.getNombreAntido(especie)!!
+            var nombreAntidoto=hacerAnalisis(especie)
             tomarAntidoto(nombreAntidoto,especie,vector)
         }
     }
+
+    fun hacerAnalisis(especie: Especie): String {
+       return  antidotoServiceImpl.getNombreAntido(especie)!!
+    }
+
 
     fun tomarAntidoto(antidoto: String,especie: Especie,vector:Vector){
         if(antidotoServiceImpl.getNombreAntido(especie)==antidoto){
