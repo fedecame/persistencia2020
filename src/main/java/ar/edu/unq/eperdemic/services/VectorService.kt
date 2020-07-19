@@ -21,4 +21,7 @@ interface VectorService {
     fun irAlMedico2(vector: Vector,especie: Especie)
 
 
-    }
+
+ fun hacerAnalisis(especie: Especie): String
+    fun tomarAntidoto(antidoto: String,especie: Especie,vector:Vector)
+}

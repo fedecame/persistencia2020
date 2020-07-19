@@ -46,7 +46,7 @@ class Redis {
         antidoto = Antidoto("quedateEnCasa",especieCreada)
 
         vectorServiceImpl.crearVector(vector)
-        antidotoServiceImpl.CrearAntidoto(antidoto)
+        antidotoServiceImpl.crearAntidoto(antidoto)
     }
 
     @Test(expected = AnalisisDeSangreImposibleHacer::class)

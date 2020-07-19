@@ -16,11 +16,11 @@ import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 
 
 class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO, var feedService : FeedService = FeedServiceImpl(FeedMongoDAO())) : VectorService {
-    var redisADNDao=RedisADNDao()
+    var redisADNDao = RedisADNDao()
     var redisScripts = RedisScriptDao()
-    var  antidotoServiceImpl=AntidotoServiceImpl()
+    var antidotoServiceImpl = AntidotoServiceImpl()
 
-    var especieDAO=HibernateEspecieDAO()
+    var especieDAO = HibernateEspecieDAO()
 
     override fun contagiar(vectorInfectado: Vector, vectores: List<Vector>) {
         val infecciones: List<Pair<Vector, Especie>> = vectorInfectado.contagiar(vectores)
@@ -33,7 +33,7 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
     }
 
 
-    fun fastForwardFeed(infecciones: List<Pair<Vector, Especie>>, vectorInfectado: Long? = null){
+    fun fastForwardFeed(infecciones: List<Pair<Vector, Especie>>, vectorInfectado: Long? = null) {
         val especieDAO = HibernateEspecieDAO()
         TransactionRunner.addHibernate().runTrx {
             infecciones.forEach {
@@ -53,15 +53,15 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
     }
 
     override fun infectar(vector: Vector, especie: Especie) {
-        lateinit var infeccion : List<Pair<Vector, Especie>>
+        lateinit var infeccion: List<Pair<Vector, Especie>>
         TransactionRunner.addHibernate().runTrx {
             val especieDB = HibernateEspecieDAO().recuperarEspecie(especie.id!!)
             val _vector = vectorDao.recuperar(vector.id?.toInt()!!)
-            infeccion  = _vector.infectarse(especieDB)
+            infeccion = _vector.infectarse(especieDB)
             vectorDao.actualizar(_vector)
 
             //crear adn de infeccion
-            redisADNDao.incorporarADNDeEspecie(vector,especie)
+            redisADNDao.incorporarADNDeEspecie(vector, especie)
         }
         this.fastForwardFeed(infeccion)
     }
@@ -69,60 +69,56 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
     override fun enfermedades(vectorId: Int): List<Especie> = TransactionRunner.addHibernate().runTrx { vectorDao.enfermedades(vectorId) }
 
     override fun crearVector(vector: Vector): Vector = TransactionRunner.addHibernate().runTrx {
-        var vector1=vectorDao.crear(vector)
+        var vector1 = vectorDao.crear(vector)
         vector1
     }
 
     override fun recuperarVector(vectorID: Int): Vector = TransactionRunner.addHibernate().runTrx { vectorDao.recuperar(vectorID) }
 
 
-    override fun irAlMedico2(vector: Vector, especie: Especie){
-        var respuestasDeTodasLasQuerys= redisScripts.todasLasQuerys(vector,especie.nombre)
-        if(respuestasDeTodasLasQuerys?.get(0)=="No se puede hacer nada"){
+    override fun irAlMedico2(vector: Vector, especie: Especie) {
+        var respuestasDeTodasLasQuerys = redisScripts.todasLasQuerys(vector, especie.nombre)
+        if (respuestasDeTodasLasQuerys?.get(0) == "No se puede hacer nada") {
             throw AnalisisDeSangreImposibleHacer()
-        }
-        else{
-            vector.recuperarseDeUnaEnfermedad(especie)
-            TransactionRunner.addHibernate().runTrx {
-                vectorDao.actualizar(vector)
-            }
-        }
-
-
-    }
-
-
-
-    override fun irAlMedico(vector:Vector,especie: Especie){
-       var nombreEspecie=redisADNDao.darAdnDeEspecie(vector)
-
-
-        if(redisADNDao.noExisteAdn(vector)){
-               throw AnalisisDeSangreImposibleHacer()
-           }
-            else{
-            var nombreAntidoto=hacerAnalisis(especie)
-            tomarAntidoto(nombreAntidoto,especie,vector)
-        }
-    }
-
-    fun hacerAnalisis(especie: Especie): String {
-       return  antidotoServiceImpl.getNombreAntido(especie)!!
-    }
-
-
-    fun tomarAntidoto(antidoto: String,especie: Especie,vector:Vector){
-        if(antidotoServiceImpl.getNombreAntido(especie)==antidoto){
+        } else {
             vector.recuperarseDeUnaEnfermedad(especie)
             TransactionRunner.addHibernate().runTrx {
                 vectorDao.actualizar(vector)
             }
         }
     }
-    override fun borrarVector(vectorId: Int) {
-        TransactionRunner.addHibernate().runTrx {
-            val vector = vectorDao.recuperar(vectorId)
-            vectorDao.borrar(vector)
+
+
+    override fun irAlMedico(vector: Vector, especie: Especie) {
+        var nombreEspecie = redisADNDao.darAdnDeEspecie(vector)
+
+
+        if (redisADNDao.noExisteAdn(vector)) {
+            throw AnalisisDeSangreImposibleHacer()
+        } else {
+            var nombreAntidoto = hacerAnalisis(especie)
+            tomarAntidoto(nombreAntidoto, especie, vector)
+
         }
     }
+
+        //Aca falta un try/catch?
+        override fun hacerAnalisis(especie: Especie): String = antidotoServiceImpl.getNombreAntido(especie)!!
+
+        override fun tomarAntidoto(antidoto: String, especie: Especie, vector: Vector) {
+            if (antidotoServiceImpl.getNombreAntido(especie) == antidoto) {
+                vector.recuperarseDeUnaEnfermedad(especie)
+                TransactionRunner.addHibernate().runTrx {
+                    vectorDao.actualizar(vector)
+                }
+            }
+        }
+
+        override fun borrarVector(vectorId: Int) {
+            TransactionRunner.addHibernate().runTrx {
+                val vector = vectorDao.recuperar(vectorId)
+                vectorDao.borrar(vector)
+            }
+        }
+
 }
