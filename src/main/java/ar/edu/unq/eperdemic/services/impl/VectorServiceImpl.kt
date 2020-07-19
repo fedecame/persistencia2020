@@ -5,6 +5,7 @@ import ar.edu.unq.eperdemic.modelo.Vector
 import ar.edu.unq.eperdemic.modelo.evento.EventoFactory
 import ar.edu.unq.eperdemic.modelo.exception.AnalisisDeSangreImposibleHacer
 import ar.edu.unq.eperdemic.persistencia.dao.Redis.RedisADNDao
+import ar.edu.unq.eperdemic.persistencia.dao.Redis.RedisScriptDao
 import ar.edu.unq.eperdemic.persistencia.dao.UbicacionDAO
 import ar.edu.unq.eperdemic.persistencia.dao.VectorDAO
 import ar.edu.unq.eperdemic.persistencia.dao.hibernate.HibernateEspecieDAO
@@ -16,6 +17,7 @@ import ar.edu.unq.eperdemic.services.runner.TransactionRunner
 
 class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO, var feedService : FeedService = FeedServiceImpl(FeedMongoDAO())) : VectorService {
     var redisADNDao=RedisADNDao()
+    var redisScripts = RedisScriptDao()
     var  antidotoServiceImpl=AntidotoServiceImpl()
 
     var especieDAO=HibernateEspecieDAO()
@@ -73,11 +75,29 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
 
     override fun recuperarVector(vectorID: Int): Vector = TransactionRunner.addHibernate().runTrx { vectorDao.recuperar(vectorID) }
 
+
+    override fun irAlMedico2(vector: Vector, especie: Especie){
+        var respuestasDeTodasLasQuerys= redisScripts.todasLasQuerys(vector,especie.nombre)
+        if(respuestasDeTodasLasQuerys?.get(0)=="No se puede hacer nada"){
+            throw AnalisisDeSangreImposibleHacer()
+        }
+        else{
+            vector.recuperarseDeUnaEnfermedad(especie)
+            TransactionRunner.addHibernate().runTrx {
+                vectorDao.actualizar(vector)
+            }
+        }
+
+
+    }
+
+
+
     override fun irAlMedico(vector:Vector,especie: Especie){
        var nombreEspecie=redisADNDao.darAdnDeEspecie(vector)
 
 
-        if(redisADNDao.existeAdn(vector)){
+        if(redisADNDao.noExisteAdn(vector)){
                throw AnalisisDeSangreImposibleHacer()
            }
             else{

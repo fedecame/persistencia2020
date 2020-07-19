@@ -18,4 +18,7 @@ interface VectorService {
     //fun mover(vectorId: Int, nombreUbicacion: String)
 
     fun irAlMedico(vectorCreado: Vector, recuperarEspecie: Especie)
-}
+    fun irAlMedico2(vector: Vector,especie: Especie)
+
+
+    }

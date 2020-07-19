@@ -1,8 +1,13 @@
 package ar.edu.unq.eperdemic.persistencia.dao.Redis
 
+import io.lettuce.core.ScriptOutputType
+
+
 import ar.edu.unq.eperdemic.modelo.Especie
 import ar.edu.unq.eperdemic.modelo.Vector
-import java.util.HashMap
+import org.springframework.boot.autoconfigure.cache.CacheProperties
+import java.util.*
+
 
 class RedisADNDao {
     var connectRedis= ConnectRedis()
@@ -18,10 +23,29 @@ class RedisADNDao {
       return  connectRedis.connection.sync().hget("AdnDe:${vector.id}","especie")
     }
 
-    fun existeAdn(vector: Vector): Boolean {
+    fun noExisteAdn(vector: Vector): Boolean {
         return darAdnDeEspecie(vector).isNullOrEmpty()
     }
 
+    fun hacerTodo(vector: Vector,nombreEspecie:String): MutableList<String>? {
+        //" local darAdnDeEspecie = redis.call('hget','Antidoto:quedateEnCasa','especie') return {darAdnDeEspecie}"
+
+
+        var script =  "local darAdnDeEspecie = redis.call('hget','AdnDe:${vector.id}','especie')" +
+                "        if  redis.call('hexists','AdnDe:${vector.id}', 'especie')==1 then local darAntidoto = redis.call('hget','Especie:$nombreEspecie','antidoto')" +
+                "                local items = { darAdnDeEspecie, darAntidoto ,'sabes que si'}" +
+
+                "return items end " +
+                "               local darAntidoto = redis.call('hget','Especie:$nombreEspecie','antidoto')" +
+                " local pepito=redis.call('hexists','AdnDe:${vector.id}', 'especie')"+
+
+                "                local items={'pepito'}" +
+                "return items "
+
+        val response= connectRedis.connection.sync().eval<MutableList<String>>(script,ScriptOutputType.MULTI)
+    return response
+
+    }
     fun deleteAll(){
         connectRedis
     }
