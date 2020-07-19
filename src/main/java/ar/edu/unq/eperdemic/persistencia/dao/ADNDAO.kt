@@ -6,5 +6,5 @@ import ar.edu.unq.eperdemic.modelo.Vector
 interface ADNDAO {
     fun incorporarADNDeEspecie(vector: Vector, especie: Especie)
     fun darAdnDeEspecie(vector: Vector):String?
-    fun existeAdn(vector: Vector): Boolean
+    fun noExisteAdn(vector: Vector): Boolean
 }
