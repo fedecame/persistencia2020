@@ -18,4 +18,6 @@ interface VectorService {
     //fun mover(vectorId: Int, nombreUbicacion: String)
 
     fun irAlMedico(vectorCreado: Vector, recuperarEspecie: Especie)
+    fun hacerAnalisis(especie: Especie): String
+    fun tomarAntidoto(antidoto: String,especie: Especie,vector:Vector)
 }
