@@ -73,28 +73,28 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
 
     override fun recuperarVector(vectorID: Int): Vector = TransactionRunner.addHibernate().runTrx { vectorDao.recuperar(vectorID) }
 
-
-
-    fun irAlMedico(vector:Vector,especie: Especie){
-       var nombreEspecie=redisADNDao.darAdnDeEspecie(vector)
-
-
+    override fun irAlMedico(vector:Vector,especie: Especie){
         if(redisADNDao.existeAdn(vector)){
-               throw AnalisisDeSangreImposibleHacer()
-           }
-            else{
-            var nombreAntidoto=antidotoServiceImpl.getNombreAntido(especie)!!
-            tomarAntidoto(nombreAntidoto,especie,vector)
+            throw AnalisisDeSangreImposibleHacer()
+        }
+        else{
+            val nombreAntidoto = this.hacerAnalisis(especie)
+            this.tomarAntidoto(nombreAntidoto,especie,vector)
         }
     }
-    fun tomarAntidoto(antidoto: String,especie: Especie,vector:Vector){
+
+    //Aca falta un try/catch?
+    override fun hacerAnalisis(especie: Especie): String = antidotoServiceImpl.getNombreAntido(especie)!!
+
+    override fun tomarAntidoto(antidoto: String,especie: Especie,vector:Vector){
         if(antidotoServiceImpl.getNombreAntido(especie)==antidoto){
             vector.recuperarseDeUnaEnfermedad(especie)
             TransactionRunner.addHibernate().runTrx {
                 vectorDao.actualizar(vector)
             }
-            }
+        }
     }
+
     override fun borrarVector(vectorId: Int) {
         TransactionRunner.addHibernate().runTrx {
             val vector = vectorDao.recuperar(vectorId)
