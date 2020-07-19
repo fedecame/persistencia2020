@@ -12,4 +12,8 @@ class ConnectRedis {
     var connection : StatefulRedisConnection<String, String> = redisClient.connect();
     var syncCommands : RedisCommands<String, String> = connection.sync();
 
+
+    fun dropAll(){
+        redisClient
+    }
 }
