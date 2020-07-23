@@ -9,10 +9,11 @@ class RedisScriptDao {
     fun todasLasQuerys(vector: Vector, nombreEspecie:String): MutableList<String>? {
         //" local darAdnDeEspecie = redis.call('hget','Antidoto:quedateEnCasa','especie') return {darAdnDeEspecie}"
         var script =  "local darAdnDeEspecie = redis.call('hget','AdnDe:${vector.id}','especie')" +
-                "        if  redis.call('hexists','AdnDe:${vector.id}', 'especie')==1 and " +
-                "              redis.call('hexists','Especie:$nombreEspecie','antidoto')    " +
-                "then local darAntidoto = redis.call('hget','Especie:$nombreEspecie','antidoto')" +
-                "                local respuestas = { darAdnDeEspecie, darAntidoto }" +
+                "        if  (redis.call('hexists','AdnDe:${vector.id}', 'especie')==1)"+
+                "then " +
+                "local existeLaCura=tostring(redis.call('hexists','Especie:$nombreEspecie','antidoto')) " +
+                "local darAntidoto = redis.call('hget','Especie:$nombreEspecie','antidoto')" +
+                "                local respuestas = { darAdnDeEspecie ,existeLaCura,darAntidoto}" +
 
                 "return respuestas end " +
 

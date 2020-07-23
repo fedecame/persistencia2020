@@ -81,9 +81,13 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
         if (respuestasDeTodasLasQuerys?.get(0) == "No se puede hacer nada") {
             throw AnalisisDeSangreImposibleHacer()
         } else {
-            vector.recuperarseDeUnaEnfermedad(especie)
-            TransactionRunner.addHibernate().runTrx {
-                vectorDao.actualizar(vector)
+            if (respuestasDeTodasLasQuerys != null) {
+                if(respuestasDeTodasLasQuerys.get(1)=="1"){ ///se verifica si existe la cura  para esa especie
+                    vector.recuperarseDeUnaEnfermedad(especie)
+                    TransactionRunner.addHibernate().runTrx {
+                        vectorDao.actualizar(vector)
+                    }
+                }
             }
         }
     }
@@ -106,7 +110,8 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
         override fun hacerAnalisis(especie: Especie): String = antidotoServiceImpl.getNombreAntido(especie)!!
 
         override fun tomarAntidoto(antidoto: String, especie: Especie, vector: Vector) {
-            if (antidotoServiceImpl.getNombreAntido(especie) == antidoto) {
+
+            if (antidotoServiceImpl.getNombreAntido(especie) == antidoto) {//se verifica si existe la cura  para esa especie
                 vector.recuperarseDeUnaEnfermedad(especie)
                 TransactionRunner.addHibernate().runTrx {
                     vectorDao.actualizar(vector)
