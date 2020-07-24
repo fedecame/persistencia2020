@@ -18,7 +18,7 @@ class RedisADNDao : ADNDAO{
         val map: MutableMap<String, String> = HashMap()
         map["especie"] = "Especie:${especie.nombre}"
         connectRedis.syncCommands.hmset("AdnDe:${vector.id}",map)
-        connectRedis.syncCommands.expire("AdnDe:${vector.id}",1)
+        connectRedis.syncCommands.expire("AdnDe:${vector.id}",10)
     }
 
     override fun darAdnDeEspecie(vector: Vector):String?{
@@ -27,7 +27,7 @@ class RedisADNDao : ADNDAO{
 
 
     override fun noExisteAdn(vector: Vector): Boolean {
-        return darAdnDeEspecie(vector).isNullOrEmpty()
+        return !connectRedis.connection.sync().hexists("AdnDe:${vector.id}","especie")
     }
 
 

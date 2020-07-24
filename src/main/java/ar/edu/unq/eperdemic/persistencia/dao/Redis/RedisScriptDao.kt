@@ -7,7 +7,6 @@ class RedisScriptDao {
     var connectRedis= ConnectRedis()
 
     fun todasLasQuerys(vector: Vector, nombreEspecie:String): MutableList<String>? {
-        //" local darAdnDeEspecie = redis.call('hget','Antidoto:quedateEnCasa','especie') return {darAdnDeEspecie}"
         var script =  "local darAdnDeEspecie = redis.call('hget','AdnDe:${vector.id}','especie')" +
                 "        if  (redis.call('hexists','AdnDe:${vector.id}', 'especie')==1)"+
                 "then " +

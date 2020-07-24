@@ -95,8 +95,6 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
 
     override fun irAlMedico(vector: Vector, especie: Especie) {
         var nombreEspecie = redisADNDao.darAdnDeEspecie(vector)
-
-
         if (redisADNDao.noExisteAdn(vector)) {
             throw AnalisisDeSangreImposibleHacer()
         } else {
@@ -106,7 +104,6 @@ class VectorServiceImpl(var vectorDao: VectorDAO, var ubicacionDao: UbicacionDAO
         }
     }
 
-        //Aca falta un try/catch?
         override fun hacerAnalisis(especie: Especie): String = antidotoServiceImpl.getNombreAntido(especie)!!
 
         override fun tomarAntidoto(antidoto: String, especie: Especie, vector: Vector) {

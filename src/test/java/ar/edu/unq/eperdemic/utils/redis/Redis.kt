@@ -52,7 +52,7 @@ class Redis {
     @Test(expected = AnalisisDeSangreImposibleHacer::class)
     fun vectorVaAlMedicoPeroEsImposibleHacerElAnilisis(){
         vectorServiceImpl.infectar(vector,patogenoService.recuperarEspecie(especieCreada.id!!))
-        Thread.sleep(1001)
+        Thread.sleep(10001)
         vectorServiceImpl.irAlMedico(vector, patogenoService.recuperarEspecie(especieCreada.id!!))
     }
 
@@ -60,7 +60,7 @@ class Redis {
     fun vectorVaAlMedicoAntesDeQueSeaImposibleHacerElAnilisis(){
         var redisAdnDao =RedisADNDao()
         vectorServiceImpl.infectar(vector,patogenoService.recuperarEspecie(especieCreada.id!!))
-        Thread.sleep(50)
+        Thread.sleep(1)
         vectorServiceImpl.irAlMedico(vector, patogenoService.recuperarEspecie(especieCreada.id!!))
         var vectorCurado= vectorServiceImpl.recuperarVector(vector.id?.toInt()!!)
         Assert.assertTrue(vectorCurado.estado is Sano)
@@ -69,7 +69,7 @@ class Redis {
     @Test(expected = AnalisisDeSangreImposibleHacer::class)
     fun vectorVaAlMedicoPeroEsImposibleHacerElAnilisisScript(){
         vectorServiceImpl.infectar(vector,patogenoService.recuperarEspecie(especieCreada.id!!))
-        Thread.sleep(1001)
+        Thread.sleep(10001)
         vectorServiceImpl.irAlMedico2(vector, patogenoService.recuperarEspecie(especieCreada.id!!))
     }
 
@@ -82,16 +82,6 @@ class Redis {
         var vectorCurado= vectorServiceImpl.recuperarVector(vector.id?.toInt()!!)
         Assert.assertTrue(vectorCurado.estado is Sano)
     }
-
-
-    /*
-    @Test
-    fun Scrip(){
-        var script='local val = "Hola IBM Cloud" return val'
-        var redisDAO=ConnectRedis()
-        redisDAO.syncCommands.eval(script, o)
-    }
-    */
 
     @After
     fun dropAll(){
